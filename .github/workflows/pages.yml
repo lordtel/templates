@@ -3,7 +3,6 @@ name: Deploy webapp to GitHub Pages
 on:
   push:
     branches:
-      - claude/create-elegant-web-app-Xf25P
       - master
     paths:
       - "webapp/**"
