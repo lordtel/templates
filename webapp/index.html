@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ember — A Quiet Place for Your Tasks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <span class="orb orb-a"></span>
+      <span class="orb orb-b"></span>
+      <span class="orb orb-c"></span>
+    </div>
+
+    <main class="shell">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">Ember</span>
+        </div>
+        <p class="tagline">A quiet place for the things that matter today.</p>
+      </header>
+
+      <section class="card" aria-labelledby="today-heading">
+        <div class="card-top">
+          <div>
+            <p class="eyebrow" id="today-label">Today</p>
+            <h1 id="today-heading" class="today-date">—</h1>
+          </div>
+          <div class="progress" role="group" aria-label="Daily progress">
+            <div class="progress-ring">
+              <svg viewBox="0 0 64 64" aria-hidden="true">
+                <circle class="ring-track" cx="32" cy="32" r="28"></circle>
+                <circle class="ring-fill" cx="32" cy="32" r="28"></circle>
+              </svg>
+              <span class="progress-value" id="progress-value">0%</span>
+            </div>
+            <div class="progress-meta">
+              <span id="progress-count">0 of 0</span>
+              <span class="progress-sub">complete</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="composer" id="composer" autocomplete="off">
+          <input
+            id="task-input"
+            class="composer-input"
+            type="text"
+            placeholder="What deserves your attention?"
+            aria-label="New task"
+            maxlength="140"
+            required
+          />
+          <button class="composer-submit" type="submit" aria-label="Add task">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+        </form>
+
+        <div class="filters" role="tablist" aria-label="Filter tasks">
+          <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button class="filter" data-filter="active" role="tab" aria-selected="false">Active</button>
+          <button class="filter" data-filter="done" role="tab" aria-selected="false">Done</button>
+        </div>
+
+        <ul class="tasks" id="task-list" aria-live="polite"></ul>
+
+        <div class="empty" id="empty-state" hidden>
+          <span class="empty-glyph" aria-hidden="true">✦</span>
+          <p class="empty-title">A clean slate.</p>
+          <p class="empty-sub">Add your first intention above.</p>
+        </div>
+
+        <footer class="card-foot">
+          <span class="hint" id="hint">Press Enter to add · Click to complete</span>
+          <button class="ghost-btn" id="clear-done" type="button">Clear completed</button>
+        </footer>
+      </section>
+
+      <p class="footnote">Crafted with care · Your tasks stay on this device.</p>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
