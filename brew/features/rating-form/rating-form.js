@@ -1,4 +1,5 @@
 import { getBag, upsertRating, removeRating, getRating, drinkLabel, DRINK_TYPES } from "../../core/store.js";
+import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
 const GRIND_LABELS = [
@@ -20,8 +21,9 @@ export function render(container, params) {
   }
 
   const existing = getRating(bag.id, drinkType);
+  const suggestion = existing ? null : suggestForDrink(drinkType, bag);
   const state = {
-    grindSize: existing?.grindSize ?? 10,
+    grindSize: existing?.grindSize ?? suggestion?.grind ?? 10,
     rating: existing?.rating ?? 0,
     notes: existing?.notes ?? "",
     date: existing?.date ?? todayIso(),
@@ -38,6 +40,8 @@ export function render(container, params) {
     </div>
 
     <div class="card rating-form">
+      ${suggestion ? dialInBanner(suggestion) : ""}
+
       <div class="field">
         <label for="r-date">Date</label>
         <input type="date" id="r-date" value="${state.date}" max="${todayIso()}" />
@@ -139,6 +143,25 @@ function syncStars(el, state) {
 
 function grindLabel(n) {
   return GRIND_LABELS.find((g) => n <= g.max)?.label ?? "";
+}
+
+function dialInBanner(s) {
+  const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>`;
+  const title = s.hasData
+    ? `Start at grind ${s.grind}`
+    : `Try grind ${s.grind} to start`;
+  const sub = s.hasData
+    ? `Weighted from ${s.sampleSize} rating${s.sampleSize === 1 ? "" : "s"} ${s.scopeLabel} · avg ${s.avgRating.toFixed(1)}/5`
+    : `A common ${s.drinkLabel.toLowerCase()} starting point — adjust after tasting`;
+  return `
+    <div class="dial-in">
+      <span class="dial-in-icon" aria-hidden="true">${icon}</span>
+      <div>
+        <p class="dial-in-title">${title}</p>
+        <p class="dial-in-sub">${sub}</p>
+      </div>
+    </div>
+  `;
 }
 
 function todayIso() {
