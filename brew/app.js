@@ -5,6 +5,7 @@ import { initRouter } from "./core/router.js";
 import { renderNav } from "./features/nav/nav.js";
 import { renderEquipStrip } from "./features/equipment/strip.js";
 import { renderSignIn } from "./features/sign-in/sign-in.js";
+import { renderOnboarding } from "./features/onboarding/onboarding.js";
 import { render as renderHome } from "./features/home/home.js";
 import { render as renderBagForm } from "./features/bag-form/bag-form.js";
 import { render as renderBagDetail } from "./features/bag-detail/bag-detail.js";
@@ -71,6 +72,26 @@ async function boot(session) {
   } catch (err) {
     captureException(err, { where: "boot.loadInitialData" });
     viewEl.innerHTML = `<div class="empty-state"><h2>Couldn't load your data</h2><p>Check your connection and refresh. If it keeps failing, sign out and back in.</p></div>`;
+    return;
+  }
+
+  const onboardKey = `crema.onboarded.${session.user.id}.v1`;
+  const needsOnboarding = !localStorage.getItem(onboardKey);
+
+  if (needsOnboarding && !routerStarted) {
+    navEl.hidden = true;
+    equipEl.hidden = true;
+    renderOnboarding(viewEl, {
+      onDone: () => {
+        try { localStorage.setItem(onboardKey, "1"); } catch {}
+        navEl.hidden = false;
+        equipEl.hidden = false;
+        renderNav(navEl);
+        renderEquipStrip(equipEl);
+        initRouter(viewEl, routes);
+        routerStarted = true;
+      },
+    });
     return;
   }
 

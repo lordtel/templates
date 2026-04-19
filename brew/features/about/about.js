@@ -63,11 +63,25 @@ export function render(container) {
         <p>On Android Chrome: the <strong>⋮ menu → Install app</strong>.</p>
         <p>It launches standalone, no browser chrome, and survives Safari's aggressive storage eviction.</p>
       </section>
+
+      <section class="card about-card">
+        <h2>Replay the intro</h2>
+        <p>Want to show someone the pitch, or miss the jokes?</p>
+        <button class="btn ghost small" type="button" id="replay-btn">Replay intro</button>
+      </section>
     </div>
   `;
 
   container.querySelector(".back-btn").addEventListener("click", () => {
     if (history.length > 1) history.back();
     else navigate("/");
+  });
+
+  container.querySelector("#replay-btn")?.addEventListener("click", async () => {
+    try {
+      const keys = Object.keys(localStorage).filter((k) => k.startsWith("crema.onboarded."));
+      keys.forEach((k) => localStorage.removeItem(k));
+    } catch {}
+    location.reload();
   });
 }
