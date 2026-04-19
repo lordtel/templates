@@ -1,4 +1,4 @@
-import { getBag, upsertRating, removeRating, getRating, drinkLabel, DRINK_TYPES } from "../../core/store.js";
+import { getBag, upsertRating, removeRating, getRating, drinkLabel } from "../../core/store.js";
 import { suggestForDrink, getActiveGrinder } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -15,9 +15,8 @@ const GRIND_LABELS = [
 export function render(container, params) {
   const bag = getBag(params.id);
   const drinkType = params.drink;
-  const validDrink = DRINK_TYPES.some((d) => d.id === drinkType);
 
-  if (!bag || !validDrink) {
+  if (!bag || !drinkType) {
     container.innerHTML = `<div class="empty-state"><h2>Not found</h2></div>`;
     return;
   }

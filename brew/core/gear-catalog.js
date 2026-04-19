@@ -109,9 +109,9 @@ export const GRINDERS = [
     brand: "Option-O",
     model: "Lagom Casa",
     burrSize: "65mm conical",
-    scale: { min: 0, max: 2.5, step: 0.1, unit: "rot" },
-    espressoRange: [0.4, 0.9],
-    filterRange: [1.3, 1.9],
+    scale: { min: 0, max: 30, step: 0.5, unit: "" },
+    espressoRange: [4, 9],
+    filterRange: [13, 19],
   },
 ];
 

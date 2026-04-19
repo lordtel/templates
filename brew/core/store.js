@@ -4,6 +4,8 @@ import { load, remove } from "./storage.js";
 
 const LEGACY_BAGS_KEY = "brew.bags.v1";
 const LEGACY_EQUIPMENT_KEY = "brew.equipment.v1";
+const DOSE_KEY = "crema.dose.v1";
+const DEFAULT_DOSE_G = 18;
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
@@ -24,7 +26,23 @@ export const DRINK_TYPES = [
 ];
 
 export function drinkLabel(id) {
-  return DRINK_TYPES.find((d) => d.id === id)?.label ?? id;
+  const hit = DRINK_TYPES.find((d) => d.id === id);
+  if (hit) return hit.label;
+  if (!id) return "";
+  return String(id)
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+export function slugifyDrink(name) {
+  return String(name ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 40);
 }
 
 export function subscribe(fn) {
@@ -55,6 +73,22 @@ export function getRating(bagId, drinkType) {
 
 export function getEquipment() {
   return state.equipment;
+}
+
+export function getEspressoDose() {
+  const raw = localStorage.getItem(DOSE_KEY);
+  const n = raw == null ? NaN : Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : DEFAULT_DOSE_G;
+}
+
+export function setEspressoDose(grams) {
+  const n = Number(grams);
+  if (!Number.isFinite(n) || n <= 0) {
+    localStorage.removeItem(DOSE_KEY);
+  } else {
+    localStorage.setItem(DOSE_KEY, String(n));
+  }
+  emit();
 }
 
 export async function loadInitialData(userId) {
