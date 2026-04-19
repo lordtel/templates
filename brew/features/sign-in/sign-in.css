@@ -91,6 +91,36 @@
   color: #b5463a;
 }
 
+.sign-in-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 14px;
+  color: var(--ink-faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sign-in-divider::before,
+.sign-in-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.btn.ghost.guest {
+  width: 100%;
+}
+
+.sign-in-disclaimer {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+}
+
 .sign-in-footer {
   margin: 8px 0 0;
   font-size: 11px;
