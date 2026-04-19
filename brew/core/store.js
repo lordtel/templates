@@ -1,11 +1,13 @@
 import { load, save } from "./storage.js";
 
 const BAGS_KEY = "brew.bags.v1";
+const EQUIPMENT_KEY = "brew.equipment.v1";
 
 const listeners = new Set();
 
 const state = {
   bags: load(BAGS_KEY, []),
+  equipment: load(EQUIPMENT_KEY, { machine: "", grinder: "" }),
 };
 
 export const DRINK_TYPES = [
@@ -84,6 +86,16 @@ export function removeBrew(bagId, brewId) {
   if (!bag) return;
   bag.brews = (bag.brews ?? []).filter((br) => br.id !== brewId);
   persist();
+  emit();
+}
+
+export function getEquipment() {
+  return state.equipment;
+}
+
+export function setEquipment(patch) {
+  state.equipment = { ...state.equipment, ...patch };
+  save(EQUIPMENT_KEY, state.equipment);
   emit();
 }
 

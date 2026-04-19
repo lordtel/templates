@@ -1,15 +1,19 @@
 import { initRouter } from "./core/router.js";
 import { renderNav } from "./features/nav/nav.js";
+import { renderEquipStrip } from "./features/equipment/strip.js";
 import { render as renderHome } from "./features/home/home.js";
 import { render as renderBagForm } from "./features/bag-form/bag-form.js";
 import { render as renderBagDetail } from "./features/bag-detail/bag-detail.js";
 import { render as renderBrewForm } from "./features/brew-form/brew-form.js";
 import { render as renderAnalytics } from "./features/analytics/analytics.js";
+import { render as renderEquipment } from "./features/equipment/equipment.js";
 
 const viewEl = document.getElementById("view");
 const navEl = document.getElementById("nav");
+const equipEl = document.getElementById("equip-strip");
 
 renderNav(navEl);
+renderEquipStrip(equipEl);
 
 initRouter(viewEl, [
   { path: "/", render: renderHome },
@@ -18,4 +22,5 @@ initRouter(viewEl, [
   { path: "/bag/:id/edit", render: (c, p) => renderBagForm(c, p) },
   { path: "/bag/:id/brew", render: renderBrewForm },
   { path: "/analytics", render: renderAnalytics },
+  { path: "/equipment", render: renderEquipment },
 ]);
