@@ -1,0 +1,60 @@
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 6px 6px 18px;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  margin-bottom: 18px;
+}
+
+.composer:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.composer-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  padding: 12px 0;
+}
+
+.composer-input::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-family: "Fraunces", serif;
+  font-weight: 300;
+}
+
+.composer-submit {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease), background 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+
+.composer-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -8px rgba(232, 182, 97, 0.55);
+}
+
+.composer-submit svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}

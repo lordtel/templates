@@ -1,0 +1,99 @@
+.bag-form {
+  padding: 28px;
+}
+
+.photo-slot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+  border: 1.5px dashed var(--line-strong);
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+  display: grid;
+  place-items: center;
+}
+
+.photo-slot:hover,
+.photo-slot:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-soft);
+  padding: 20px;
+  text-align: center;
+}
+
+.photo-placeholder svg {
+  width: 38px;
+  height: 38px;
+  color: var(--accent);
+}
+
+.photo-placeholder span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.photo-placeholder small {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.photo-slot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ocr-status {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background: var(--accent-soft);
+  border-radius: var(--radius-xs);
+}
+
+.ocr-bar {
+  height: 4px;
+  background: rgba(122, 62, 29, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.ocr-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  transition: width 0.3s var(--ease);
+}
+
+.ocr-status p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
