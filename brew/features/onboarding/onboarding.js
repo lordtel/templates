@@ -22,7 +22,7 @@ const SLIDES = [
   {
     eyebrow: "No feed. No streaks.",
     title: "Your shelf. Your data. Your grind.",
-    body: "Everything syncs to a private Postgres row tied to your Google account. No ads, no social feed, no leaderboards, no push notifications nagging you to log today's cortado.",
+    body: "Everything syncs to your own private, secure space. No ads, no social feed, no leaderboards, no push notifications nagging you to log today's cortado.",
     tail: "Just you, your shelf, and a quietly smarter slider.",
     art: "shelf",
   },
