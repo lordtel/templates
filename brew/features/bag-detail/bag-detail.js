@@ -1,4 +1,4 @@
-import { subscribe, getBag, drinkLabel, DRINK_TYPES } from "../../core/store.js";
+import { subscribe, getBag, drinkLabel, DRINK_TYPES, getEspressoDose, slugifyDrink } from "../../core/store.js";
 import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -48,8 +48,8 @@ function paint(container, bagId) {
 
   const info = document.createElement("section");
   info.className = "bag-info card";
-  const priceStr = formatPrice(bag.price, bag.currency);
-  const weightStr = bag.weight ? `${bag.weight} g` : "";
+  const per250 = pricePer250g(bag);
+  const perCup = pricePerEspresso(bag);
   const pillBits = [bag.roast, bag.process, bag.variety]
     .filter(Boolean)
     .map((v) => `<span class="pill">${escapeHtml(v)}</span>`)
@@ -60,9 +60,8 @@ function paint(container, bagId) {
     ${pillBits ? `<div class="pill-row">${pillBits}</div>` : ""}
     ${bag.notes ? `<p class="bag-notes">${escapeHtml(bag.notes)}</p>` : ""}
     <dl class="kv">
-      ${priceStr ? `<div><dt>Price</dt><dd>${priceStr}</dd></div>` : ""}
-      ${weightStr ? `<div><dt>Weight</dt><dd>${weightStr}</dd></div>` : ""}
-      ${priceStr && weightStr ? `<div><dt>€/g</dt><dd>${(bag.price / bag.weight).toFixed(3)}</dd></div>` : ""}
+      ${per250 ? `<div><dt>Price / 250g</dt><dd>${per250}</dd></div>` : ""}
+      ${perCup ? `<div><dt>Price / shot</dt><dd>${perCup}</dd></div>` : ""}
     </dl>
     <div class="info-actions">
       <button class="btn ghost small" id="edit-btn">Edit</button>
@@ -80,14 +79,34 @@ function paint(container, bagId) {
   const ratings = bag.ratings ?? [];
   const byDrink = new Map(ratings.map((r) => [r.drinkType, r]));
 
+  const defaultIds = new Set(DRINK_TYPES.map((d) => d.id));
+  const customDrinks = ratings
+    .filter((r) => !defaultIds.has(r.drinkType))
+    .map((r) => ({ id: r.drinkType, label: drinkLabel(r.drinkType) }));
+
+  const allDrinks = [...DRINK_TYPES, ...customDrinks];
+
   const slots = document.createElement("section");
   slots.className = "rating-slots";
-  DRINK_TYPES.forEach((d) => {
+  allDrinks.forEach((d) => {
     const r = byDrink.get(d.id);
     const hint = r ? null : suggestForDrink(d.id, bag);
     slots.appendChild(buildSlot(bag.id, d, r, hint));
   });
   container.appendChild(slots);
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "btn ghost small add-drink";
+  addBtn.textContent = "+ Add another drink";
+  addBtn.addEventListener("click", () => {
+    const name = prompt("What drink did you brew?\n(e.g. Flat white, Cortado, V60)");
+    if (!name) return;
+    const slug = slugifyDrink(name);
+    if (!slug) return;
+    navigate(`/bag/${bag.id}/rate/${slug}`);
+  });
+  container.appendChild(addBtn);
 }
 
 function buildSlot(bagId, drink, rating, hint) {
@@ -150,10 +169,21 @@ function formatDate(iso) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
-function formatPrice(price, currency) {
-  if (price == null || price === "") return "";
-  const sym = currency || "€";
-  return `${sym}${Number(price).toFixed(2)}`;
+function pricePer250g(bag) {
+  const p = Number(bag.price);
+  const w = Number(bag.weight);
+  if (!p || !w) return "";
+  const sym = bag.currency || "€";
+  return `${sym}${((p / w) * 250).toFixed(2)}`;
+}
+
+function pricePerEspresso(bag) {
+  const p = Number(bag.price);
+  const w = Number(bag.weight);
+  const dose = Number(getEspressoDose());
+  if (!p || !w || !dose) return "";
+  const sym = bag.currency || "€";
+  return `${sym}${((p / w) * dose).toFixed(2)} · ${dose}g`;
 }
 
 function escapeHtml(s) {

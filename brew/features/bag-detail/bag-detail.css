@@ -127,6 +127,11 @@
   gap: 10px;
 }
 
+.add-drink {
+  margin: 14px auto 0;
+  display: block;
+}
+
 .rating-slot {
   all: unset;
   display: block;

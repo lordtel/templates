@@ -28,6 +28,34 @@
   margin-top: 8px;
 }
 
+.dose-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dose-row input[type="number"] {
+  width: 90px;
+}
+
+.dose-unit {
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+
+.equip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.equip-badge svg {
+  width: 13px;
+  height: 13px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .form-actions {
   display: flex;
   align-items: center;
@@ -73,10 +101,12 @@
   transform: translateY(-1px);
 }
 
-.equip-strip .equip-icon {
+.equip-strip .equip-icon,
+.equip-strip button > svg {
   width: 14px;
   height: 14px;
   color: var(--accent);
+  flex-shrink: 0;
 }
 
 .equip-strip .equip-dot {

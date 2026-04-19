@@ -1,4 +1,4 @@
-import { subscribe, DRINK_TYPES, drinkLabel, getEquipment } from "../../core/store.js";
+import { subscribe, DRINK_TYPES, drinkLabel, getEquipment, getEspressoDose } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container) {
@@ -84,10 +84,10 @@ function buildCard(bag) {
   const brand = bag.brand || "Untitled bag";
   const origin = bag.origin ? ` · ${bag.origin}` : "";
   const ratings = bag.ratings ?? [];
-  const rated = ratings.length;
   const avg = avgRating(ratings);
   const roast = bag.roast ? `<span class="pill">${escapeHtml(bag.roast)}</span>` : "";
-  const priceBit = formatPrice(bag.price, bag.currency);
+  const per250 = pricePer250g(bag);
+  const perCup = pricePerEspresso(bag);
 
   meta.innerHTML = `
     <h3>${escapeHtml(brand)}</h3>
@@ -95,8 +95,8 @@ function buildCard(bag) {
     <div class="bag-row">
       ${roast}
       <span class="bag-dots" aria-label="Average rating ${avg ? avg.toFixed(1) : 'none'}">${ratingDots(avg)}</span>
-      <span class="bag-count">${rated}/4 rated</span>
-      ${priceBit ? `<span class="bag-price">${priceBit}</span>` : ""}
+      ${per250 ? `<span class="bag-price">${per250} / 250g</span>` : ""}
+      ${perCup ? `<span class="bag-price muted">${perCup} / shot</span>` : ""}
     </div>
   `;
 
@@ -121,10 +121,21 @@ function ratingDots(avg) {
   return out;
 }
 
-function formatPrice(price, currency) {
-  if (price == null || price === "") return "";
-  const sym = currency || "€";
-  return `${sym}${Number(price).toFixed(2)}`;
+function pricePer250g(bag) {
+  const p = Number(bag.price);
+  const w = Number(bag.weight);
+  if (!p || !w) return "";
+  const sym = bag.currency || "€";
+  return `${sym}${((p / w) * 250).toFixed(2)}`;
+}
+
+function pricePerEspresso(bag) {
+  const p = Number(bag.price);
+  const w = Number(bag.weight);
+  const dose = Number(getEspressoDose());
+  if (!p || !w || !dose) return "";
+  const sym = bag.currency || "€";
+  return `${sym}${((p / w) * dose).toFixed(2)}`;
 }
 
 function escapeHtml(s) {
