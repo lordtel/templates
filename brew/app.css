@@ -130,6 +130,35 @@ body::before {
   border-color: var(--accent);
 }
 
+.app-footer .linklike {
+  background: none;
+  border: none;
+  padding: 0 0 1px;
+  color: var(--ink-soft);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line-strong);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.app-footer .linklike:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.app-footer .who {
+  color: var(--ink-faint);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+#nav[hidden],
+#equip-strip[hidden] {
+  display: none !important;
+}
+
 @keyframes rise {
   from {
     opacity: 0;

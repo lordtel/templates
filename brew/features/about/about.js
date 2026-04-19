@@ -49,9 +49,11 @@ export function render(container) {
       <section class="card about-card">
         <h2>Your data</h2>
         <ul class="about-list">
-          <li>Everything lives in your browser's <strong>localStorage</strong>. No account, no server, no analytics — nothing leaves this device.</li>
-          <li>OCR runs locally too (Tesseract.js loads on first photo — about 3 MB).</li>
-          <li>Clearing site data in browser settings wipes everything. There's no backup yet, so be kind to the cache.</li>
+          <li>Bags, ratings and photos sync to a private Supabase space tied to your Google account. Only you can read your rows (row-level security on every table).</li>
+          <li>Sign in on any device — phone, laptop — and your shelf follows.</li>
+          <li>OCR still runs locally in your browser (Tesseract.js loads on first photo — about 3 MB).</li>
+          <li>Crash reports go to Sentry so bugs get fixed. They include a stack trace and your user id, no passwords or photos.</li>
+          <li>Delete a bag and its photo is removed from storage too. Want a full wipe? Sign out, ask Nour, we'll drop the row.</li>
         </ul>
       </section>
 
