@@ -37,11 +37,11 @@ export function render(container, params = {}) {
     </div>
     <div class="card bag-form">
       <div class="photo-slot" id="photo-slot" role="button" tabindex="0" aria-label="Upload bag photo">
-        <input type="file" id="photo-input" accept="image/*" capture="environment" hidden />
+        <input type="file" id="photo-input" accept="image/*" hidden />
         <div class="photo-placeholder" id="photo-placeholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M8 5l1.5-2h5L16 5"/></svg>
-          <span>Tap to add a photo</span>
-          <small>We'll try to auto-fill the fields</small>
+          <span>Add a photo</span>
+          <small>Camera or photo library — we'll try to auto-fill the fields</small>
         </div>
         <img id="photo-preview" alt="" hidden />
       </div>
