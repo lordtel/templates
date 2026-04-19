@@ -1,4 +1,5 @@
 import { subscribe } from "../../core/store.js";
+import { machineLabel, grinderLabel } from "../../core/gear-catalog.js";
 import { navigate } from "../../core/router.js";
 
 export function renderEquipStrip(el) {
@@ -7,8 +8,8 @@ export function renderEquipStrip(el) {
 }
 
 function paint(el, eq) {
-  const machine = (eq?.machine || "").trim();
-  const grinder = (eq?.grinder || "").trim();
+  const machine = machineLabel(eq?.machine?.id, eq?.machine?.custom).trim();
+  const grinder = grinderLabel(eq?.grinder?.id, eq?.grinder?.custom).trim();
   const hasAny = machine || grinder;
 
   el.innerHTML = "";

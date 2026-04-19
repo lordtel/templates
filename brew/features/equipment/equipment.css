@@ -12,6 +12,22 @@
   color: var(--ink-faint);
 }
 
+.grinder-hint {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  min-height: 14px;
+}
+
+.equipment-form input[type="text"][hidden] {
+  display: none;
+}
+
+.equipment-form input[type="text"]:not([hidden]) {
+  margin-top: 8px;
+}
+
 .form-actions {
   display: flex;
   align-items: center;

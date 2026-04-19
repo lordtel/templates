@@ -1,4 +1,5 @@
-import { subscribe, getEquipment, setEquipment } from "../../core/store.js";
+import { getEquipment, setEquipment } from "../../core/store.js";
+import { MACHINES, GRINDERS } from "../../core/gear-catalog.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container) {
@@ -15,16 +16,43 @@ export function render(container) {
     <div class="card equipment-form">
       <div class="field">
         <label for="machine">Espresso machine</label>
-        <input type="text" id="machine" placeholder="e.g. Breville Bambino Plus" value="${escapeAttr(eq.machine)}" />
+        <select id="machine">
+          <option value="">—</option>
+          ${groupOptions(MACHINES, eq.machine.id)}
+          <option value="custom" ${eq.machine.id === "custom" ? "selected" : ""}>Other…</option>
+        </select>
+        <input
+          type="text"
+          id="machine-custom"
+          placeholder="Machine name"
+          value="${escapeAttr(eq.machine.custom)}"
+          ${eq.machine.id === "custom" ? "" : "hidden"}
+        />
       </div>
 
       <div class="field">
         <label for="grinder">Grinder</label>
-        <input type="text" id="grinder" placeholder="e.g. Baratza Encore" value="${escapeAttr(eq.grinder)}" />
+        <select id="grinder">
+          <option value="">—</option>
+          ${GRINDERS.map((g) => `
+            <option value="${g.id}" ${eq.grinder.id === g.id ? "selected" : ""}>
+              ${g.brand} ${g.model}${g.burrSize ? " · " + g.burrSize : ""}
+            </option>
+          `).join("")}
+          <option value="custom" ${eq.grinder.id === "custom" ? "selected" : ""}>Other…</option>
+        </select>
+        <input
+          type="text"
+          id="grinder-custom"
+          placeholder="Grinder name"
+          value="${escapeAttr(eq.grinder.custom)}"
+          ${eq.grinder.id === "custom" ? "" : "hidden"}
+        />
+        <p class="grinder-hint" id="grinder-hint"></p>
       </div>
 
       <div class="equipment-hint">
-        <p>Shown at the top of every page. Saved locally on this device.</p>
+        <p>Shown at the top of every page. Grinder specs help tune the dial-in suggestions on the rating form.</p>
       </div>
 
       <div class="form-actions">
@@ -35,24 +63,74 @@ export function render(container) {
     </div>
   `;
 
-  const machineEl = container.querySelector("#machine");
-  const grinderEl = container.querySelector("#grinder");
+  bind(container);
+}
+
+function bind(container) {
+  const machineSel = container.querySelector("#machine");
+  const machineCustom = container.querySelector("#machine-custom");
+  const grinderSel = container.querySelector("#grinder");
+  const grinderCustom = container.querySelector("#grinder-custom");
+  const grinderHint = container.querySelector("#grinder-hint");
   const saveBtn = container.querySelector("#save-btn");
   const clearBtn = container.querySelector("#clear-btn");
 
+  const syncCustom = (sel, input) => {
+    input.hidden = sel.value !== "custom";
+    if (sel.value !== "custom") input.value = "";
+  };
+
+  const syncGrinderHint = () => {
+    const g = GRINDERS.find((x) => x.id === grinderSel.value);
+    if (!g) {
+      grinderHint.textContent = "";
+      return;
+    }
+    const { min, max, step, unit } = g.scale;
+    const [lo, hi] = g.espressoRange;
+    const unitStr = unit ? " " + unit + (step < 1 ? "" : "s") : "";
+    grinderHint.textContent =
+      `Scale ${min}–${max}${unitStr} · Espresso ${lo}–${hi} · Filter ${g.filterRange[0]}–${g.filterRange[1]}`;
+  };
+
+  machineSel.addEventListener("change", () => syncCustom(machineSel, machineCustom));
+  grinderSel.addEventListener("change", () => {
+    syncCustom(grinderSel, grinderCustom);
+    syncGrinderHint();
+  });
+
+  syncGrinderHint();
+
   saveBtn.addEventListener("click", () => {
     setEquipment({
-      machine: machineEl.value.trim(),
-      grinder: grinderEl.value.trim(),
+      machine: {
+        id: machineSel.value,
+        custom: machineSel.value === "custom" ? machineCustom.value.trim() : "",
+      },
+      grinder: {
+        id: grinderSel.value,
+        custom: grinderSel.value === "custom" ? grinderCustom.value.trim() : "",
+      },
     });
     navigate("/");
   });
 
   clearBtn.addEventListener("click", () => {
-    machineEl.value = "";
-    grinderEl.value = "";
-    machineEl.focus();
+    machineSel.value = "";
+    machineCustom.value = "";
+    machineCustom.hidden = true;
+    grinderSel.value = "";
+    grinderCustom.value = "";
+    grinderCustom.hidden = true;
+    grinderHint.textContent = "";
+    machineSel.focus();
   });
+}
+
+function groupOptions(items, selectedId) {
+  return items
+    .map((m) => `<option value="${m.id}" ${m.id === selectedId ? "selected" : ""}>${m.brand} ${m.model}</option>`)
+    .join("");
 }
 
 function escapeAttr(s) {
