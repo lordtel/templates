@@ -287,9 +287,25 @@ h3 {
 }
 
 .empty-state p {
-  margin: 0 0 20px;
+  margin: 0 auto 16px;
   color: var(--ink-faint);
   font-size: 14px;
+  max-width: 360px;
+  line-height: 1.55;
+}
+
+.empty-state .empty-hint {
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.empty-actions {
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
 }
 
 .pill {
