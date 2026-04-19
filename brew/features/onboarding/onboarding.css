@@ -1,0 +1,167 @@
+.onboard {
+  min-height: calc(100vh - 140px);
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.onboard-skip {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+
+.onboard-skip:hover {
+  color: var(--ink);
+}
+
+.onboard-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0 24px;
+}
+
+.onboard-slide {
+  width: 100%;
+  text-align: center;
+  animation: onboard-fade 0.4s var(--ease);
+}
+
+.onboard-art {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 28px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  border-radius: 28px;
+  box-shadow: var(--shadow-md);
+}
+
+.onboard-art svg {
+  width: 68%;
+  height: 68%;
+}
+
+.onboard-eyebrow {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.onboard-title {
+  margin: 0 0 18px;
+  font-family: "Fraunces", serif;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.onboard-body,
+.onboard-tail {
+  margin: 0 auto;
+  max-width: 420px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.onboard-tail {
+  margin-top: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.onboard-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.onboard-back {
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.onboard-back:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.onboard-back[hidden] {
+  visibility: hidden;
+  display: inline-flex;
+}
+
+.onboard-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.onboard-dots {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.onboard-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  transition: all 0.25s var(--ease);
+}
+
+.onboard-dot.on {
+  background: var(--accent);
+  width: 22px;
+  border-radius: 999px;
+}
+
+.onboard-next {
+  min-width: 132px;
+  justify-content: center;
+}
+
+@keyframes onboard-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
