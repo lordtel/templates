@@ -1,42 +1,23 @@
-.brew-form {
+.rating-form {
   padding: 28px;
 }
 
-.drink-picker {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-@media (min-width: 520px) {
-  .drink-picker {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.drink-option {
-  padding: 12px 10px;
+.field input[type="date"] {
+  width: 100%;
+  padding: 12px 14px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-xs);
   background: var(--surface-solid);
   font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: all 0.2s var(--ease);
-}
-
-.drink-option:hover {
-  border-color: var(--accent);
+  font-size: 15px;
   color: var(--ink);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 
-.drink-option.is-active {
-  background: var(--accent);
+.field input[type="date"]:focus {
+  outline: none;
   border-color: var(--accent);
-  color: var(--on-accent);
-  box-shadow: 0 6px 14px -8px rgba(122, 62, 29, 0.6);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .grind-tag {
