@@ -14,7 +14,7 @@ npx serve . -l 3000
 # then open http://localhost:3000
 ```
 
-OCR runs entirely in your browser (Tesseract.js). Your bags and brews stay
+OCR runs entirely in your browser (Tesseract.js). Your bags and ratings stay
 on your device in `localStorage`.
 
 ## Structure
@@ -36,7 +36,8 @@ brew/
     ├── home/              main page: bags list
     ├── nav/               bottom tab bar
     ├── bag-form/          add/edit a bag (photo upload + OCR)
-    ├── bag-detail/        one bag + its brews
-    ├── brew-form/         log a brew (drink, grind, rating, notes)
+    ├── bag-detail/        one bag + 4 drink rating slots
+    ├── rating-form/       rate a drink (date, grind, stars, notes)
+    ├── equipment/         machine + grinder settings, top strip
     └── analytics/         dashboards: totals, averages, timeline
 ```

@@ -70,8 +70,9 @@ function buildCard(bag) {
   meta.className = "bag-meta";
   const brand = bag.brand || "Untitled bag";
   const origin = bag.origin ? ` · ${bag.origin}` : "";
-  const brewCount = (bag.brews ?? []).length;
-  const avg = avgRating(bag.brews ?? []);
+  const ratings = bag.ratings ?? [];
+  const rated = ratings.length;
+  const avg = avgRating(ratings);
   const roast = bag.roast ? `<span class="pill">${escapeHtml(bag.roast)}</span>` : "";
   const priceBit = formatPrice(bag.price, bag.currency);
 
@@ -81,7 +82,7 @@ function buildCard(bag) {
     <div class="bag-row">
       ${roast}
       <span class="bag-dots" aria-label="Average rating ${avg ? avg.toFixed(1) : 'none'}">${ratingDots(avg)}</span>
-      <span class="bag-count">${brewCount} ${brewCount === 1 ? "brew" : "brews"}</span>
+      <span class="bag-count">${rated}/4 rated</span>
       ${priceBit ? `<span class="bag-price">${priceBit}</span>` : ""}
     </div>
   `;
@@ -90,10 +91,10 @@ function buildCard(bag) {
   return card;
 }
 
-function avgRating(brews) {
-  if (!brews.length) return 0;
-  const sum = brews.reduce((s, b) => s + (Number(b.rating) || 0), 0);
-  return sum / brews.length;
+function avgRating(ratings) {
+  if (!ratings.length) return 0;
+  const sum = ratings.reduce((s, r) => s + (Number(r.rating) || 0), 0);
+  return sum / ratings.length;
 }
 
 function ratingDots(avg) {

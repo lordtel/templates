@@ -1,4 +1,4 @@
-import { getBag, addBrew, DRINK_TYPES } from "../../core/store.js";
+import { getBag, upsertRating, removeRating, getRating, drinkLabel, DRINK_TYPES } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
 const GRIND_LABELS = [
@@ -11,18 +11,20 @@ const GRIND_LABELS = [
 
 export function render(container, params) {
   const bag = getBag(params.id);
-  if (!bag) {
-    container.innerHTML = `<div class="empty-state"><h2>Bag not found</h2></div>`;
+  const drinkType = params.drink;
+  const validDrink = DRINK_TYPES.some((d) => d.id === drinkType);
+
+  if (!bag || !validDrink) {
+    container.innerHTML = `<div class="empty-state"><h2>Not found</h2></div>`;
     return;
   }
 
+  const existing = getRating(bag.id, drinkType);
   const state = {
-    drinkType: "espresso",
-    grindSize: 10,
-    rating: 0,
-    doseGrams: "",
-    yieldGrams: "",
-    notes: "",
+    grindSize: existing?.grindSize ?? 10,
+    rating: existing?.rating ?? 0,
+    notes: existing?.notes ?? "",
+    date: existing?.date ?? todayIso(),
   };
 
   container.innerHTML = `
@@ -30,26 +32,20 @@ export function render(container, params) {
 
     <div class="page-head">
       <div>
-        <p class="eyebrow">Log a brew</p>
-        <h1>How did it pull?</h1>
+        <p class="eyebrow">${existing ? "Edit rating" : "New rating"}</p>
+        <h1>${drinkLabel(drinkType)}</h1>
       </div>
     </div>
 
-    <div class="card brew-form">
+    <div class="card rating-form">
       <div class="field">
-        <label>Drink</label>
-        <div class="drink-picker" role="radiogroup">
-          ${DRINK_TYPES.map((d) => `
-            <button type="button" role="radio" aria-checked="false" data-drink="${d.id}" class="drink-option">
-              ${d.label}
-            </button>
-          `).join("")}
-        </div>
+        <label for="r-date">Date</label>
+        <input type="date" id="r-date" value="${state.date}" max="${todayIso()}" />
       </div>
 
       <div class="field">
-        <label for="grind">Grind size <span class="grind-tag" id="grind-tag">Espresso</span></label>
-        <input type="range" id="grind" min="1" max="30" step="1" value="10" />
+        <label for="grind">Grind size <span class="grind-tag" id="grind-tag">${grindLabel(state.grindSize)}</span></label>
+        <input type="range" id="grind" min="1" max="30" step="1" value="${state.grindSize}" />
         <div class="grind-scale">
           <span>Fine</span>
           <span>Medium</span>
@@ -57,62 +53,48 @@ export function render(container, params) {
         </div>
       </div>
 
-      <div class="field-row">
-        <div class="field">
-          <label for="dose">Dose (g)</label>
-          <input type="number" id="dose" min="0" step="0.1" placeholder="18.0" />
-        </div>
-        <div class="field">
-          <label for="yield">Yield (g)</label>
-          <input type="number" id="yield" min="0" step="0.1" placeholder="36.0" />
-        </div>
-      </div>
-
       <div class="field">
         <label>Rating</label>
-        <div class="rating" role="radiogroup" aria-label="Rate this brew">
+        <div class="rating" role="radiogroup" aria-label="Rate this drink">
           ${[1, 2, 3, 4, 5].map((n) => `<button type="button" class="star" data-rating="${n}" aria-label="${n} stars"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.3.9-4.6 4.5 1.1 6.3L12 17.8 6.4 20.4l1.1-6.3L2.9 9.6l6.3-.9L12 3z"/></svg></button>`).join("")}
         </div>
       </div>
 
       <div class="field">
-        <label for="b-notes">Notes</label>
-        <textarea id="b-notes" placeholder="Bright, clean, slight acidity — dialed in nicely."></textarea>
+        <label for="r-notes">Notes</label>
+        <textarea id="r-notes" placeholder="Bright, clean, slight acidity — dialed in nicely.">${escapeHtml(state.notes)}</textarea>
       </div>
 
       <div class="form-actions">
-        <button class="btn ghost" type="button" id="cancel-btn">Cancel</button>
+        ${existing ? `<button class="btn danger small" type="button" id="delete-btn">Delete</button>` : ""}
         <div class="spacer"></div>
-        <button class="btn" type="button" id="save-btn">Save brew</button>
+        <button class="btn ghost" type="button" id="cancel-btn">Cancel</button>
+        <button class="btn" type="button" id="save-btn">${existing ? "Update" : "Save"}</button>
       </div>
     </div>
   `;
 
-  bind(container, state, bag.id);
+  bind(container, state, bag.id, drinkType, !!existing);
 }
 
-function bind(container, state, bagId) {
+function bind(container, state, bagId, drinkType, isEdit) {
   const el = {
     back: container.querySelector(".back-btn"),
-    drinkButtons: container.querySelectorAll(".drink-option"),
+    date: container.querySelector("#r-date"),
     grind: container.querySelector("#grind"),
     grindTag: container.querySelector("#grind-tag"),
-    dose: container.querySelector("#dose"),
-    yield: container.querySelector("#yield"),
     stars: container.querySelectorAll(".star"),
-    notes: container.querySelector("#b-notes"),
+    notes: container.querySelector("#r-notes"),
     save: container.querySelector("#save-btn"),
     cancel: container.querySelector("#cancel-btn"),
+    del: container.querySelector("#delete-btn"),
   };
 
   el.back.addEventListener("click", () => navigate(`/bag/${bagId}`));
   el.cancel.addEventListener("click", () => navigate(`/bag/${bagId}`));
 
-  el.drinkButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      state.drinkType = btn.dataset.drink;
-      syncDrink(el, state);
-    });
+  el.date.addEventListener("change", () => {
+    state.date = el.date.value || todayIso();
   });
 
   el.grind.addEventListener("input", () => {
@@ -127,29 +109,26 @@ function bind(container, state, bagId) {
     });
   });
 
+  if (el.del) {
+    el.del.addEventListener("click", () => {
+      if (confirm("Remove this rating?")) {
+        removeRating(bagId, drinkType);
+        navigate(`/bag/${bagId}`);
+      }
+    });
+  }
+
   el.save.addEventListener("click", () => {
-    state.doseGrams = el.dose.value ? Number(el.dose.value) : "";
-    state.yieldGrams = el.yield.value ? Number(el.yield.value) : "";
     state.notes = el.notes.value.trim();
     if (!state.rating) {
       el.stars[0].focus();
       return;
     }
-    addBrew(bagId, { ...state });
+    upsertRating(bagId, drinkType, { ...state });
     navigate(`/bag/${bagId}`);
   });
 
-  syncDrink(el, state);
   syncStars(el, state);
-  el.grindTag.textContent = grindLabel(state.grindSize);
-}
-
-function syncDrink(el, state) {
-  el.drinkButtons.forEach((btn) => {
-    const active = btn.dataset.drink === state.drinkType;
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-checked", String(active));
-  });
 }
 
 function syncStars(el, state) {
@@ -160,6 +139,14 @@ function syncStars(el, state) {
 
 function grindLabel(n) {
   return GRIND_LABELS.find((g) => n <= g.max)?.label ?? "";
+}
+
+function todayIso() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function escapeHtml(s) {

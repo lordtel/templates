@@ -1,4 +1,4 @@
-import { subscribe, getBag, removeBrew, drinkLabel, DRINK_TYPES } from "../../core/store.js";
+import { subscribe, getBag, drinkLabel, DRINK_TYPES } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container, params) {
@@ -71,83 +71,66 @@ function paint(container, bagId) {
 
   info.querySelector("#edit-btn").addEventListener("click", () => navigate(`/bag/${bag.id}/edit`));
 
-  const brewsHead = document.createElement("div");
-  brewsHead.className = "page-head brews-head";
-  brewsHead.innerHTML = `<h2>Brews</h2>`;
-  const addBrew = document.createElement("button");
-  addBrew.className = "btn small";
-  addBrew.textContent = "+ Log brew";
-  addBrew.addEventListener("click", () => navigate(`/bag/${bag.id}/brew`));
-  brewsHead.appendChild(addBrew);
-  container.appendChild(brewsHead);
+  const ratingsHead = document.createElement("div");
+  ratingsHead.className = "page-head ratings-head";
+  ratingsHead.innerHTML = `<h2>How it performed</h2>`;
+  container.appendChild(ratingsHead);
 
-  const byType = groupBy((bag.brews ?? []), "drinkType");
-  const summary = document.createElement("section");
-  summary.className = "drink-summary";
-  summary.innerHTML = DRINK_TYPES.map((d) => {
-    const list = byType[d.id] ?? [];
-    const avg = list.length ? list.reduce((s, b) => s + Number(b.rating || 0), 0) / list.length : 0;
-    return `
-      <div class="drink-card">
-        <p class="eyebrow">${d.label}</p>
-        <p class="drink-score">${avg ? avg.toFixed(1) : "—"}</p>
-        <p class="drink-sub">${list.length} ${list.length === 1 ? "brew" : "brews"}</p>
-      </div>
-    `;
-  }).join("");
-  container.appendChild(summary);
+  const ratings = bag.ratings ?? [];
+  const byDrink = new Map(ratings.map((r) => [r.drinkType, r]));
 
-  const list = document.createElement("section");
-  list.className = "brews-list";
-  if (!(bag.brews ?? []).length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <h2>No brews yet</h2>
-        <p>Log your first pull with this bag.</p>
-      </div>
-    `;
-  } else {
-    bag.brews.forEach((brew) => list.appendChild(buildBrew(bag.id, brew)));
-  }
-  container.appendChild(list);
-}
-
-function buildBrew(bagId, brew) {
-  const row = document.createElement("article");
-  row.className = "brew-row";
-  const date = new Date(brew.createdAt);
-  const dateStr = date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-  row.innerHTML = `
-    <header>
-      <div>
-        <h3>${drinkLabel(brew.drinkType)}</h3>
-        <p class="brew-sub">${escapeHtml(dateStr)}${brew.grindSize ? " · grind " + escapeHtml(String(brew.grindSize)) : ""}${brew.doseGrams ? " · " + escapeHtml(String(brew.doseGrams)) + "g" : ""}</p>
-      </div>
-      <div class="brew-rating" aria-label="Rating ${brew.rating} of 5">${ratingDots(brew.rating)}</div>
-    </header>
-    ${brew.notes ? `<p class="brew-notes">${escapeHtml(brew.notes)}</p>` : ""}
-    <button class="brew-del" aria-label="Remove brew" data-id="${brew.id}">×</button>
-  `;
-  row.querySelector(".brew-del").addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (confirm("Remove this brew?")) removeBrew(bagId, brew.id);
+  const slots = document.createElement("section");
+  slots.className = "rating-slots";
+  DRINK_TYPES.forEach((d) => {
+    const r = byDrink.get(d.id);
+    slots.appendChild(buildSlot(bag.id, d, r));
   });
-  return row;
+  container.appendChild(slots);
 }
 
-function ratingDots(r) {
-  const n = Number(r) || 0;
+function buildSlot(bagId, drink, rating) {
+  const slot = document.createElement("button");
+  slot.type = "button";
+  slot.className = "rating-slot" + (rating ? " filled" : " empty");
+  slot.addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
+
+  if (!rating) {
+    slot.innerHTML = `
+      <div class="slot-head">
+        <h3>${drink.label}</h3>
+        <span class="slot-action">Rate</span>
+      </div>
+      <p class="slot-empty">Not rated yet</p>
+    `;
+    return slot;
+  }
+
+  const dateStr = formatDate(rating.date);
+  const grindStr = rating.grindSize != null ? `Grind ${rating.grindSize}` : "";
+  slot.innerHTML = `
+    <div class="slot-head">
+      <h3>${drink.label}</h3>
+      <span class="slot-stars" aria-label="${rating.rating} of 5">${starRow(rating.rating)}</span>
+    </div>
+    <p class="slot-meta">${[dateStr, grindStr].filter(Boolean).join(" · ")}</p>
+    ${rating.notes ? `<p class="slot-notes">${escapeHtml(rating.notes)}</p>` : ""}
+  `;
+  return slot;
+}
+
+function starRow(n) {
+  const r = Number(n) || 0;
   let out = "";
-  for (let i = 1; i <= 5; i++) out += `<span class="dot${i <= n ? " on" : ""}"></span>`;
+  for (let i = 1; i <= 5; i++) out += `<span class="dot${i <= r ? " on" : ""}"></span>`;
   return out;
 }
 
-function groupBy(arr, key) {
-  return arr.reduce((acc, x) => {
-    const k = x[key];
-    (acc[k] = acc[k] ?? []).push(x);
-    return acc;
-  }, {});
+function formatDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y) return "";
+  const date = new Date(y, (m || 1) - 1, d || 1);
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
 function formatPrice(price, currency) {

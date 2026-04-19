@@ -1,4 +1,4 @@
-import { subscribe, allBrews, DRINK_TYPES, drinkLabel } from "../../core/store.js";
+import { subscribe, allRatings, DRINK_TYPES } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container) {
@@ -20,14 +20,14 @@ function paint(container, state) {
   container.appendChild(head);
 
   const bags = state.bags;
-  const brews = allBrews();
+  const ratings = allRatings();
 
   if (bags.length === 0) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
     empty.innerHTML = `
       <h2>Nothing to analyze yet</h2>
-      <p>Add a bag and log a few brews to see your stats.</p>
+      <p>Add a bag and rate a few drinks to see your stats.</p>
     `;
     const btn = document.createElement("button");
     btn.className = "btn";
@@ -38,29 +38,29 @@ function paint(container, state) {
     return;
   }
 
-  container.appendChild(totalsGrid(bags, brews));
-  container.appendChild(drinkBreakdown(brews));
+  container.appendChild(totalsGrid(bags, ratings));
+  container.appendChild(drinkBreakdown(ratings));
   container.appendChild(bagRanking(bags));
-  container.appendChild(grindSweetSpot(brews));
-  container.appendChild(timeline(brews));
+  container.appendChild(grindSweetSpot(ratings));
+  container.appendChild(timeline(ratings));
 }
 
-function totalsGrid(bags, brews) {
+function totalsGrid(bags, ratings) {
   const totalSpent = bags.reduce((s, b) => s + (Number(b.price) || 0), 0);
-  const totalBrews = brews.length;
-  const avgRating = totalBrews
-    ? brews.reduce((s, b) => s + (Number(b.rating) || 0), 0) / totalBrews
+  const totalRatings = ratings.length;
+  const avgRating = totalRatings
+    ? ratings.reduce((s, r) => s + (Number(r.rating) || 0), 0) / totalRatings
     : 0;
-  const avgCostPerBrew = totalBrews && totalSpent ? totalSpent / totalBrews : 0;
+  const ratedBags = bags.filter((b) => (b.ratings ?? []).length).length;
 
   const grid = document.createElement("section");
   grid.className = "stats-grid";
   grid.innerHTML = `
     ${statCard("Bags", bags.length, "")}
-    ${statCard("Brews", totalBrews, "")}
+    ${statCard("Rated", ratedBags, ratedBags ? "bags" : "")}
+    ${statCard("Ratings", totalRatings, "")}
     ${statCard("Spent", formatPrice(totalSpent), "")}
     ${statCard("Avg rating", avgRating ? avgRating.toFixed(2) : "—", avgRating ? "of 5" : "")}
-    ${statCard("Cost / brew", avgCostPerBrew ? formatPrice(avgCostPerBrew) : "—", "")}
   `;
   return grid;
 }
@@ -75,15 +75,15 @@ function statCard(label, value, sub) {
   `;
 }
 
-function drinkBreakdown(brews) {
+function drinkBreakdown(ratings) {
   const section = document.createElement("section");
   section.className = "panel";
   section.innerHTML = `<h2>By drink</h2>`;
 
   const byType = DRINK_TYPES.map((d) => {
-    const list = brews.filter((b) => b.drinkType === d.id);
+    const list = ratings.filter((r) => r.drinkType === d.id);
     const avg = list.length
-      ? list.reduce((s, b) => s + (Number(b.rating) || 0), 0) / list.length
+      ? list.reduce((s, r) => s + (Number(r.rating) || 0), 0) / list.length
       : 0;
     return { label: d.label, count: list.length, avg };
   });
@@ -106,12 +106,11 @@ function drinkBreakdown(brews) {
 function bagRanking(bags) {
   const ranked = bags
     .map((b) => {
-      const list = b.brews ?? [];
-      const avg = list.length ? list.reduce((s, x) => s + (Number(x.rating) || 0), 0) / list.length : 0;
-      const cpb = b.price && list.length ? Number(b.price) / list.length : null;
-      return { bag: b, avg, brewCount: list.length, cpb };
+      const list = b.ratings ?? [];
+      const avg = list.length ? list.reduce((s, r) => s + (Number(r.rating) || 0), 0) / list.length : 0;
+      return { bag: b, avg, count: list.length };
     })
-    .filter((r) => r.brewCount > 0)
+    .filter((r) => r.count > 0)
     .sort((a, b) => b.avg - a.avg);
 
   const section = document.createElement("section");
@@ -119,7 +118,7 @@ function bagRanking(bags) {
   section.innerHTML = `<h2>Best bags</h2>`;
 
   if (!ranked.length) {
-    section.innerHTML += `<p class="panel-empty">No rated brews yet.</p>`;
+    section.innerHTML += `<p class="panel-empty">No ratings yet.</p>`;
     return section;
   }
 
@@ -131,7 +130,7 @@ function bagRanking(bags) {
       <span class="rank-num">${i + 1}</span>
       <div class="rank-meta">
         <h3>${escapeHtml(r.bag.brand || "Untitled")}</h3>
-        <p>${r.bag.origin ? escapeHtml(r.bag.origin) + " · " : ""}${r.brewCount} brews${r.cpb ? " · " + formatPrice(r.cpb, r.bag.currency) + "/brew" : ""}</p>
+        <p>${r.bag.origin ? escapeHtml(r.bag.origin) + " · " : ""}${r.count}/4 drinks rated</p>
       </div>
       <span class="rank-score">${r.avg.toFixed(1)}</span>
     `;
@@ -142,20 +141,20 @@ function bagRanking(bags) {
   return section;
 }
 
-function grindSweetSpot(brews) {
+function grindSweetSpot(ratings) {
   const section = document.createElement("section");
   section.className = "panel";
   section.innerHTML = `<h2>Grind sweet spot</h2>`;
 
-  if (!brews.length) {
-    section.innerHTML += `<p class="panel-empty">No brews yet.</p>`;
+  if (!ratings.length) {
+    section.innerHTML += `<p class="panel-empty">No ratings yet.</p>`;
     return section;
   }
 
   const rows = document.createElement("div");
   rows.className = "drink-rows";
   DRINK_TYPES.forEach((d) => {
-    const list = brews.filter((b) => b.drinkType === d.id && b.grindSize != null && b.rating);
+    const list = ratings.filter((r) => r.drinkType === d.id && r.grindSize != null && r.rating);
     if (!list.length) {
       rows.innerHTML += `
         <div class="drink-line muted">
@@ -165,11 +164,11 @@ function grindSweetSpot(brews) {
         </div>`;
       return;
     }
-    const weighted = list.reduce((s, b) => s + b.grindSize * b.rating, 0);
-    const totalR = list.reduce((s, b) => s + Number(b.rating), 0);
+    const weighted = list.reduce((s, r) => s + r.grindSize * r.rating, 0);
+    const totalR = list.reduce((s, r) => s + Number(r.rating), 0);
     const bestGrind = weighted / totalR;
-    const minG = Math.min(...list.map((b) => b.grindSize));
-    const maxG = Math.max(...list.map((b) => b.grindSize));
+    const minG = Math.min(...list.map((r) => r.grindSize));
+    const maxG = Math.max(...list.map((r) => r.grindSize));
     const pct = ((bestGrind - 1) / 29) * 100;
     rows.innerHTML += `
       <div class="drink-line">
@@ -182,17 +181,19 @@ function grindSweetSpot(brews) {
   return section;
 }
 
-function timeline(brews) {
+function timeline(ratings) {
   const section = document.createElement("section");
   section.className = "panel";
   section.innerHTML = `<h2>Last 30 days</h2>`;
 
-  const now = Date.now();
+  const today = startOfDay(new Date());
   const days = 30;
   const DAY = 24 * 60 * 60 * 1000;
   const counts = Array(days).fill(0);
-  brews.forEach((b) => {
-    const age = Math.floor((now - b.createdAt) / DAY);
+  ratings.forEach((r) => {
+    const ts = parseIsoDate(r.date) ?? r.updatedAt ?? r.createdAt;
+    if (ts == null) return;
+    const age = Math.floor((today - startOfDay(new Date(ts))) / DAY);
     if (age >= 0 && age < days) counts[days - 1 - age] += 1;
   });
 
@@ -205,13 +206,24 @@ function timeline(brews) {
     .join(" ");
 
   section.innerHTML += `
-    <svg class="timeline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Brew timeline, last 30 days">
+    <svg class="timeline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Rating timeline, last 30 days">
       <polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       ${counts.map((c, i) => c > 0 ? `<circle cx="${(i * stepX).toFixed(1)}" cy="${(h - (c / max) * (h - 8) - 4).toFixed(1)}" r="2.2" fill="var(--accent)"/>` : "").join("")}
     </svg>
-    <p class="timeline-foot">${brews.length} total brews logged</p>
+    <p class="timeline-foot">${ratings.length} total ratings</p>
   `;
   return section;
+}
+
+function startOfDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function parseIsoDate(iso) {
+  if (!iso) return null;
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y) return null;
+  return new Date(y, (m || 1) - 1, d || 1).getTime();
 }
 
 function formatPrice(value, currency) {
