@@ -1,4 +1,4 @@
-name: Deploy Brew to GitHub Pages
+name: Deploy Crema to GitHub Pages
 
 on:
   push:

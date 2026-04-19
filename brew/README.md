@@ -1,4 +1,4 @@
-# Brew
+# Crema
 
 A quiet companion for espresso lovers. Log your coffee bags (photo + OCR
 pre-fills brand / origin / roast / weight), record how each bag performed as
