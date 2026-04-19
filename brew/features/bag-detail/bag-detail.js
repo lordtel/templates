@@ -98,7 +98,9 @@ function buildSlot(bagId, drink, rating, hint) {
 
   if (!rating) {
     const hintText = hint
-      ? (hint.hasData ? `Try grind ${hint.grind} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}` : `Try grind ${hint.grind} to start`)
+      ? (hint.hasData
+          ? `Try ${formatHintGrind(hint)} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}`
+          : `Try ${formatHintGrind(hint)} to start`)
       : "Not rated yet";
     slot.innerHTML = `
       <div class="slot-head">
@@ -121,6 +123,16 @@ function buildSlot(bagId, drink, rating, hint) {
     ${rating.notes ? `<p class="slot-notes">${escapeHtml(rating.notes)}</p>` : ""}
   `;
   return slot;
+}
+
+function formatHintGrind(hint) {
+  const scale = hint?.grinder?.scale;
+  const decimals = scale?.step && scale.step < 1
+    ? Math.max(0, -Math.floor(Math.log10(scale.step)))
+    : 0;
+  const num = Number(hint.grind).toFixed(decimals);
+  const unit = scale?.unit ? " " + scale.unit + (Number(hint.grind) === 1 ? "" : "s") : "";
+  return `grind ${num}${unit}`;
 }
 
 function starRow(n) {

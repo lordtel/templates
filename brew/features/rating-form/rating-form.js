@@ -1,6 +1,8 @@
 import { getBag, upsertRating, removeRating, getRating, drinkLabel, DRINK_TYPES } from "../../core/store.js";
-import { suggestForDrink } from "../../core/dial-in.js";
+import { suggestForDrink, getActiveGrinder } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
+
+const GENERIC_SCALE = { min: 1, max: 30, step: 1, unit: "" };
 
 const GRIND_LABELS = [
   { max: 5, label: "Turkish" },
@@ -22,8 +24,11 @@ export function render(container, params) {
 
   const existing = getRating(bag.id, drinkType);
   const suggestion = existing ? null : suggestForDrink(drinkType, bag);
+  const grinder = getActiveGrinder();
+  const scale = grinder?.scale ?? GENERIC_SCALE;
+  const defaultGrind = suggestion?.grind ?? ((scale.min + scale.max) / 2);
   const state = {
-    grindSize: existing?.grindSize ?? suggestion?.grind ?? 10,
+    grindSize: existing?.grindSize ?? defaultGrind,
     rating: existing?.rating ?? 0,
     notes: existing?.notes ?? "",
     date: existing?.date ?? todayIso(),
@@ -48,12 +53,15 @@ export function render(container, params) {
       </div>
 
       <div class="field">
-        <label for="grind">Grind size <span class="grind-tag" id="grind-tag">${grindLabel(state.grindSize)}</span></label>
-        <input type="range" id="grind" min="1" max="30" step="1" value="${state.grindSize}" />
+        <label for="grind">
+          Grind size
+          <span class="grind-tag" id="grind-tag">${grinder ? formatGrind(state.grindSize, scale) : grindLabel(state.grindSize)}</span>
+        </label>
+        <input type="range" id="grind" min="${scale.min}" max="${scale.max}" step="${scale.step}" value="${state.grindSize}" />
         <div class="grind-scale">
-          <span>Fine</span>
-          <span>Medium</span>
-          <span>Coarse</span>
+          <span>Fine (${scale.min})</span>
+          ${grinder ? `<span>${grinder.brand} ${grinder.model}</span>` : `<span>Medium</span>`}
+          <span>Coarse (${scale.max})</span>
         </div>
       </div>
 
@@ -101,9 +109,11 @@ function bind(container, state, bagId, drinkType, isEdit) {
     state.date = el.date.value || todayIso();
   });
 
+  const grinder = getActiveGrinder();
+  const scale = grinder?.scale ?? GENERIC_SCALE;
   el.grind.addEventListener("input", () => {
     state.grindSize = Number(el.grind.value);
-    el.grindTag.textContent = grindLabel(state.grindSize);
+    el.grindTag.textContent = grinder ? formatGrind(state.grindSize, scale) : grindLabel(state.grindSize);
   });
 
   el.stars.forEach((s) => {
@@ -145,14 +155,24 @@ function grindLabel(n) {
   return GRIND_LABELS.find((g) => n <= g.max)?.label ?? "";
 }
 
+function formatGrind(n, scale) {
+  const decimals = scale?.step && scale.step < 1
+    ? Math.max(0, -Math.floor(Math.log10(scale.step)))
+    : 0;
+  const num = Number(n).toFixed(decimals);
+  const unit = scale?.unit ? " " + scale.unit + (Number(n) === 1 ? "" : "s") : "";
+  return `${num}${unit}`;
+}
+
 function dialInBanner(s) {
   const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>`;
+  const grindText = formatGrind(s.grind, s.grinder?.scale);
   const title = s.hasData
-    ? `Start at grind ${s.grind}`
-    : `Try grind ${s.grind} to start`;
+    ? `Start at ${grindText}`
+    : `Try ${grindText} to start`;
   const sub = s.hasData
     ? `Weighted from ${s.sampleSize} rating${s.sampleSize === 1 ? "" : "s"} ${s.scopeLabel} · avg ${s.avgRating.toFixed(1)}/5`
-    : `A common ${s.drinkLabel.toLowerCase()} starting point — adjust after tasting`;
+    : `${s.scopeLabel.charAt(0).toUpperCase() + s.scopeLabel.slice(1)} for ${s.drinkLabel.toLowerCase()} — adjust after tasting`;
   return `
     <div class="dial-in">
       <span class="dial-in-icon" aria-hidden="true">${icon}</span>

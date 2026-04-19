@@ -7,7 +7,7 @@ const listeners = new Set();
 
 const state = {
   bags: migrateBags(load(BAGS_KEY, [])),
-  equipment: load(EQUIPMENT_KEY, { machine: "", grinder: "" }),
+  equipment: migrateEquipment(load(EQUIPMENT_KEY, null)),
 };
 
 export const DRINK_TYPES = [
@@ -112,6 +112,18 @@ export function setEquipment(patch) {
   state.equipment = { ...state.equipment, ...patch };
   save(EQUIPMENT_KEY, state.equipment);
   emit();
+}
+
+function migrateEquipment(raw) {
+  const empty = { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } };
+  if (!raw) return empty;
+  const machine = typeof raw.machine === "string"
+    ? (raw.machine ? { id: "custom", custom: raw.machine } : { id: "", custom: "" })
+    : raw.machine ?? { id: "", custom: "" };
+  const grinder = typeof raw.grinder === "string"
+    ? (raw.grinder ? { id: "custom", custom: raw.grinder } : { id: "", custom: "" })
+    : raw.grinder ?? { id: "", custom: "" };
+  return { machine, grinder };
 }
 
 function migrateBags(bags) {
