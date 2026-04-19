@@ -15,6 +15,8 @@ export function render(container, params = {}) {
 
   const state = {
     photo: existing?.photo ?? "",
+    photoPath: existing?.photoPath ?? "",
+    photoUpload: "",
     brand: existing?.brand ?? "",
     origin: existing?.origin ?? "",
     process: existing?.process ?? "",
@@ -162,6 +164,7 @@ function bind(container, state, editing, id) {
     const dataUrl = await readAsDataUrl(file);
     const resized = await resizeImage(dataUrl, 1200);
     state.photo = resized;
+    state.photoUpload = resized;
     el.photoPreview.src = resized;
     el.photoPreview.hidden = false;
     el.photoPlaceholder.hidden = true;
@@ -170,7 +173,7 @@ function bind(container, state, editing, id) {
 
   el.save.addEventListener("click", () => {
     readFields(el, state);
-    if (!state.brand && !state.origin && !state.photo) {
+    if (!state.brand && !state.origin && !state.photo && !state.photoUpload) {
       el.brand.focus();
       return;
     }

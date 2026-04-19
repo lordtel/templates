@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4ede0" />
-    <meta name="description" content="Log coffee bags, rate each brew, and get tuned grind suggestions over time. Local-only, runs in your browser." />
+    <meta name="description" content="Log coffee bags, rate each brew, and get tuned grind suggestions over time. Syncs across your devices." />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="icon.svg" />
     <link rel="apple-touch-icon" href="icon.svg" />
@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="features/analytics/analytics.css" />
     <link rel="stylesheet" href="features/equipment/equipment.css" />
     <link rel="stylesheet" href="features/about/about.css" />
+    <link rel="stylesheet" href="features/sign-in/sign-in.css" />
   </head>
   <body>
     <header class="masthead">
@@ -40,7 +41,7 @@
 
     <main id="view" class="view" aria-live="polite"></main>
 
-    <footer class="app-footer">
+    <footer id="app-footer" class="app-footer">
       <a href="#/about">How it works</a>
       <span aria-hidden="true">·</span>
       <span>Made by Nour</span>
