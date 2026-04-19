@@ -1,11 +1,11 @@
-name: Deploy webapp to GitHub Pages
+name: Deploy Brew to GitHub Pages
 
 on:
   push:
     branches:
       - master
     paths:
-      - "webapp/**"
+      - "brew/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -29,6 +29,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./webapp
+          path: ./brew
       - id: deployment
         uses: actions/deploy-pages@v4
