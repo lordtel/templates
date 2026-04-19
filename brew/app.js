@@ -1,6 +1,14 @@
 import { initSentry, captureException, setSentryUser } from "./core/sentry.js";
 import { onAuthChange, signOut } from "./core/auth.js";
-import { loadInitialData, resetStore, migrateLegacyLocalStorage } from "./core/store.js";
+import {
+  loadInitialData,
+  resetStore,
+  migrateLegacyLocalStorage,
+  isGuest,
+  enterGuestMode,
+  exitGuestMode,
+  loadGuestData,
+} from "./core/store.js";
 import { initRouter } from "./core/router.js";
 import { renderNav } from "./features/nav/nav.js";
 import { renderEquipStrip } from "./features/equipment/strip.js";
@@ -20,6 +28,7 @@ const viewEl = document.getElementById("view");
 const navEl = document.getElementById("nav");
 const equipEl = document.getElementById("equip-strip");
 const footerEl = document.getElementById("app-footer");
+const bannerEl = document.getElementById("guest-banner");
 
 const routes = [
   { path: "/", render: renderHome },
@@ -34,28 +43,59 @@ const routes = [
 
 let bootedOnce = false;
 let currentUserId = null;
+let currentGuest = false;
 let routerStarted = false;
+
+function bootGuest() {
+  currentUserId = null;
+  currentGuest = true;
+  bootedOnce = true;
+  loadGuestData();
+  navEl.hidden = false;
+  equipEl.hidden = false;
+  renderGuestBanner(true);
+  renderFooter(null);
+
+  if (!routerStarted) {
+    renderNav(navEl);
+    renderEquipStrip(equipEl);
+    initRouter(viewEl, routes);
+    routerStarted = true;
+  } else {
+    location.hash = "";
+  }
+}
 
 async function boot(session) {
   const newUserId = session?.user?.id ?? null;
-  if (bootedOnce && newUserId === currentUserId) {
+
+  if (!session && isGuest()) {
+    if (bootedOnce && currentGuest) return;
+    bootGuest();
+    return;
+  }
+
+  if (bootedOnce && newUserId === currentUserId && !currentGuest) {
     renderFooter(session?.user ?? null);
     return;
   }
   bootedOnce = true;
   currentUserId = newUserId;
+  currentGuest = false;
 
   if (!session) {
     resetStore();
     navEl.hidden = true;
     equipEl.hidden = true;
+    renderGuestBanner(false);
     renderFooter(null);
-    renderSignIn(viewEl);
+    renderSignIn(viewEl, { onGuest: () => { enterGuestMode(); bootGuest(); } });
     return;
   }
 
   navEl.hidden = false;
   equipEl.hidden = false;
+  renderGuestBanner(false);
   renderFooter(session.user);
   setSentryUser(session.user);
 
@@ -107,6 +147,20 @@ async function boot(session) {
 
 function renderFooter(user) {
   if (!footerEl) return;
+  if (currentGuest) {
+    footerEl.innerHTML = `
+      <a href="#/about">How it works</a>
+      <span aria-hidden="true">·</span>
+      <span class="who">Guest</span>
+      <span aria-hidden="true">·</span>
+      <button type="button" class="linklike" id="exit-guest-btn">Sign in instead</button>
+    `;
+    footerEl.querySelector("#exit-guest-btn")?.addEventListener("click", () => {
+      exitGuestMode();
+      location.reload();
+    });
+    return;
+  }
   if (!user) {
     footerEl.innerHTML = `<a href="#/about">How it works</a> <span aria-hidden="true">·</span> <span>Made by Nour</span>`;
     return;
@@ -122,6 +176,24 @@ function renderFooter(user) {
   `;
   footerEl.querySelector("#sign-out-btn")?.addEventListener("click", async () => {
     await signOut();
+  });
+}
+
+function renderGuestBanner(show) {
+  if (!bannerEl) return;
+  if (!show) {
+    bannerEl.hidden = true;
+    bannerEl.innerHTML = "";
+    return;
+  }
+  bannerEl.hidden = false;
+  bannerEl.innerHTML = `
+    <span>Guest mode — your data lives only on this device, no guarantee it'll stick around.</span>
+    <button type="button" class="linklike" id="banner-signin">Sign in to sync</button>
+  `;
+  bannerEl.querySelector("#banner-signin")?.addEventListener("click", () => {
+    exitGuestMode();
+    location.reload();
   });
 }
 

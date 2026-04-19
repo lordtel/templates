@@ -55,10 +55,10 @@ export function render(container) {
       <div class="field">
         <label for="dose">Dose per double espresso</label>
         <div class="dose-row">
-          <input type="number" id="dose" min="8" max="25" step="0.5" value="${Number(dose).toFixed(1)}" />
+          <input type="number" id="dose" min="8" max="25" step="0.5" placeholder="18" value="${dose != null ? Number(dose).toFixed(1) : ""}" />
           <span class="dose-unit">g</span>
         </div>
-        <p class="grinder-hint">Used to compute the per-shot price on every bag.</p>
+        <p class="grinder-hint">Set your own dose to unlock the per-shot price on every bag.</p>
       </div>
 
       <div class="equipment-hint">

@@ -5,7 +5,8 @@ import { load, remove } from "./storage.js";
 const LEGACY_BAGS_KEY = "brew.bags.v1";
 const LEGACY_EQUIPMENT_KEY = "brew.equipment.v1";
 const DOSE_KEY = "crema.dose.v1";
-const DEFAULT_DOSE_G = 18;
+const GUEST_FLAG_KEY = "crema.guest.v1";
+const GUEST_DATA_KEY = "crema.guest-data.v1";
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
@@ -16,7 +17,53 @@ let state = {
   equipment: { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } },
   loading: true,
   userId: null,
+  guest: false,
 };
+
+export function isGuest() {
+  try {
+    return localStorage.getItem(GUEST_FLAG_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function enterGuestMode() {
+  try { localStorage.setItem(GUEST_FLAG_KEY, "1"); } catch {}
+}
+
+export function exitGuestMode() {
+  try {
+    localStorage.removeItem(GUEST_FLAG_KEY);
+    localStorage.removeItem(GUEST_DATA_KEY);
+  } catch {}
+}
+
+function readGuestData() {
+  try {
+    const raw = localStorage.getItem(GUEST_DATA_KEY);
+    if (!raw) return { bags: [], equipment: null };
+    const parsed = JSON.parse(raw);
+    return {
+      bags: Array.isArray(parsed.bags) ? parsed.bags : [],
+      equipment: parsed.equipment ?? null,
+    };
+  } catch {
+    return { bags: [], equipment: null };
+  }
+}
+
+function writeGuestData() {
+  if (!state.guest) return;
+  try {
+    localStorage.setItem(
+      GUEST_DATA_KEY,
+      JSON.stringify({ bags: state.bags, equipment: state.equipment })
+    );
+  } catch (err) {
+    captureException(err, { where: "writeGuestData" });
+  }
+}
 
 export const DRINK_TYPES = [
   { id: "espresso", label: "Espresso" },
@@ -78,7 +125,7 @@ export function getEquipment() {
 export function getEspressoDose() {
   const raw = localStorage.getItem(DOSE_KEY);
   const n = raw == null ? NaN : Number(raw);
-  return Number.isFinite(n) && n > 0 ? n : DEFAULT_DOSE_G;
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 export function setEspressoDose(grams) {
@@ -91,7 +138,19 @@ export function setEspressoDose(grams) {
   emit();
 }
 
+export function loadGuestData() {
+  state.guest = true;
+  state.userId = null;
+  state.loading = false;
+  const data = readGuestData();
+  state.bags = data.bags.map((b) => ({ ...b, ratings: b.ratings ?? [] }));
+  state.equipment =
+    data.equipment ?? { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } };
+  emit();
+}
+
 export async function loadInitialData(userId) {
+  state.guest = false;
   state.userId = userId;
   state.loading = true;
   emit();
@@ -150,6 +209,7 @@ export function resetStore() {
     equipment: { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } },
     loading: false,
     userId: null,
+    guest: false,
   };
   emit();
 }
@@ -175,9 +235,17 @@ export function addBag(bag) {
     ...bag,
     ratings: [],
   };
+  if (state.guest && newBag.photoUpload?.startsWith("data:")) {
+    newBag.photo = newBag.photoUpload;
+    newBag.photoUpload = "";
+  }
   state.bags = [newBag, ...state.bags];
   emit();
-  persistBag(newBag).catch((err) => captureException(err, { where: "addBag", id }));
+  if (state.guest) {
+    writeGuestData();
+  } else {
+    persistBag(newBag).catch((err) => captureException(err, { where: "addBag", id }));
+  }
   return id;
 }
 
@@ -185,14 +253,26 @@ export function updateBag(id, patch) {
   const bag = getBag(id);
   if (!bag) return;
   Object.assign(bag, patch);
+  if (state.guest && bag.photoUpload?.startsWith("data:")) {
+    bag.photo = bag.photoUpload;
+    bag.photoUpload = "";
+  }
   emit();
-  persistBag(bag).catch((err) => captureException(err, { where: "updateBag", id }));
+  if (state.guest) {
+    writeGuestData();
+  } else {
+    persistBag(bag).catch((err) => captureException(err, { where: "updateBag", id }));
+  }
 }
 
 export function removeBag(id) {
   const bag = getBag(id);
   state.bags = state.bags.filter((b) => b.id !== id);
   emit();
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
   (async () => {
     try {
       if (bag?.photoPath) {
@@ -222,6 +302,11 @@ export function upsertRating(bagId, drinkType, rating) {
   else bag.ratings.push(entry);
   emit();
 
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+
   (async () => {
     try {
       const { error } = await sb.from("ratings").upsert(
@@ -241,6 +326,11 @@ export function removeRating(bagId, drinkType) {
   bag.ratings = (bag.ratings ?? []).filter((r) => r.drinkType !== drinkType);
   emit();
 
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+
   (async () => {
     try {
       const { error } = await sb
@@ -258,6 +348,11 @@ export function removeRating(bagId, drinkType) {
 export function setEquipment(patch) {
   state.equipment = { ...state.equipment, ...patch };
   emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
 
   (async () => {
     try {
