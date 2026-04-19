@@ -1,0 +1,77 @@
+.equipment-form {
+  padding: 28px;
+}
+
+.equipment-hint {
+  margin: 4px 0 20px;
+}
+
+.equipment-hint p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.equip-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 8px 20px 12px;
+  position: relative;
+  z-index: 5;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.equip-strip button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s var(--ease);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.equip-strip button:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.equip-strip .equip-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+}
+
+.equip-strip .equip-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  flex-shrink: 0;
+}
+
+.equip-strip .equip-placeholder {
+  font-style: italic;
+  opacity: 0.8;
+}
