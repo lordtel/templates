@@ -98,8 +98,19 @@ body::before {
   z-index: 1;
   max-width: 680px;
   margin: 0 auto;
-  padding: 12px 20px calc(var(--nav-h) + 48px);
+  padding: 12px 20px 24px;
   animation: rise 0.45s var(--ease) both;
+}
+
+.app-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 8px 20px calc(var(--nav-h) + 32px);
 }
 
 @keyframes rise {
