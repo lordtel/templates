@@ -1,4 +1,5 @@
 import { subscribe, getBag, drinkLabel, DRINK_TYPES } from "../../core/store.js";
+import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container, params) {
@@ -83,24 +84,28 @@ function paint(container, bagId) {
   slots.className = "rating-slots";
   DRINK_TYPES.forEach((d) => {
     const r = byDrink.get(d.id);
-    slots.appendChild(buildSlot(bag.id, d, r));
+    const hint = r ? null : suggestForDrink(d.id, bag);
+    slots.appendChild(buildSlot(bag.id, d, r, hint));
   });
   container.appendChild(slots);
 }
 
-function buildSlot(bagId, drink, rating) {
+function buildSlot(bagId, drink, rating, hint) {
   const slot = document.createElement("button");
   slot.type = "button";
   slot.className = "rating-slot" + (rating ? " filled" : " empty");
   slot.addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
 
   if (!rating) {
+    const hintText = hint
+      ? (hint.hasData ? `Try grind ${hint.grind} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}` : `Try grind ${hint.grind} to start`)
+      : "Not rated yet";
     slot.innerHTML = `
       <div class="slot-head">
         <h3>${drink.label}</h3>
         <span class="slot-action">Rate</span>
       </div>
-      <p class="slot-empty">Not rated yet</p>
+      <p class="slot-empty">${hintText}</p>
     `;
     return slot;
   }
