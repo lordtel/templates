@@ -7,6 +7,7 @@ import { render as renderBagDetail } from "./features/bag-detail/bag-detail.js";
 import { render as renderRatingForm } from "./features/rating-form/rating-form.js";
 import { render as renderAnalytics } from "./features/analytics/analytics.js";
 import { render as renderEquipment } from "./features/equipment/equipment.js";
+import { render as renderAbout } from "./features/about/about.js";
 
 const viewEl = document.getElementById("view");
 const navEl = document.getElementById("nav");
@@ -23,4 +24,5 @@ initRouter(viewEl, [
   { path: "/bag/:id/rate/:drink", render: renderRatingForm },
   { path: "/analytics", render: renderAnalytics },
   { path: "/equipment", render: renderEquipment },
+  { path: "/about", render: renderAbout },
 ]);
