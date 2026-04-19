@@ -1,4 +1,4 @@
-import { subscribe, DRINK_TYPES, drinkLabel } from "../../core/store.js";
+import { subscribe, DRINK_TYPES, drinkLabel, getEquipment } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container) {
@@ -30,17 +30,30 @@ export function render(container) {
 function paint(listEl, bags) {
   listEl.innerHTML = "";
   if (bags.length === 0) {
+    const eq = getEquipment();
+    const hasGear = !!(eq?.machine?.id || eq?.grinder?.id);
     const empty = document.createElement("div");
     empty.className = "empty-state";
     empty.innerHTML = `
-      <h2>No bags yet</h2>
-      <p>Snap a photo of your next bag to get started.</p>
+      <h2>Welcome to Crema</h2>
+      <p>Log each coffee bag once, rate how it brews as espresso, iced americano, iced latte and cappuccino, and get tuned grind suggestions over time. Everything stays on this device.</p>
+      ${hasGear ? "" : `<p class="empty-hint">Tip — set your machine &amp; grinder first so suggestions match your setup.</p>`}
     `;
-    const btn = document.createElement("button");
-    btn.className = "btn";
-    btn.textContent = "Add your first bag";
-    btn.addEventListener("click", () => navigate("/bag/new"));
-    empty.appendChild(btn);
+    const actions = document.createElement("div");
+    actions.className = "empty-actions";
+    if (!hasGear) {
+      const gearBtn = document.createElement("button");
+      gearBtn.className = "btn ghost";
+      gearBtn.textContent = "Set up equipment";
+      gearBtn.addEventListener("click", () => navigate("/equipment"));
+      actions.appendChild(gearBtn);
+    }
+    const addBtn = document.createElement("button");
+    addBtn.className = "btn";
+    addBtn.textContent = "Add your first bag";
+    addBtn.addEventListener("click", () => navigate("/bag/new"));
+    actions.appendChild(addBtn);
+    empty.appendChild(actions);
     listEl.appendChild(empty);
     return;
   }

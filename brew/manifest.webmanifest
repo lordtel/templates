@@ -1,0 +1,19 @@
+{
+  "name": "Crema — Espresso journal",
+  "short_name": "Crema",
+  "description": "Log coffee bags, rate each brew, and get tuned grind suggestions over time.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4ede0",
+  "theme_color": "#f4ede0",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
