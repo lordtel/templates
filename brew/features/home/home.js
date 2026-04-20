@@ -1,6 +1,8 @@
 import { subscribe, DRINK_TYPES, drinkLabel, getEquipment } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 
+let currentFilter = "active";
+
 export function render(container) {
   container.innerHTML = "";
 
@@ -19,52 +21,117 @@ export function render(container) {
   head.appendChild(action);
   container.appendChild(head);
 
+  const tabs = document.createElement("div");
+  tabs.className = "shelf-tabs";
+  tabs.setAttribute("role", "tablist");
+  container.appendChild(tabs);
+
   const listEl = document.createElement("div");
   listEl.className = "bags";
   container.appendChild(listEl);
 
-  const unsubscribe = subscribe((state) => paint(listEl, state.bags));
+  const unsubscribe = subscribe((state) => paint(tabs, listEl, state.bags));
   return unsubscribe;
 }
 
-function paint(listEl, bags) {
+function paint(tabsEl, listEl, bags) {
+  const active = bags.filter((b) => !b.finishedAt);
+  const finished = bags.filter((b) => b.finishedAt);
+
+  paintTabs(tabsEl, listEl, bags, active.length, finished.length);
+
+  const shown = currentFilter === "finished" ? finished : active;
   listEl.innerHTML = "";
+
   if (bags.length === 0) {
-    const eq = getEquipment();
-    const hasGear = !!(eq?.machine?.id || eq?.grinder?.id);
+    renderWelcome(listEl);
+    return;
+  }
+
+  if (shown.length === 0) {
     const empty = document.createElement("div");
-    empty.className = "empty-state";
-    empty.innerHTML = `
-      <h2>Welcome to Crema</h2>
-      <p>Log each coffee bag once, rate how it brews as espresso, iced americano, iced latte and cappuccino, and get tuned grind suggestions over time. Everything stays on this device.</p>
-      ${hasGear ? "" : `<p class="empty-hint">Tip — set your machine &amp; grinder first so suggestions match your setup.</p>`}
-    `;
-    const actions = document.createElement("div");
-    actions.className = "empty-actions";
-    if (!hasGear) {
-      const gearBtn = document.createElement("button");
-      gearBtn.className = "btn ghost";
-      gearBtn.textContent = "Set up equipment";
-      gearBtn.addEventListener("click", () => navigate("/equipment"));
-      actions.appendChild(gearBtn);
+    empty.className = "empty-state shelf-empty";
+    if (currentFilter === "finished") {
+      empty.innerHTML = `
+        <h2>No finished bags yet</h2>
+        <p>When you polish off a bag, mark it as finished from its page. It'll move here so your history stays intact without cluttering your shelf.</p>
+      `;
+    } else {
+      empty.innerHTML = `
+        <h2>Shelf is empty</h2>
+        <p>All your bags are archived. Add a new one or browse what you've had before.</p>
+      `;
+      const actions = document.createElement("div");
+      actions.className = "empty-actions";
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn";
+      addBtn.textContent = "+ Add bag";
+      addBtn.addEventListener("click", () => navigate("/bag/new"));
+      actions.appendChild(addBtn);
+      empty.appendChild(actions);
     }
-    const addBtn = document.createElement("button");
-    addBtn.className = "btn";
-    addBtn.textContent = "Add your first bag";
-    addBtn.addEventListener("click", () => navigate("/bag/new"));
-    actions.appendChild(addBtn);
-    empty.appendChild(actions);
     listEl.appendChild(empty);
     return;
   }
 
-  bags.forEach((bag) => listEl.appendChild(buildCard(bag)));
+  shown.forEach((bag) => listEl.appendChild(buildCard(bag)));
+}
+
+function paintTabs(tabsEl, listEl, bags, activeCount, finishedCount) {
+  if (bags.length === 0) {
+    tabsEl.innerHTML = "";
+    return;
+  }
+  tabsEl.innerHTML = `
+    <button type="button" class="shelf-tab${currentFilter === "active" ? " on" : ""}" data-filter="active" role="tab" aria-selected="${currentFilter === "active"}">
+      Active <span class="shelf-tab-count">${activeCount}</span>
+    </button>
+    <button type="button" class="shelf-tab${currentFilter === "finished" ? " on" : ""}" data-filter="finished" role="tab" aria-selected="${currentFilter === "finished"}">
+      Finished <span class="shelf-tab-count">${finishedCount}</span>
+    </button>
+  `;
+  tabsEl.querySelectorAll(".shelf-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const f = btn.dataset.filter;
+      if (f === currentFilter) return;
+      currentFilter = f;
+      paint(tabsEl, listEl, bags);
+    });
+  });
+}
+
+function renderWelcome(listEl) {
+  const eq = getEquipment();
+  const hasGear = !!(eq?.machine?.id || eq?.grinder?.id);
+  const empty = document.createElement("div");
+  empty.className = "empty-state";
+  empty.innerHTML = `
+    <h2>Welcome to Crema</h2>
+    <p>Log each coffee bag once, rate how it brews as espresso, iced americano, iced latte and cappuccino, and get tuned grind suggestions over time. Everything stays on this device.</p>
+    ${hasGear ? "" : `<p class="empty-hint">Tip — set your machine &amp; grinder first so suggestions match your setup.</p>`}
+  `;
+  const actions = document.createElement("div");
+  actions.className = "empty-actions";
+  if (!hasGear) {
+    const gearBtn = document.createElement("button");
+    gearBtn.className = "btn ghost";
+    gearBtn.textContent = "Set up equipment";
+    gearBtn.addEventListener("click", () => navigate("/equipment"));
+    actions.appendChild(gearBtn);
+  }
+  const addBtn = document.createElement("button");
+  addBtn.className = "btn";
+  addBtn.textContent = "Add your first bag";
+  addBtn.addEventListener("click", () => navigate("/bag/new"));
+  actions.appendChild(addBtn);
+  empty.appendChild(actions);
+  listEl.appendChild(empty);
 }
 
 function buildCard(bag) {
   const card = document.createElement("button");
   card.type = "button";
-  card.className = "bag-card";
+  card.className = "bag-card" + (bag.finishedAt ? " finished" : "");
   card.addEventListener("click", () => navigate(`/bag/${bag.id}`));
 
   const thumb = document.createElement("div");
@@ -88,6 +155,9 @@ function buildCard(bag) {
   const roast = bag.roast ? `<span class="pill">${escapeHtml(bag.roast)}</span>` : "";
   const per250 = pricePer250g(bag);
   const perCup = pricePerEspresso(bag);
+  const finishedBadge = bag.finishedAt
+    ? `<span class="finished-badge">Finished ${formatFinishedDate(bag.finishedAt)}</span>`
+    : "";
 
   meta.innerHTML = `
     <h3>${escapeHtml(brand)}</h3>
@@ -95,8 +165,8 @@ function buildCard(bag) {
     <div class="bag-row">
       ${roast}
       <span class="bag-dots" aria-label="Average rating ${avg ? avg.toFixed(1) : 'none'}">${ratingDots(avg)}</span>
-      ${per250 ? `<span class="bag-price">${per250} / 250g</span>` : ""}
-      ${perCup ? `<span class="bag-price muted">${perCup} / shot</span>` : ""}
+      ${finishedBadge || (per250 ? `<span class="bag-price">${per250} / 250g</span>` : "")}
+      ${finishedBadge ? "" : (perCup ? `<span class="bag-price muted">${perCup} / shot</span>` : "")}
     </div>
   `;
 
@@ -136,6 +206,13 @@ function pricePerEspresso(bag) {
   if (!p || !w || !dose) return "";
   const sym = bag.currency || "€";
   return `${sym}${((p / w) * dose).toFixed(2)}`;
+}
+
+function formatFinishedDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
 }
 
 function escapeHtml(s) {

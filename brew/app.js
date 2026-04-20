@@ -23,6 +23,7 @@ import { render as renderAnalytics } from "./features/analytics/analytics.js";
 import { render as renderEquipment } from "./features/equipment/equipment.js";
 import { render as renderAbout } from "./features/about/about.js";
 import { render as renderPrivacy } from "./features/privacy/privacy.js";
+import { render as renderChangelog } from "./features/changelog/changelog.js";
 
 initSentry();
 
@@ -44,6 +45,7 @@ const routes = [
   { path: "/equipment", render: renderEquipment },
   { path: "/about", render: renderAbout },
   { path: "/privacy", render: renderPrivacy },
+  { path: "/changelog", render: renderChangelog },
 ];
 
 let bootedOnce = false;
@@ -153,7 +155,7 @@ async function boot(session) {
 function renderFooter(user) {
   if (!footerEl) return;
   const sep = `<span aria-hidden="true">·</span>`;
-  const links = `<a href="#/about">How it works</a> ${sep} <a href="#/privacy">Privacy</a>`;
+  const links = `<a href="#/about">How it works</a> ${sep} <a href="#/changelog">What's new</a> ${sep} <a href="#/privacy">Privacy</a>`;
   if (currentGuest) {
     footerEl.innerHTML = `
       ${links} ${sep}

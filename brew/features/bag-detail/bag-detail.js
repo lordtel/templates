@@ -1,4 +1,4 @@
-import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink } from "../../core/store.js";
+import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink, markFinished, markActive } from "../../core/store.js";
 import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -47,14 +47,21 @@ function paint(container, bagId) {
   container.appendChild(hero);
 
   const info = document.createElement("section");
-  info.className = "bag-info card";
+  info.className = "bag-info card" + (bag.finishedAt ? " finished" : "");
   const per250 = pricePer250g(bag);
   const perCup = pricePerEspresso(bag);
   const pillBits = [bag.roast, bag.process, bag.variety]
     .filter(Boolean)
     .map((v) => `<span class="pill">${escapeHtml(v)}</span>`)
     .join(" ");
+  const finishedBanner = bag.finishedAt
+    ? `<p class="finished-banner"><span class="finished-dot" aria-hidden="true"></span>Finished ${formatFullDate(bag.finishedAt)}</p>`
+    : "";
+  const statusBtn = bag.finishedAt
+    ? `<button class="btn ghost small" id="status-btn">Move to active</button>`
+    : `<button class="btn ghost small" id="status-btn">Mark finished</button>`;
   info.innerHTML = `
+    ${finishedBanner}
     <h1>${escapeHtml(bag.brand || "Untitled")}</h1>
     ${bag.origin ? `<p class="bag-origin">${escapeHtml(bag.origin)}${bag.altitude ? " · " + escapeHtml(bag.altitude) : ""}</p>` : ""}
     ${pillBits ? `<div class="pill-row">${pillBits}</div>` : ""}
@@ -64,12 +71,20 @@ function paint(container, bagId) {
       ${perCup ? `<div><dt>Price / shot</dt><dd>${perCup}</dd></div>` : ""}
     </dl>
     <div class="info-actions">
+      ${statusBtn}
       <button class="btn ghost small" id="edit-btn">Edit</button>
     </div>
   `;
   container.appendChild(info);
 
   info.querySelector("#edit-btn").addEventListener("click", () => navigate(`/bag/${bag.id}/edit`));
+  info.querySelector("#status-btn").addEventListener("click", () => {
+    if (bag.finishedAt) {
+      markActive(bag.id);
+    } else {
+      markFinished(bag.id);
+    }
+  });
 
   container.appendChild(buildDialInSection(bag));
 
@@ -169,6 +184,13 @@ function formatDate(iso) {
   if (!y) return "";
   const date = new Date(y, (m || 1) - 1, d || 1);
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function formatFullDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
 function buildDialInSection(bag) {

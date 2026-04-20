@@ -261,6 +261,7 @@ export function addBag(bag) {
     photoUpload: "",
     dialedInAt: null,
     dialedInRecipe: null,
+    finishedAt: null,
     ...bag,
     ratings: [],
     dialIns: [],
@@ -477,6 +478,32 @@ export function unmarkDialedIn(bagId) {
   persistBag(bag).catch((err) => { captureException(err, { where: "unmarkDialedIn", bagId }); emitSaveError("Couldn't save recipe"); });
 }
 
+export function markFinished(bagId) {
+  const bag = getBag(bagId);
+  if (!bag) return;
+  bag.finishedAt = new Date().toISOString();
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+  persistBag(bag).catch((err) => { captureException(err, { where: "markFinished", bagId }); emitSaveError("Couldn't archive bag"); });
+}
+
+export function markActive(bagId) {
+  const bag = getBag(bagId);
+  if (!bag) return;
+  bag.finishedAt = null;
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+  persistBag(bag).catch((err) => { captureException(err, { where: "markActive", bagId }); emitSaveError("Couldn't restore bag"); });
+}
+
 export function setEquipment(patch) {
   state.equipment = { ...state.equipment, ...patch };
   emit();
@@ -554,6 +581,7 @@ function bagRowToState(r) {
     photoUpload: "",
     dialedInAt: r.dialed_in_at ?? null,
     dialedInRecipe: dialedRecipe,
+    finishedAt: r.finished_at ?? null,
   };
 }
 
@@ -581,6 +609,7 @@ function bagStateToRow(s, userId) {
     dialed_in_yield: numOrNull(recipe.yield),
     dialed_in_time: numOrNull(recipe.time),
     dialed_in_grind: numOrNull(recipe.grind),
+    finished_at: s.finishedAt ?? null,
     updated_at: new Date().toISOString(),
   };
 }
