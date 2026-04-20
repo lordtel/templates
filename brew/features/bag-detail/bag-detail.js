@@ -1,4 +1,4 @@
-import { subscribe, getBag, drinkLabel, DRINK_TYPES, getEspressoDose, slugifyDrink } from "../../core/store.js";
+import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink } from "../../core/store.js";
 import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -180,7 +180,7 @@ function pricePer250g(bag) {
 function pricePerEspresso(bag) {
   const p = Number(bag.price);
   const w = Number(bag.weight);
-  const dose = Number(getEspressoDose());
+  const dose = Number(bag.dose);
   if (!p || !w || !dose) return "";
   const sym = bag.currency || "€";
   return `${sym}${((p / w) * dose).toFixed(2)} · ${dose}g`;

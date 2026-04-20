@@ -25,6 +25,7 @@ export function render(container, params = {}) {
     notes: existing?.notes ?? "",
     weight: existing?.weight ?? "",
     price: existing?.price ?? "",
+    dose: existing?.dose ?? "",
     currency: existing?.currency ?? "€",
     altitude: existing?.altitude ?? "",
     ocrText: existing?.ocrText ?? "",
@@ -108,6 +109,12 @@ export function render(container, params = {}) {
       </div>
 
       <div class="field">
+        <label for="f-dose">Dose per double espresso (g)</label>
+        <input type="number" id="f-dose" min="8" max="25" step="0.5" placeholder="18" />
+        <p class="field-hint">Unlocks the per-shot price for this bag.</p>
+      </div>
+
+      <div class="field">
         <label for="f-notes">Tasting notes</label>
         <textarea id="f-notes" placeholder="Blueberry, milk chocolate, caramel"></textarea>
       </div>
@@ -142,6 +149,7 @@ function bind(container, state, editing, id) {
     altitude: container.querySelector("#f-altitude"),
     price: container.querySelector("#f-price"),
     currency: container.querySelector("#f-currency"),
+    dose: container.querySelector("#f-dose"),
     notes: container.querySelector("#f-notes"),
     save: container.querySelector("#save-btn"),
     cancel: container.querySelector("#cancel-btn"),
@@ -213,6 +221,7 @@ function paintFields(el, state) {
   el.altitude.value = state.altitude;
   el.price.value = state.price;
   el.currency.value = state.currency || "€";
+  el.dose.value = state.dose;
   el.notes.value = state.notes;
 }
 
@@ -226,6 +235,7 @@ function readFields(el, state) {
   state.altitude = el.altitude.value.trim();
   state.price = el.price.value ? Number(el.price.value) : "";
   state.currency = el.currency.value;
+  state.dose = el.dose.value ? Number(el.dose.value) : "";
   state.notes = el.notes.value.trim();
 }
 
