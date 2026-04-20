@@ -154,13 +154,21 @@ async function boot(session) {
 
 function renderFooter(user) {
   if (!footerEl) return;
-  const sep = `<span aria-hidden="true">·</span>`;
-  const links = `<a href="#/about">How it works</a> ${sep} <a href="#/changelog">What's new</a> ${sep} <a href="#/privacy">Privacy</a>`;
+  const links = `
+    <div class="footer-links">
+      <a href="#/about">How it works</a>
+      <a href="#/changelog">What's new</a>
+      <a href="#/privacy">Privacy</a>
+    </div>
+  `;
   if (currentGuest) {
     footerEl.innerHTML = `
-      ${links} ${sep}
-      <span class="who">Guest</span> ${sep}
-      <button type="button" class="linklike" id="exit-guest-btn">Sign in instead</button>
+      ${links}
+      <div class="footer-meta">
+        <span class="who">Guest</span>
+        <span aria-hidden="true" class="dot-sep">·</span>
+        <button type="button" class="linklike" id="exit-guest-btn">Sign in instead</button>
+      </div>
     `;
     footerEl.querySelector("#exit-guest-btn")?.addEventListener("click", () => {
       exitGuestMode();
@@ -169,15 +177,18 @@ function renderFooter(user) {
     return;
   }
   if (!user) {
-    footerEl.innerHTML = `${links} ${sep} <span>Made by Nour</span>`;
+    footerEl.innerHTML = `${links}<div class="footer-meta"><span>Made by Nour</span></div>`;
     return;
   }
   const email = user.email ?? "";
   const short = email.length > 24 ? email.slice(0, 21) + "…" : email;
   footerEl.innerHTML = `
-    ${links} ${sep}
-    <span class="who">${escapeHtml(short)}</span> ${sep}
-    <button type="button" class="linklike" id="sign-out-btn">Sign out</button>
+    ${links}
+    <div class="footer-meta">
+      <span class="who">${escapeHtml(short)}</span>
+      <span aria-hidden="true" class="dot-sep">·</span>
+      <button type="button" class="linklike" id="sign-out-btn">Sign out</button>
+    </div>
   `;
   footerEl.querySelector("#sign-out-btn")?.addEventListener("click", async () => {
     await signOut();

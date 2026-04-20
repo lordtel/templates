@@ -115,52 +115,61 @@ body::before {
   position: relative;
   z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 6px;
   text-align: center;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--ink-faint);
-  padding: 8px 20px calc(var(--nav-h) + 32px);
+  padding: 18px 20px calc(var(--nav-h) + 32px);
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-size: 13px;
+}
+
+.footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
+.footer-meta .dot-sep {
+  opacity: 0.5;
 }
 
 .app-footer a {
   color: var(--ink-soft);
   text-decoration: none;
-  border-bottom: 1px solid var(--line-strong);
-  padding-bottom: 1px;
-  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  transition: color 0.2s var(--ease);
 }
 
 .app-footer a:hover {
   color: var(--accent);
-  border-color: var(--accent);
 }
 
 .app-footer .linklike {
   background: none;
   border: none;
-  padding: 0 0 1px;
+  padding: 0;
   color: var(--ink-soft);
   font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
   cursor: pointer;
-  border-bottom: 1px solid var(--line-strong);
-  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+  transition: color 0.2s var(--ease);
 }
 
 .app-footer .linklike:hover {
   color: var(--accent);
-  border-color: var(--accent);
 }
 
 .app-footer .who {
   color: var(--ink-faint);
-  text-transform: none;
-  letter-spacing: 0;
 }
 
 #nav[hidden],
