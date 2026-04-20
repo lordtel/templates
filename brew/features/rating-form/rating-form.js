@@ -1,4 +1,4 @@
-import { getBag, upsertRating, removeRating, getRating, drinkLabel } from "../../core/store.js";
+import { getBag, upsertRating, removeRating, getRating, drinkLabel, getDialedInRecipe } from "../../core/store.js";
 import { suggestForDrink, getActiveGrinder } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -22,10 +22,14 @@ export function render(container, params) {
   }
 
   const existing = getRating(bag.id, drinkType);
-  const suggestion = existing ? null : suggestForDrink(drinkType, bag);
+  const dialedIn = drinkType === "espresso" ? getDialedInRecipe(bag.id) : null;
+  const suggestion = existing || dialedIn ? null : suggestForDrink(drinkType, bag);
   const grinder = getActiveGrinder();
   const scale = grinder?.scale ?? GENERIC_SCALE;
-  const defaultGrind = suggestion?.grind ?? ((scale.min + scale.max) / 2);
+  const defaultGrind =
+    (dialedIn?.grind != null ? Number(dialedIn.grind) : null) ??
+    suggestion?.grind ??
+    ((scale.min + scale.max) / 2);
   const state = {
     grindSize: existing?.grindSize ?? defaultGrind,
     rating: existing?.rating ?? 0,

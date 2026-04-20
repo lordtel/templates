@@ -117,6 +117,31 @@ export function getRating(bagId, drinkType) {
   return (bag.ratings ?? []).find((r) => r.drinkType === drinkType) ?? null;
 }
 
+export function getDialInLogs(bagId) {
+  const bag = getBag(bagId);
+  if (!bag) return [];
+  return (bag.dialIns ?? []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+}
+
+export function getDialInLog(bagId, logId) {
+  const bag = getBag(bagId);
+  if (!bag) return null;
+  return (bag.dialIns ?? []).find((l) => l.id === logId) ?? null;
+}
+
+export function getDialedInRecipe(bagId) {
+  const bag = getBag(bagId);
+  if (!bag?.dialedInAt) return null;
+  const r = bag.dialedInRecipe ?? {};
+  return {
+    dose: r.dose ?? null,
+    yield: r.yield ?? null,
+    time: r.time ?? null,
+    grind: r.grind ?? null,
+    at: bag.dialedInAt,
+  };
+}
+
 export function getEquipment() {
   return state.equipment;
 }
@@ -126,7 +151,11 @@ export function loadGuestData() {
   state.userId = null;
   state.loading = false;
   const data = readGuestData();
-  state.bags = data.bags.map((b) => ({ ...b, ratings: b.ratings ?? [] }));
+  state.bags = data.bags.map((b) => ({
+    ...b,
+    ratings: b.ratings ?? [],
+    dialIns: b.dialIns ?? [],
+  }));
   state.equipment =
     data.equipment ?? { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } };
   emit();
@@ -139,14 +168,16 @@ export async function loadInitialData(userId) {
   emit();
 
   try {
-    const [bagsRes, ratingsRes, eqRes] = await Promise.all([
+    const [bagsRes, ratingsRes, dialInsRes, eqRes] = await Promise.all([
       sb.from("bags").select("*").order("created_at", { ascending: false }),
       sb.from("ratings").select("*"),
+      sb.from("dial_in_logs").select("*"),
       sb.from("equipment").select("*").eq("user_id", userId).maybeSingle(),
     ]);
 
     if (bagsRes.error) throw bagsRes.error;
     if (ratingsRes.error) throw ratingsRes.error;
+    if (dialInsRes.error) throw dialInsRes.error;
     if (eqRes.error) throw eqRes.error;
 
     const bags = bagsRes.data ?? [];
@@ -165,10 +196,18 @@ export async function loadInitialData(userId) {
       ratingsByBag.set(r.bag_id, arr);
     });
 
+    const dialInsByBag = new Map();
+    (dialInsRes.data ?? []).forEach((r) => {
+      const arr = dialInsByBag.get(r.bag_id) ?? [];
+      arr.push(dialInRowToState(r));
+      dialInsByBag.set(r.bag_id, arr);
+    });
+
     state.bags = bags.map((row, i) => ({
       ...bagRowToState(row),
       photo: signedUrls[i]?.data?.signedUrl ?? "",
       ratings: ratingsByBag.get(row.id) ?? [],
+      dialIns: dialInsByBag.get(row.id) ?? [],
     }));
 
     state.equipment = eqRes.data
@@ -216,8 +255,11 @@ export function addBag(bag) {
     photo: "",
     photoPath: "",
     photoUpload: "",
+    dialedInAt: null,
+    dialedInRecipe: null,
     ...bag,
     ratings: [],
+    dialIns: [],
   };
   if (state.guest && newBag.photoUpload?.startsWith("data:")) {
     newBag.photo = newBag.photoUpload;
@@ -329,6 +371,103 @@ export function removeRating(bagId, drinkType) {
   })();
 }
 
+export function upsertDialInLog(bagId, log) {
+  const bag = getBag(bagId);
+  if (!bag) return null;
+  bag.dialIns = bag.dialIns ?? [];
+  const id = log.id ?? uid();
+  const entry = {
+    id,
+    bagId,
+    dose: log.dose === "" || log.dose == null ? "" : Number(log.dose),
+    yield: log.yield === "" || log.yield == null ? "" : Number(log.yield),
+    time: log.time === "" || log.time == null ? "" : Number(log.time),
+    grind: log.grind === "" || log.grind == null ? "" : Number(log.grind),
+    taste: log.taste == null || log.taste === "" ? 0 : Number(log.taste),
+    texture: log.texture == null || log.texture === "" ? 0 : Number(log.texture),
+    note: log.note ?? "",
+    date: log.date || isoDate(Date.now()),
+  };
+  const idx = bag.dialIns.findIndex((l) => l.id === id);
+  if (idx >= 0) bag.dialIns[idx] = entry;
+  else bag.dialIns.push(entry);
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return id;
+  }
+
+  (async () => {
+    try {
+      const { error } = await sb
+        .from("dial_in_logs")
+        .upsert(dialInStateToRow(entry, state.userId), { onConflict: "id" });
+      if (error) throw error;
+    } catch (err) {
+      captureException(err, { where: "upsertDialInLog", bagId, id });
+    }
+  })();
+
+  return id;
+}
+
+export function removeDialInLog(bagId, logId) {
+  const bag = getBag(bagId);
+  if (!bag) return;
+  bag.dialIns = (bag.dialIns ?? []).filter((l) => l.id !== logId);
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+
+  (async () => {
+    try {
+      const { error } = await sb.from("dial_in_logs").delete().eq("id", logId);
+      if (error) throw error;
+    } catch (err) {
+      captureException(err, { where: "removeDialInLog", bagId, logId });
+    }
+  })();
+}
+
+export function markDialedIn(bagId, recipe) {
+  const bag = getBag(bagId);
+  if (!bag) return;
+  const numOrNull = (v) => (v === "" || v == null ? null : Number(v));
+  bag.dialedInAt = new Date().toISOString();
+  bag.dialedInRecipe = {
+    dose: numOrNull(recipe.dose),
+    yield: numOrNull(recipe.yield),
+    time: numOrNull(recipe.time),
+    grind: numOrNull(recipe.grind),
+  };
+  if (bag.dialedInRecipe.dose != null) bag.dose = bag.dialedInRecipe.dose;
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+  persistBag(bag).catch((err) => captureException(err, { where: "markDialedIn", bagId }));
+}
+
+export function unmarkDialedIn(bagId) {
+  const bag = getBag(bagId);
+  if (!bag) return;
+  bag.dialedInAt = null;
+  bag.dialedInRecipe = null;
+  emit();
+
+  if (state.guest) {
+    writeGuestData();
+    return;
+  }
+  persistBag(bag).catch((err) => captureException(err, { where: "unmarkDialedIn", bagId }));
+}
+
 export function setEquipment(patch) {
   state.equipment = { ...state.equipment, ...patch };
   emit();
@@ -379,6 +518,15 @@ async function persistBag(bag) {
 }
 
 function bagRowToState(r) {
+  const dialedRecipe =
+    r.dialed_in_at
+      ? {
+          dose: r.dialed_in_dose,
+          yield: r.dialed_in_yield,
+          time: r.dialed_in_time,
+          grind: r.dialed_in_grind,
+        }
+      : null;
   return {
     id: r.id,
     brand: r.brand ?? "",
@@ -395,10 +543,14 @@ function bagRowToState(r) {
     ocrText: r.ocr_text ?? "",
     photoPath: r.photo_path ?? "",
     photoUpload: "",
+    dialedInAt: r.dialed_in_at ?? null,
+    dialedInRecipe: dialedRecipe,
   };
 }
 
 function bagStateToRow(s, userId) {
+  const recipe = s.dialedInRecipe ?? {};
+  const numOrNull = (v) => (v === "" || v == null ? null : Number(v));
   return {
     id: s.id,
     user_id: userId,
@@ -408,13 +560,51 @@ function bagStateToRow(s, userId) {
     variety: s.variety || null,
     roast: s.roast || null,
     notes: s.notes || null,
-    weight: s.weight === "" || s.weight == null ? null : Number(s.weight),
-    price: s.price === "" || s.price == null ? null : Number(s.price),
-    dose: s.dose === "" || s.dose == null ? null : Number(s.dose),
+    weight: numOrNull(s.weight),
+    price: numOrNull(s.price),
+    dose: numOrNull(s.dose),
     currency: s.currency || null,
     altitude: s.altitude || null,
     ocr_text: s.ocrText || null,
     photo_path: s.photoPath || null,
+    dialed_in_at: s.dialedInAt ?? null,
+    dialed_in_dose: numOrNull(recipe.dose),
+    dialed_in_yield: numOrNull(recipe.yield),
+    dialed_in_time: numOrNull(recipe.time),
+    dialed_in_grind: numOrNull(recipe.grind),
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function dialInRowToState(r) {
+  return {
+    id: r.id,
+    bagId: r.bag_id,
+    dose: r.dose ?? "",
+    yield: r.yield ?? "",
+    time: r.time_s ?? "",
+    grind: r.grind ?? "",
+    taste: r.taste ?? 0,
+    texture: r.texture ?? 0,
+    note: r.note ?? "",
+    date: r.date ?? "",
+  };
+}
+
+function dialInStateToRow(log, userId) {
+  const numOrNull = (v) => (v === "" || v == null ? null : Number(v));
+  return {
+    id: log.id,
+    bag_id: log.bagId,
+    user_id: userId,
+    dose: numOrNull(log.dose),
+    yield: numOrNull(log.yield),
+    time_s: numOrNull(log.time),
+    grind: numOrNull(log.grind),
+    taste: log.taste == null || log.taste === "" ? 0 : Number(log.taste),
+    texture: log.texture == null || log.texture === "" ? 0 : Number(log.texture),
+    note: log.note || null,
+    date: log.date || null,
     updated_at: new Date().toISOString(),
   };
 }

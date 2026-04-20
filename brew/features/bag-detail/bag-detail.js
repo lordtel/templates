@@ -71,6 +71,8 @@ function paint(container, bagId) {
 
   info.querySelector("#edit-btn").addEventListener("click", () => navigate(`/bag/${bag.id}/edit`));
 
+  container.appendChild(buildDialInSection(bag));
+
   const ratingsHead = document.createElement("div");
   ratingsHead.className = "page-head ratings-head";
   ratingsHead.innerHTML = `<h2>How it performed</h2>`;
@@ -167,6 +169,54 @@ function formatDate(iso) {
   if (!y) return "";
   const date = new Date(y, (m || 1) - 1, d || 1);
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+function buildDialInSection(bag) {
+  const section = document.createElement("section");
+  section.className = "dial-in-section card";
+  const dialed = bag.dialedInAt && bag.dialedInRecipe;
+  const attempts = bag.dialIns?.length ?? 0;
+
+  const recipeLine = dialed
+    ? formatRecipeLine(bag.dialedInRecipe)
+    : attempts > 0
+      ? `${attempts} attempt${attempts === 1 ? "" : "s"} logged — mark one as dialed in when you're happy.`
+      : "Log your first pull to start tuning the recipe.";
+
+  const badge = dialed
+    ? `<span class="dialed-badge">Dialed in</span>`
+    : attempts > 0
+      ? `<span class="dialed-badge pending">${attempts} attempt${attempts === 1 ? "" : "s"}</span>`
+      : "";
+
+  section.innerHTML = `
+    <div class="dial-in-section-head">
+      <div>
+        <p class="eyebrow">Dial-in</p>
+        <h2>Recipe${badge ? " " + badge : ""}</h2>
+      </div>
+      <button type="button" class="btn small" id="dial-in-btn">
+        ${dialed ? "Log another attempt" : attempts > 0 ? "Continue dialing" : "Start dial-in"}
+      </button>
+    </div>
+    <p class="dial-in-section-recipe">${recipeLine}</p>
+  `;
+
+  section.querySelector("#dial-in-btn").addEventListener("click", () => {
+    navigate(`/bag/${bag.id}/dial-in`);
+  });
+
+  return section;
+}
+
+function formatRecipeLine(r) {
+  const bits = [];
+  if (r.dose) bits.push(`<strong>${r.dose}g</strong> in`);
+  if (r.yield) bits.push(`<strong>${r.yield}g</strong> out`);
+  if (r.dose && r.yield) bits.push(`(1:${(Number(r.yield) / Number(r.dose)).toFixed(2)})`);
+  if (r.time) bits.push(`${r.time}s`);
+  if (r.grind != null) bits.push(`grind <strong>${r.grind}</strong>`);
+  return bits.join(" · ");
 }
 
 function pricePer250g(bag) {

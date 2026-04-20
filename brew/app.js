@@ -18,6 +18,7 @@ import { render as renderHome } from "./features/home/home.js";
 import { render as renderBagForm } from "./features/bag-form/bag-form.js";
 import { render as renderBagDetail } from "./features/bag-detail/bag-detail.js";
 import { render as renderRatingForm } from "./features/rating-form/rating-form.js";
+import { render as renderDialIn } from "./features/dial-in/dial-in.js";
 import { render as renderAnalytics } from "./features/analytics/analytics.js";
 import { render as renderEquipment } from "./features/equipment/equipment.js";
 import { render as renderAbout } from "./features/about/about.js";
@@ -36,6 +37,8 @@ const routes = [
   { path: "/bag/:id", render: renderBagDetail },
   { path: "/bag/:id/edit", render: (c, p) => renderBagForm(c, p) },
   { path: "/bag/:id/rate/:drink", render: renderRatingForm },
+  { path: "/bag/:id/dial-in", render: renderDialIn },
+  { path: "/bag/:id/dial-in/:logId", render: renderDialIn },
   { path: "/analytics", render: renderAnalytics },
   { path: "/equipment", render: renderEquipment },
   { path: "/about", render: renderAbout },
