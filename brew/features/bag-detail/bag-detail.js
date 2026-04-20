@@ -177,29 +177,33 @@ function buildDialInSection(bag) {
   const dialed = bag.dialedInAt && bag.dialedInRecipe;
   const attempts = bag.dialIns?.length ?? 0;
 
-  const recipeLine = dialed
-    ? formatRecipeLine(bag.dialedInRecipe)
-    : attempts > 0
-      ? `${attempts} attempt${attempts === 1 ? "" : "s"} logged — mark one as dialed in when you're happy.`
-      : "Log your first pull to start tuning the recipe.";
-
   const badge = dialed
     ? `<span class="dialed-badge">Dialed in</span>`
     : attempts > 0
       ? `<span class="dialed-badge pending">${attempts} attempt${attempts === 1 ? "" : "s"}</span>`
       : "";
 
+  const btnLabel = dialed
+    ? "Log another attempt"
+    : attempts > 0
+      ? "Continue dialing"
+      : "Start dial-in →";
+
+  const body = dialed
+    ? buildDialInStats(bag.dialedInRecipe)
+    : `<p class="dial-in-section-sub">${
+        attempts > 0
+          ? `${attempts} attempt${attempts === 1 ? "" : "s"} logged — mark one as dialed in when you're happy.`
+          : "Log your first pull to start tuning the recipe."
+      }</p>`;
+
   section.innerHTML = `
-    <div class="dial-in-section-head">
-      <div>
-        <p class="eyebrow">Dial-in</p>
-        <h2>Recipe${badge ? " " + badge : ""}</h2>
-      </div>
-      <button type="button" class="btn small" id="dial-in-btn">
-        ${dialed ? "Log another attempt" : attempts > 0 ? "Continue dialing" : "Start dial-in"}
-      </button>
+    <div class="dial-in-section-top">
+      <p class="eyebrow">Dial-in</p>
+      ${badge}
     </div>
-    <p class="dial-in-section-recipe">${recipeLine}</p>
+    ${body}
+    <button type="button" class="btn small dial-in-section-btn" id="dial-in-btn">${btnLabel}</button>
   `;
 
   section.querySelector("#dial-in-btn").addEventListener("click", () => {
@@ -209,14 +213,15 @@ function buildDialInSection(bag) {
   return section;
 }
 
-function formatRecipeLine(r) {
-  const bits = [];
-  if (r.dose) bits.push(`<strong>${r.dose}g</strong> in`);
-  if (r.yield) bits.push(`<strong>${r.yield}g</strong> out`);
-  if (r.dose && r.yield) bits.push(`(1:${(Number(r.yield) / Number(r.dose)).toFixed(2)})`);
-  if (r.time) bits.push(`${r.time}s`);
-  if (r.grind != null) bits.push(`grind <strong>${r.grind}</strong>`);
-  return bits.join(" · ");
+function buildDialInStats(r) {
+  const stats = [];
+  if (r.dose != null) stats.push({ label: "Dose", value: `${r.dose}g` });
+  if (r.yield != null) stats.push({ label: "Yield", value: `${r.yield}g` });
+  if (r.dose && r.yield) stats.push({ label: "Ratio", value: `1:${(Number(r.yield) / Number(r.dose)).toFixed(2)}` });
+  if (r.time != null) stats.push({ label: "Time", value: `${r.time}s` });
+  if (r.grind != null) stats.push({ label: "Grind", value: String(r.grind) });
+  if (!stats.length) return `<p class="dial-in-section-sub">Recipe saved.</p>`;
+  return `<dl class="dial-in-stats">${stats.map((s) => `<div><dt>${s.label}</dt><dd>${s.value}</dd></div>`).join("")}</dl>`;
 }
 
 function pricePer250g(bag) {
