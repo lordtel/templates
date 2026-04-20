@@ -58,10 +58,33 @@ export function render(container) {
       </section>
 
       <section class="card about-card">
-        <h2>Install it</h2>
-        <p>On iPhone: <strong>Share → Add to Home Screen</strong>.</p>
-        <p>On Android Chrome: the <strong>⋮ menu → Install app</strong>.</p>
-        <p>It launches standalone, no browser chrome, and survives Safari's aggressive storage eviction.</p>
+        <h2>Install as an app</h2>
+        <p>Crema runs best from your Home Screen — full-screen, no browser bar, with its own icon. It takes ten seconds.</p>
+
+        <div class="install-block">
+          <div class="install-head">
+            <span class="install-chip">iPhone · Safari</span>
+          </div>
+          <ol class="install-steps">
+            <li><span class="install-num">1</span><span>Open <strong>crema.live</strong> in Safari (it has to be Safari — Chrome and others can't install web apps on iOS).</span></li>
+            <li><span class="install-num">2</span><span>Tap the <strong>Share</strong> icon
+              <svg class="install-ico" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              at the bottom of the screen.</span></li>
+            <li><span class="install-num">3</span><span>Scroll and pick <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</span></li>
+          </ol>
+        </div>
+
+        <div class="install-block">
+          <div class="install-head">
+            <span class="install-chip">Android · Chrome</span>
+          </div>
+          <ol class="install-steps">
+            <li><span class="install-num">1</span><span>Open <strong>crema.live</strong> in Chrome.</span></li>
+            <li><span class="install-num">2</span><span>Tap the <strong>⋮</strong> menu, then <strong>Install app</strong> (or <strong>Add to Home Screen</strong>).</span></li>
+          </ol>
+        </div>
+
+        <p class="install-foot">Once installed it launches standalone and survives Safari's aggressive storage eviction — your bags won't disappear on you.</p>
       </section>
 
       <section class="card about-card">

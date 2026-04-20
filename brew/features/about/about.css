@@ -105,3 +105,81 @@
   background: var(--accent);
   opacity: 0.6;
 }
+
+/* ── Install instructions ───────────────────────────── */
+.install-block {
+  margin-top: 14px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: var(--surface-solid);
+}
+
+.install-block + .install-block {
+  margin-top: 10px;
+}
+
+.install-head {
+  margin-bottom: 10px;
+}
+
+.install-chip {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.install-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.install-steps li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.install-num {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 12px;
+  margin-top: 1px;
+}
+
+.install-ico {
+  display: inline-block;
+  vertical-align: -2px;
+  color: var(--accent);
+  margin: 0 2px;
+}
+
+.install-foot {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-style: italic;
+}
