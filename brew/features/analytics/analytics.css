@@ -1,25 +1,63 @@
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-@media (min-width: 520px) {
-  .stats-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-.stat-card {
-  padding: 14px;
-  background: var(--surface);
+/* ── Hero journal ───────────────────────────────────── */
+.hero-journal {
+  position: relative;
+  padding: 26px 26px 22px;
+  margin-bottom: 18px;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(ellipse at top right, rgba(217, 181, 128, 0.28), transparent 55%),
+    radial-gradient(ellipse at bottom left, rgba(122, 62, 29, 0.08), transparent 55%),
+    var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xs);
-  text-align: left;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
-.stat-label {
+.hero-journal::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--crema), transparent 65%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.journal-prose {
+  margin: 0 0 18px;
+  font-family: "Fraunces", serif;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  position: relative;
+}
+
+.journal-prose strong {
+  font-weight: 600;
+  color: var(--accent);
+  font-style: italic;
+}
+
+.journal-stats {
+  margin: 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  position: relative;
+}
+
+.journal-stats > div {
+  min-width: 0;
+}
+
+.journal-stats dt {
   margin: 0;
   font-size: 10.5px;
   text-transform: uppercase;
@@ -28,20 +66,18 @@
   font-weight: 500;
 }
 
-.stat-value {
-  margin: 6px 0 0;
+.journal-stats dd {
+  margin: 4px 0 0;
   font-family: "Fraunces", serif;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.stat-sub {
-  margin: 2px 0 0;
-  font-size: 11px;
-  color: var(--ink-faint);
-}
-
+/* ── Panel (shared) ─────────────────────────────────── */
 .panel {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -62,6 +98,7 @@
   margin: 0;
 }
 
+/* ── By drink ───────────────────────────────────────── */
 .drink-rows {
   display: grid;
   gap: 10px;
@@ -101,78 +138,67 @@
 .drink-bar span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(to right, var(--accent), var(--crema));
   border-radius: 4px;
   transition: width 0.4s var(--ease);
 }
 
-.grind-track {
-  position: relative;
-  height: 6px;
-  background: linear-gradient(to right, var(--accent), var(--crema), var(--line-strong));
-  border-radius: 3px;
-}
-
-.grind-marker {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 14px;
-  height: 14px;
-  background: var(--surface-solid);
-  border: 2px solid var(--accent);
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.rank-list {
+/* ── Menu-style top picks ───────────────────────────── */
+.menu-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
-.rank-list li {
+.menu-row {
   display: grid;
-  grid-template-columns: 28px 1fr auto;
+  grid-template-columns: 44px 1fr auto;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 14px;
+  padding: 12px 10px;
   border-radius: var(--radius-xs);
-  background: var(--surface-solid);
   cursor: pointer;
   transition: background 0.2s var(--ease);
+  border-bottom: 1px dashed var(--line);
 }
 
-.rank-list li:hover {
+.menu-row:last-child {
+  border-bottom: none;
+}
+
+.menu-row:hover {
   background: var(--accent-soft);
 }
 
-.rank-num {
+.menu-numeral {
   font-family: "Fraunces", serif;
-  font-size: 18px;
-  color: var(--accent);
+  font-size: 22px;
   font-weight: 500;
+  font-style: italic;
+  color: var(--accent);
   text-align: center;
+  letter-spacing: 0.02em;
 }
 
-.rank-meta {
+.menu-body {
   min-width: 0;
 }
 
-.rank-meta h3 {
+.menu-body h3 {
   margin: 0;
-  font-size: 14px;
-  font-family: "Inter", sans-serif;
-  font-weight: 600;
+  font-family: "Fraunces", serif;
+  font-size: 16px;
+  font-weight: 500;
+  font-style: italic;
   color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.rank-meta p {
+.menu-body p {
   margin: 2px 0 0;
   font-size: 12px;
   color: var(--ink-faint);
@@ -181,20 +207,127 @@
   text-overflow: ellipsis;
 }
 
-.rank-score {
+.menu-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.menu-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.menu-dots .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.menu-dots .dot.on {
+  background: var(--accent);
+}
+
+.menu-score-num {
+  font-family: "Fraunces", serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── The dial ───────────────────────────────────────── */
+.dial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 520px) {
+  .dial-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.dial-tile {
+  text-align: center;
+  padding: 10px 4px 6px;
+  background: var(--surface-solid);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.dial-tile.muted {
+  opacity: 0.7;
+}
+
+.dial-svg {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.dial-value {
   font-family: "Fraunces", serif;
   font-size: 20px;
   font-weight: 500;
-  color: var(--accent);
+  fill: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
-.timeline {
+.dial-label {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.dial-hint {
+  margin: 2px 0 0;
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ── Pour-row timeline ──────────────────────────────── */
+.pour-row {
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  gap: 3px;
+  align-items: end;
+  height: 80px;
+  padding: 4px 0 0;
+}
+
+.pour-col {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  cursor: default;
+}
+
+.pour-fill {
+  display: block;
   width: 100%;
-  height: 100px;
+  min-height: 2px;
+  background: linear-gradient(to top, var(--accent), var(--crema));
+  border-radius: 3px 3px 1px 1px;
+  transition: height 0.4s var(--ease);
+  box-shadow: 0 -1px 0 rgba(217, 181, 128, 0.4);
+}
+
+.pour-col.empty .pour-fill {
+  background: var(--line);
+  opacity: 0.55;
+  box-shadow: none;
 }
 
 .timeline-foot {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   font-size: 12px;
   color: var(--ink-faint);
   text-align: right;

@@ -61,6 +61,27 @@ export function render(container) {
         <button class="btn" type="button" id="save-btn">Save</button>
       </div>
     </div>
+
+    <aside class="support-card">
+      <div class="support-ico" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="32" height="32">
+          <defs>
+            <radialGradient id="support-cup" cx="40%" cy="35%">
+              <stop offset="0" stop-color="var(--crema)"/>
+              <stop offset="1" stop-color="var(--accent)"/>
+            </radialGradient>
+          </defs>
+          <path d="M8 14h20l-1.6 14.5A5 5 0 0 1 21.4 33h-6.8a5 5 0 0 1-5-4.5L8 14Z" fill="url(#support-cup)"/>
+          <path d="M28 17h3a4 4 0 0 1 0 8h-2.2" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <path d="M13 5c0 2 2 2 2 4s-2 2-2 4M19 5c0 2 2 2 2 4s-2 2-2 4M25 5c0 2 2 2 2 4s-2 2-2 4" fill="none" stroke="var(--ink-soft)" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+        </svg>
+      </div>
+      <div class="support-body">
+        <h2>No ads. No paywalls. Ever.</h2>
+        <p>Crema is free and will stay that way. If it's earned a spot in your routine, a small coffee helps keep it running.</p>
+        <a href="https://buymeacoffee.com/cremacoffee" target="_blank" rel="noopener" class="btn small support-btn">Buy me a coffee →</a>
+      </div>
+    </aside>
   `;
 
   bind(container);

@@ -159,6 +159,12 @@ function renderFooter(user) {
       <a href="#/about">How it works</a>
       <a href="#/changelog">What's new</a>
       <a href="#/privacy">Privacy</a>
+      <a href="https://buymeacoffee.com/cremacoffee" target="_blank" rel="noopener" class="bmc-link" title="Keeps the app free and ad-free">
+        <span class="bmc-ico" aria-hidden="true">
+          <svg viewBox="0 0 20 20" width="14" height="14"><path d="M4 7h12l-1 7.5a3 3 0 0 1-3 2.5H8a3 3 0 0 1-3-2.5L4 7Zm3-3.5a.8.8 0 1 1 1.6 0 1.4 1.4 0 0 0 .8 1.3.8.8 0 1 1-.8 1.4 3 3 0 0 1-1.6-2.7ZM11 3.2a.8.8 0 1 1 1.6 0 1.4 1.4 0 0 0 .8 1.3.8.8 0 1 1-.8 1.4 3 3 0 0 1-1.6-2.7Z" fill="currentColor"/></svg>
+        </span>
+        Buy me a coffee
+      </a>
     </div>
   `;
   if (currentGuest) {
