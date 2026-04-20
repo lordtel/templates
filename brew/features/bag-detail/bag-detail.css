@@ -96,10 +96,11 @@
 
 .bag-hero {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-width: 360px;
+  margin: 0 auto 18px;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 18px;
   box-shadow: var(--shadow-md);
   background: var(--surface-solid);
   position: relative;

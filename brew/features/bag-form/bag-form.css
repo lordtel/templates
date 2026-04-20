@@ -12,13 +12,14 @@
 .photo-slot {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  max-width: 300px;
+  margin: 0 auto 20px;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius-sm);
   background: var(--surface-solid);
   border: 1.5px dashed var(--line-strong);
   overflow: hidden;
   cursor: pointer;
-  margin-bottom: 20px;
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
   display: grid;
   place-items: center;
