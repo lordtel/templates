@@ -16,6 +16,7 @@ export function renderSignIn(container, { onGuest } = {}) {
           Continue with Google
         </button>
         <p class="sign-in-note" id="err"></p>
+        <p class="sign-in-legal">By signing in you agree to our <a href="#/privacy">Privacy Policy</a>.</p>
         <div class="sign-in-divider" aria-hidden="true"><span>or</span></div>
         <button class="btn ghost guest" type="button" id="guest-btn">Continue as guest</button>
         <p class="sign-in-disclaimer">Guest mode keeps everything on this device only — clearing your browser or switching devices loses it.</p>

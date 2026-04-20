@@ -22,6 +22,7 @@ import { render as renderDialIn } from "./features/dial-in/dial-in.js";
 import { render as renderAnalytics } from "./features/analytics/analytics.js";
 import { render as renderEquipment } from "./features/equipment/equipment.js";
 import { render as renderAbout } from "./features/about/about.js";
+import { render as renderPrivacy } from "./features/privacy/privacy.js";
 
 initSentry();
 
@@ -42,6 +43,7 @@ const routes = [
   { path: "/analytics", render: renderAnalytics },
   { path: "/equipment", render: renderEquipment },
   { path: "/about", render: renderAbout },
+  { path: "/privacy", render: renderPrivacy },
 ];
 
 let bootedOnce = false;
@@ -150,12 +152,12 @@ async function boot(session) {
 
 function renderFooter(user) {
   if (!footerEl) return;
+  const sep = `<span aria-hidden="true">·</span>`;
+  const links = `<a href="#/about">How it works</a> ${sep} <a href="#/privacy">Privacy</a>`;
   if (currentGuest) {
     footerEl.innerHTML = `
-      <a href="#/about">How it works</a>
-      <span aria-hidden="true">·</span>
-      <span class="who">Guest</span>
-      <span aria-hidden="true">·</span>
+      ${links} ${sep}
+      <span class="who">Guest</span> ${sep}
       <button type="button" class="linklike" id="exit-guest-btn">Sign in instead</button>
     `;
     footerEl.querySelector("#exit-guest-btn")?.addEventListener("click", () => {
@@ -165,16 +167,14 @@ function renderFooter(user) {
     return;
   }
   if (!user) {
-    footerEl.innerHTML = `<a href="#/about">How it works</a> <span aria-hidden="true">·</span> <span>Made by Nour</span>`;
+    footerEl.innerHTML = `${links} ${sep} <span>Made by Nour</span>`;
     return;
   }
   const email = user.email ?? "";
   const short = email.length > 24 ? email.slice(0, 21) + "…" : email;
   footerEl.innerHTML = `
-    <a href="#/about">How it works</a>
-    <span aria-hidden="true">·</span>
-    <span class="who">${escapeHtml(short)}</span>
-    <span aria-hidden="true">·</span>
+    ${links} ${sep}
+    <span class="who">${escapeHtml(short)}</span> ${sep}
     <button type="button" class="linklike" id="sign-out-btn">Sign out</button>
   `;
   footerEl.querySelector("#sign-out-btn")?.addEventListener("click", async () => {
@@ -207,3 +207,20 @@ function escapeHtml(s) {
 }
 
 onAuthChange((session) => boot(session));
+
+document.addEventListener("crema:save-error", (e) => {
+  const msg = e.detail?.label ?? "Couldn't save — check your connection.";
+  const existing = document.getElementById("crema-toast");
+  if (existing) existing.remove();
+  const toast = document.createElement("div");
+  toast.id = "crema-toast";
+  toast.className = "toast";
+  toast.setAttribute("role", "alert");
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("toast--show"));
+  setTimeout(() => {
+    toast.classList.remove("toast--show");
+    toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+  }, 4000);
+});

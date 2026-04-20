@@ -91,6 +91,18 @@
   color: #b5463a;
 }
 
+.sign-in-legal {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.sign-in-legal a {
+  color: var(--ink-soft);
+  text-underline-offset: 2px;
+}
+
 .sign-in-divider {
   display: flex;
   align-items: center;
