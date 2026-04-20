@@ -1,10 +1,9 @@
-import { getEquipment, setEquipment, getEspressoDose, setEspressoDose } from "../../core/store.js";
+import { getEquipment, setEquipment } from "../../core/store.js";
 import { MACHINES, GRINDERS } from "../../core/gear-catalog.js";
 import { navigate } from "../../core/router.js";
 
 export function render(container) {
   const eq = getEquipment();
-  const dose = getEspressoDose();
 
   container.innerHTML = `
     <div class="page-head">
@@ -50,15 +49,6 @@ export function render(container) {
           ${eq.grinder.id === "custom" ? "" : "hidden"}
         />
         <p class="grinder-hint" id="grinder-hint"></p>
-      </div>
-
-      <div class="field">
-        <label for="dose">Dose per double espresso</label>
-        <div class="dose-row">
-          <input type="number" id="dose" min="8" max="25" step="0.5" placeholder="18" value="${dose != null ? Number(dose).toFixed(1) : ""}" />
-          <span class="dose-unit">g</span>
-        </div>
-        <p class="grinder-hint">Set your own dose to unlock the per-shot price on every bag.</p>
       </div>
 
       <div class="equipment-hint">
@@ -122,8 +112,6 @@ function bind(container) {
         custom: grinderSel.value === "custom" ? grinderCustom.value.trim() : "",
       },
     });
-    const doseEl = container.querySelector("#dose");
-    setEspressoDose(doseEl?.value);
     navigate("/");
   });
 

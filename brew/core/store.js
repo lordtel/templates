@@ -4,7 +4,6 @@ import { load, remove } from "./storage.js";
 
 const LEGACY_BAGS_KEY = "brew.bags.v1";
 const LEGACY_EQUIPMENT_KEY = "brew.equipment.v1";
-const DOSE_KEY = "crema.dose.v1";
 const GUEST_FLAG_KEY = "crema.guest.v1";
 const GUEST_DATA_KEY = "crema.guest-data.v1";
 
@@ -122,22 +121,6 @@ export function getEquipment() {
   return state.equipment;
 }
 
-export function getEspressoDose() {
-  const raw = localStorage.getItem(DOSE_KEY);
-  const n = raw == null ? NaN : Number(raw);
-  return Number.isFinite(n) && n > 0 ? n : null;
-}
-
-export function setEspressoDose(grams) {
-  const n = Number(grams);
-  if (!Number.isFinite(n) || n <= 0) {
-    localStorage.removeItem(DOSE_KEY);
-  } else {
-    localStorage.setItem(DOSE_KEY, String(n));
-  }
-  emit();
-}
-
 export function loadGuestData() {
   state.guest = true;
   state.userId = null;
@@ -226,6 +209,7 @@ export function addBag(bag) {
     notes: "",
     weight: "",
     price: "",
+    dose: "",
     currency: "€",
     altitude: "",
     ocrText: "",
@@ -405,6 +389,7 @@ function bagRowToState(r) {
     notes: r.notes ?? "",
     weight: r.weight ?? "",
     price: r.price ?? "",
+    dose: r.dose ?? "",
     currency: r.currency ?? "€",
     altitude: r.altitude ?? "",
     ocrText: r.ocr_text ?? "",
@@ -425,6 +410,7 @@ function bagStateToRow(s, userId) {
     notes: s.notes || null,
     weight: s.weight === "" || s.weight == null ? null : Number(s.weight),
     price: s.price === "" || s.price == null ? null : Number(s.price),
+    dose: s.dose === "" || s.dose == null ? null : Number(s.dose),
     currency: s.currency || null,
     altitude: s.altitude || null,
     ocr_text: s.ocrText || null,
