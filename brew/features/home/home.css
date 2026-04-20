@@ -3,6 +3,65 @@
   gap: 14px;
 }
 
+.shelf-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 0 0 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+.shelf-tab {
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.shelf-tab:hover:not(.on) {
+  color: var(--ink);
+}
+
+.shelf-tab.on {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.shelf-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.shelf-tab.on .shelf-tab-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--on-accent);
+}
+
+.shelf-empty {
+  padding: 36px 20px;
+}
+
 .bag-card {
   display: flex;
   align-items: center;
@@ -127,4 +186,24 @@
 .bag-price.muted::before {
   content: "· ";
   color: var(--ink-faint);
+}
+
+.bag-card.finished {
+  opacity: 0.72;
+}
+
+.bag-card.finished .bag-thumb img {
+  filter: grayscale(0.4);
+}
+
+.finished-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  background: var(--bg-deep);
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
