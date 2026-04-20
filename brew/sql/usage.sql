@@ -129,7 +129,8 @@ select
   count(*)                                          as bags_total,
   count(*) filter (where dialed_in_at is not null)  as bags_dialed_in,
   count(*) filter (where finished_at is not null)   as bags_finished,
-  count(*) filter (where photo_path is not null)    as bags_with_photo;
+  count(*) filter (where photo_path is not null)    as bags_with_photo
+from bags;
 
 -- ───────────────────────────────────────────────────────────────
 -- 4. Content signal
@@ -213,8 +214,8 @@ limit 8;
 
 -- Storage footprint (photos in the bag-photos bucket)
 select
-  count(*)                          as photos,
-  pg_size_pretty(sum(metadata->>'size')::bigint) as total_size
+  count(*)                                          as photos,
+  pg_size_pretty(sum((metadata->>'size')::bigint))  as total_size
 from storage.objects
 where bucket_id = 'bag-photos';
 
