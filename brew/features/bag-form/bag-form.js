@@ -1,6 +1,7 @@
 import { addBag, updateBag, getBag, removeBag } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 import { ocrImage, parseBagText } from "../../core/ocr.js";
+import { openImageEditor } from "../../core/image-editor.js";
 
 const ROASTS = ["light", "medium-light", "medium", "medium-dark", "dark", "filter", "omni"];
 const CURRENCIES = ["€", "$", "£", "¥", "CHF", "SEK", "NOK", "DKK", "AUD", "CAD"];
@@ -178,13 +179,16 @@ function bind(container, state, editing, id) {
     const file = e.target.files?.[0];
     if (!file) return;
     const dataUrl = await readAsDataUrl(file);
-    const resized = await resizeImage(dataUrl, 1200);
-    state.photo = resized;
-    state.photoUpload = resized;
-    el.photoPreview.src = resized;
+    const resized = await resizeImage(dataUrl, 1600);
+    const edited = await openImageEditor(resized);
+    const final = edited ?? resized;
+    state.photo = final;
+    state.photoUpload = final;
+    el.photoPreview.src = final;
     el.photoPreview.hidden = false;
     el.photoPlaceholder.hidden = true;
-    runOcr(resized, state, el);
+    el.photoInput.value = "";
+    runOcr(final, state, el);
   });
 
   const commit = (afterPath) => {
