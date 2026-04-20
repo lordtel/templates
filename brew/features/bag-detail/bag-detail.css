@@ -1,30 +1,22 @@
 .dial-in-section {
-  padding: 18px 20px;
+  padding: 18px 20px 16px;
   margin: 18px 0 22px;
 }
 
-.dial-in-section-head {
+.dial-in-section-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.dial-in-section-head h2 {
+.dial-in-section-top .eyebrow {
   margin: 0;
-  font-family: "Fraunces", serif;
-  font-size: 19px;
-  font-weight: 500;
-  color: var(--ink);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .dialed-badge {
   font-size: 10.5px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   background: var(--accent);
@@ -38,16 +30,44 @@
   color: var(--accent);
 }
 
-.dial-in-section-recipe {
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--ink-soft);
-  line-height: 1.5;
+.dial-in-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 10px 12px;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: var(--surface-solid);
+  border-radius: var(--radius-xs);
 }
 
-.dial-in-section-recipe strong {
-  color: var(--ink);
+.dial-in-stats dt {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  margin: 0 0 3px;
+}
+
+.dial-in-stats dd {
+  margin: 0;
+  font-size: 18px;
+  font-family: "Fraunces", serif;
   font-weight: 500;
+  color: var(--ink);
+}
+
+.dial-in-section-sub {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.dial-in-section-btn {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .back-btn {
