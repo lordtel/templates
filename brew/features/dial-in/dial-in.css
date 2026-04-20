@@ -1,0 +1,175 @@
+.dial-in-form {
+  padding: 28px;
+}
+
+.dial-in-form .ratio-display {
+  margin: 0;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface-solid);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xs);
+}
+
+.dialed-locked {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(122, 62, 29, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.dialed-locked-title {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.dialed-locked-sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+input[type="range"].bipolar.sour-bitter {
+  background: linear-gradient(
+    to right,
+    #ffd466 0%,
+    #f5ead2 50%,
+    #7a3e1d 100%
+  );
+}
+
+input[type="range"].bipolar.water-syrup {
+  background: linear-gradient(
+    to right,
+    #a9cde3 0%,
+    #f5ead2 50%,
+    #5c2a0e 100%
+  );
+}
+
+.dial-in-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.dial-in-attempt {
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.dial-in-attempt-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.dial-in-attempt-date {
+  margin: 0 0 2px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.dial-in-attempt-recipe {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.dial-in-attempt-recipe .muted {
+  color: var(--ink-faint);
+  font-family: inherit;
+}
+
+.dial-in-attempt-grind {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.dial-in-attempt-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.tag-bipolar {
+  font-size: 11.5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.tag-bipolar[data-val="-3"] { background: #fff3bf; border-color: #f0d77a; color: #7a5a00; }
+.tag-bipolar[data-val="-2"] { background: #fff7d6; border-color: #e9d99c; color: #8a6c15; }
+.tag-bipolar[data-val="-1"] { background: #fbf3dc; border-color: #e5d5b0; color: #7b6735; }
+.tag-bipolar[data-val="0"]  { background: var(--surface-solid); color: var(--ink); }
+.tag-bipolar[data-val="1"]  { background: #f4e4d0; border-color: #d9b995; color: #6d401a; }
+.tag-bipolar[data-val="2"]  { background: #ecd0b0; border-color: #c79a6a; color: #5a2f10; }
+.tag-bipolar[data-val="3"]  { background: #d9b38a; border-color: #a97343; color: #3d1c07; }
+
+.tag-bipolar.water-syrup[data-val="-3"] { background: #e3f0f7; border-color: #9ec6dd; color: #17536b; }
+.tag-bipolar.water-syrup[data-val="-2"] { background: #eaf3f8; border-color: #bcd7e5; color: #2a5d72; }
+.tag-bipolar.water-syrup[data-val="-1"] { background: #f0f5f8; border-color: #d0dee6; color: #466575; }
+
+.dial-in-attempt-note {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.dial-in-attempt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.dial-in-attempt-actions .linklike {
+  background: none;
+  border: none;
+  padding: 0 0 1px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-bottom: 1px solid var(--line-strong);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.dial-in-attempt-actions .linklike:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.dial-in-attempt-actions .linklike.strong {
+  color: var(--accent);
+  font-weight: 500;
+  border-color: var(--accent);
+}

@@ -123,7 +123,14 @@ export function render(container, params = {}) {
         <button class="btn ghost" type="button" id="cancel-btn">Cancel</button>
         <div class="spacer"></div>
         ${editing ? '<button class="btn danger small" type="button" id="delete-btn">Delete</button>' : ""}
-        <button class="btn" type="button" id="save-btn">${editing ? "Save changes" : "Save bag"}</button>
+        ${
+          editing
+            ? '<button class="btn" type="button" id="save-btn">Save changes</button>'
+            : `
+              <button class="btn ghost" type="button" id="save-btn">Save — already dialed</button>
+              <button class="btn" type="button" id="save-dial-btn">Save &amp; dial in →</button>
+            `
+        }
       </div>
     </div>
   `;
@@ -152,6 +159,7 @@ function bind(container, state, editing, id) {
     dose: container.querySelector("#f-dose"),
     notes: container.querySelector("#f-notes"),
     save: container.querySelector("#save-btn"),
+    saveDial: container.querySelector("#save-dial-btn"),
     cancel: container.querySelector("#cancel-btn"),
     del: container.querySelector("#delete-btn"),
   };
@@ -179,7 +187,7 @@ function bind(container, state, editing, id) {
     runOcr(resized, state, el);
   });
 
-  el.save.addEventListener("click", () => {
+  const commit = (afterPath) => {
     readFields(el, state);
     if (!state.brand && !state.origin && !state.photo && !state.photoUpload) {
       el.brand.focus();
@@ -187,12 +195,15 @@ function bind(container, state, editing, id) {
     }
     if (editing) {
       updateBag(id, { ...state });
-      navigate(`/bag/${id}`);
+      navigate(afterPath ?? `/bag/${id}`);
     } else {
       const newId = addBag({ ...state });
-      navigate(`/bag/${newId}`);
+      navigate(afterPath ? afterPath.replace(":id", newId) : `/bag/${newId}`);
     }
-  });
+  };
+
+  el.save.addEventListener("click", () => commit());
+  el.saveDial?.addEventListener("click", () => commit(`/bag/:id/dial-in`));
 
   el.cancel.addEventListener("click", () => {
     if (editing) navigate(`/bag/${id}`);
