@@ -172,6 +172,29 @@ body::before {
   color: var(--ink-faint);
 }
 
+.bmc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent) !important;
+}
+
+.bmc-link:hover {
+  color: var(--ink) !important;
+}
+
+.bmc-ico {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  color: var(--accent);
+  transition: transform 0.2s var(--ease);
+}
+
+.bmc-link:hover .bmc-ico {
+  transform: translateY(-1px);
+}
+
 #nav[hidden],
 #equip-strip[hidden],
 #guest-banner[hidden] {
