@@ -11,6 +11,10 @@ const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
 const listeners = new Set();
 
+export function emitSaveError(label) {
+  document.dispatchEvent(new CustomEvent("crema:save-error", { detail: { label } }));
+}
+
 let state = {
   bags: [],
   equipment: { machine: { id: "", custom: "" }, grinder: { id: "", custom: "" } },
@@ -308,6 +312,7 @@ export function removeBag(id) {
       if (error) throw error;
     } catch (err) {
       captureException(err, { where: "removeBag", id });
+      emitSaveError("Couldn't delete bag");
     }
   })();
 }
@@ -342,6 +347,7 @@ export function upsertRating(bagId, drinkType, rating) {
       if (error) throw error;
     } catch (err) {
       captureException(err, { where: "upsertRating", bagId, drinkType });
+      emitSaveError("Couldn't save rating");
     }
   })();
 }
@@ -367,6 +373,7 @@ export function removeRating(bagId, drinkType) {
       if (error) throw error;
     } catch (err) {
       captureException(err, { where: "removeRating", bagId, drinkType });
+      emitSaveError("Couldn't delete rating");
     }
   })();
 }
@@ -406,6 +413,7 @@ export function upsertDialInLog(bagId, log) {
       if (error) throw error;
     } catch (err) {
       captureException(err, { where: "upsertDialInLog", bagId, id });
+      emitSaveError("Couldn't save dial-in attempt");
     }
   })();
 
@@ -429,6 +437,7 @@ export function removeDialInLog(bagId, logId) {
       if (error) throw error;
     } catch (err) {
       captureException(err, { where: "removeDialInLog", bagId, logId });
+      emitSaveError("Couldn't delete dial-in attempt");
     }
   })();
 }
@@ -451,7 +460,7 @@ export function markDialedIn(bagId, recipe) {
     writeGuestData();
     return;
   }
-  persistBag(bag).catch((err) => captureException(err, { where: "markDialedIn", bagId }));
+  persistBag(bag).catch((err) => { captureException(err, { where: "markDialedIn", bagId }); emitSaveError("Couldn't save recipe"); });
 }
 
 export function unmarkDialedIn(bagId) {
@@ -465,7 +474,7 @@ export function unmarkDialedIn(bagId) {
     writeGuestData();
     return;
   }
-  persistBag(bag).catch((err) => captureException(err, { where: "unmarkDialedIn", bagId }));
+  persistBag(bag).catch((err) => { captureException(err, { where: "unmarkDialedIn", bagId }); emitSaveError("Couldn't save recipe"); });
 }
 
 export function setEquipment(patch) {

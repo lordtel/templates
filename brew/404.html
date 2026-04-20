@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Crema</title>
+    <script>
+      // GitHub Pages SPA routing: convert path-based URL → hash URL so the
+      // router handles it instead of GitHub serving a 404.
+      // e.g. crema.live/bag/abc  →  crema.live/#/bag/abc
+      var path = location.pathname.replace(/^\//, "").replace(/\/$/, "");
+      var search = location.search;
+      var dest = location.origin + "/#/" + (path ? path + search : "");
+      location.replace(dest);
+    </script>
+  </head>
+  <body></body>
+</html>
