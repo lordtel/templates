@@ -4,13 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4ede0" />
-    <meta name="description" content="Log coffee bags, rate each brew, and get tuned grind suggestions over time. Syncs across your devices." />
+    <meta name="description" content="Crema is an espresso journal and coffee-logging app. Track every coffee bag, rate espresso, cortado, iced latte, and cappuccino, log your dial-in (dose, yield, time, grind, taste), and get tuned grind suggestions over time. Free, ad-free, works offline." />
+    <meta name="keywords" content="espresso journal, coffee journal, coffee logging app, espresso tracker, coffee bag tracker, espresso dial-in, coffee tasting notes, coffee diary, barista log" />
+    <meta name="author" content="Nour" />
+    <meta name="application-name" content="Crema" />
     <link rel="canonical" href="https://crema.live/" />
+    <link rel="alternate" type="text/html" href="https://crema.live/docs/press-kit/" title="Crema — Press kit" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Crema" />
     <meta property="og:title" content="Crema — Your espresso, dialed in." />
-    <meta property="og:description" content="Log bags, rate each brew, and tune your recipe. A quiet espresso journal that remembers what works." />
+    <meta property="og:description" content="An espresso journal that remembers what works. Log coffee bags, rate each brew, track dial-in settings, and tune your recipe over time." />
     <meta property="og:url" content="https://crema.live/" />
     <meta property="og:image" content="https://crema.live/og-image.png" />
     <meta property="og:image:width" content="1200" />
@@ -20,7 +24,7 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Crema — Your espresso, dialed in." />
-    <meta name="twitter:description" content="Log bags, rate each brew, and tune your recipe. A quiet espresso journal that remembers what works." />
+    <meta name="twitter:description" content="An espresso journal that remembers what works. Log coffee bags, rate each brew, track dial-in settings." />
     <meta name="twitter:image" content="https://crema.live/og-image.png" />
     <meta name="twitter:image:alt" content="Crema — your espresso, dialed in." />
 
@@ -31,7 +35,53 @@
     <meta name="apple-mobile-web-app-title" content="Crema" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <title>Crema — Your espresso journal</title>
+    <title>Crema — Espresso journal & coffee-logging app</title>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Crema",
+      "alternateName": "Crema Espresso Journal",
+      "url": "https://crema.live/",
+      "description": "An espresso journal and coffee-logging app. Track every coffee bag, rate espresso, cortado, iced latte, and cappuccino, log your dial-in, and get tuned grind suggestions over time.",
+      "applicationCategory": "LifestyleApplication",
+      "applicationSubCategory": "Food & Drink",
+      "operatingSystem": "Web, iOS, Android",
+      "browserRequirements": "Requires a modern browser with JavaScript enabled.",
+      "softwareVersion": "1.0",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Photo + OCR auto-fills brand, origin, roast, weight",
+        "Four rating slots per bag — espresso, cortado, iced latte, cappuccino",
+        "Dial-in companion: dose, yield, time, grind, taste, texture",
+        "Grind suggestions tuned to your past ratings",
+        "Analytics: totals, averages, top picks, by-drink breakdown",
+        "Offline-capable progressive web app",
+        "End-to-end private — your own Supabase row, photo bucket"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Nour",
+        "email": "nour@crema.live"
+      },
+      "creator": {
+        "@type": "Person",
+        "name": "Nour"
+      },
+      "image": "https://crema.live/og-image.png",
+      "screenshot": "https://crema.live/og-image.png",
+      "sameAs": [
+        "https://www.producthunt.com/products/crema-3"
+      ]
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -59,13 +109,29 @@
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-name">Crema</span>
       </a>
+      <h1 class="sr-only">Crema — the espresso journal that remembers what works</h1>
     </header>
 
     <div id="guest-banner" class="guest-banner" role="status" hidden></div>
 
     <div id="equip-strip" class="equip-strip" aria-label="Equipment"></div>
 
-    <main id="view" class="view" aria-live="polite"></main>
+    <main id="view" class="view" aria-live="polite">
+      <noscript>
+        <section style="max-width: 640px; margin: 40px auto; padding: 0 24px;">
+          <h2>An espresso journal for the coffee-obsessed.</h2>
+          <p>Crema is a lightweight web app for logging coffee bags, rating each brew, and dialing in your espresso over time. Snap a photo of the bag and OCR fills in brand, origin, roast, and weight. Rate every drink — espresso, cortado, iced latte, cappuccino — and Crema suggests a grind setting based on what's worked for you before.</p>
+          <p><strong>What you get:</strong></p>
+          <ul>
+            <li>One page per coffee bag with four rating slots</li>
+            <li>Per-bag dial-in companion: dose, yield, shot time, grind, taste, texture</li>
+            <li>Analytics: totals, averages, top picks, cost per shot</li>
+            <li>Works offline as a Progressive Web App on iPhone and Android</li>
+          </ul>
+          <p>Crema needs JavaScript. <a href="/docs/press-kit/">See the press kit for screenshots</a> or visit this page in a modern browser.</p>
+        </section>
+      </noscript>
+    </main>
 
     <footer id="app-footer" class="app-footer">
       <div class="footer-links">
