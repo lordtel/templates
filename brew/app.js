@@ -254,6 +254,14 @@ function escapeHtml(s) {
 
 onAuthChange((session) => boot(session));
 
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch((err) => {
+      captureException(err, { where: "sw.register" });
+    });
+  });
+}
+
 document.addEventListener("crema:save-error", (e) => {
   const msg = e.detail?.label ?? "Couldn't save — check your connection.";
   const existing = document.getElementById("crema-toast");
