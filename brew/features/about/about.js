@@ -98,6 +98,12 @@ export function render(container) {
         <p>Crema is a one-person side project — feedback is the difference between a feature landing next week and never. Tell me what broke, what felt off, or what you wish was here.</p>
         <a class="btn small" href="mailto:nour@crema.live?subject=Crema%20feedback" rel="noopener">Email Nour</a>
       </section>
+
+      <p class="about-ph">
+        <a href="https://www.producthunt.com/products/crema-3?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-crema-3" target="_blank" rel="noopener noreferrer" aria-label="Crema on Product Hunt">
+          <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1128894&theme=dark&t=1776785283385" alt="Crema — Your espresso, dialed in. | Product Hunt" width="180" height="39" loading="lazy" />
+        </a>
+      </p>
     </div>
   `;
 
