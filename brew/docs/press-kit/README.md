@@ -20,36 +20,56 @@ press-kit/
 │   ├── instagram-square.svg    1080×1080
 │   └── instagram-story.svg     1080×1920
 └── screenshots/
-    ├── 01-home.svg         device-framed shelf view
-    ├── 02-bag-detail.svg   one bag, four drinks
-    ├── 03-dial-in.svg      dial-in companion
-    ├── 04-analytics.svg    your coffee year (journal)
-    └── 05-ocr.svg          snap → auto-fill
+    ├── _frame.css             iPhone chrome shared by all HTML screenshots
+    ├── 01-home.html           device-framed shelf view
+    ├── 02-bag-detail.html     one bag, four drinks
+    ├── 03-dial-in.html        dial-in companion
+    ├── 04-analytics.html      your coffee year (journal)
+    ├── 05-ocr.html            snap → auto-fill
+    ├── 01-home.svg            older SVG mockups (kept as fallback)
+    ├── 02-bag-detail.svg
+    ├── 03-dial-in.svg
+    ├── 04-analytics.svg
+    └── 05-ocr.svg
 ```
 
 Also at the site root: `og-image.svg` / `og-image.png` (1200×630 social card).
 
-## Converting SVG → PNG
+## Screenshots
 
-For anywhere that requires PNG (Twitter profile images, app stores, print):
+The `.html` files render each screen using the **real app's CSS** (`app.css`
++ the relevant `features/*/*.css`) wrapped in an iPhone-style chrome — so
+what you see is pixel-identical to the running app, not an approximation.
+Each file is a 1080 × 1920 poster: tagline at top, phone mockup in the
+middle, `crema.live` URL at bottom. Drop the PNG into a social post as-is.
 
-**Browser (easiest):**
-1. Open the SVG in Chrome/Safari.
-2. Zoom to 100%, take a screenshot — or right-click → "Save Image As" with the browser's PNG export (varies).
+**Browser:** open the file in Chrome at 100 % zoom and take a full-page
+screenshot (DevTools → Cmd-Shift-P → "Capture full size screenshot").
 
-**Headless (exact sizes):**
+**Headless (exact 1080 × 1920 PNG):**
+```bash
+# via Playwright (recommended — handles web fonts reliably)
+npx playwright screenshot --viewport-size=1080,1920 --wait-for-timeout=800 \
+  screenshots/01-home.html 01-home.png
+
+# via Chrome
+google-chrome --headless --hide-scrollbars --window-size=1080,1920 \
+  --screenshot=$(pwd)/01-home.png \
+  file://$(pwd)/screenshots/01-home.html
+```
+
+The older static `.svg` files remain in the folder as a fallback.
+
+## Converting SVG → PNG (logos, social cards)
+
+For the logo / social SVGs that still need a PNG:
+
 ```bash
 # via Playwright
 npx playwright screenshot --viewport-size=1080,1080 \
   social/instagram-square.svg instagram-square.png
 
-# via Chrome
-google-chrome --headless --screenshot --window-size=1080,1080 \
-  social/instagram-square.svg
-```
-
-**Inkscape / rsvg:**
-```bash
+# via rsvg / Inkscape
 rsvg-convert -w 1080 -h 1080 social/instagram-square.svg > instagram-square.png
 inkscape social/instagram-square.svg --export-type=png --export-width=1080
 ```
