@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="25%" cy="20%" r="95%">
+      <stop offset="0%" stop-color="#faf2e4"/>
+      <stop offset="100%" stop-color="#e5d8bf"/>
+    </radialGradient>
+    <radialGradient id="bean" cx="30%" cy="28%" r="80%">
+      <stop offset="0%" stop-color="#b98555"/>
+      <stop offset="60%" stop-color="#7a3e1d"/>
+      <stop offset="100%" stop-color="#3e1e0b"/>
+    </radialGradient>
+    <radialGradient id="crema" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#f0d48a" stop-opacity="0.45"/>
+      <stop offset="80%" stop-color="#c69652" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircle">
+      <rect x="0" y="0" width="512" height="512" rx="112" ry="112"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#squircle)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <g transform="translate(256 256)">
+      <ellipse cx="0" cy="180" rx="170" ry="12" fill="#2b1b12" opacity="0.08"/>
+      <circle r="160" fill="url(#bean)"/>
+      <ellipse cx="0" cy="-12" rx="140" ry="128" fill="url(#crema)"/>
+      <path d="M -38 -128 C -100 -72 -100 72 -38 128"
+            fill="none" stroke="#2b1b12" stroke-opacity="0.48"
+            stroke-width="11" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

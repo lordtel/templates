@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0e6d2"/>
+      <stop offset="1" stop-color="#d8c8a8"/>
+    </linearGradient>
+    <linearGradient id="screenBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#faf2e4"/>
+      <stop offset="1" stop-color="#f2e6cf"/>
+    </linearGradient>
+    <linearGradient id="dialTrack" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#e5d8bf"/>
+      <stop offset="0.58" stop-color="#7a3e1d"/>
+      <stop offset="0.58" stop-color="#e5d8bf"/>
+      <stop offset="1" stop-color="#e5d8bf"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#pageBg)"/>
+
+  <text x="540" y="110" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="26" font-weight="600"
+        letter-spacing="4" fill="#7a3e1d">DIAL-IN</text>
+  <text x="540" y="180" text-anchor="middle"
+        font-family="Fraunces 144pt, Fraunces, Georgia, serif"
+        font-size="60" font-weight="500" fill="#2b1b12"
+        letter-spacing="-1.2">Every attempt, logged</text>
+
+  <rect x="220" y="290" width="640" height="1380" rx="130" fill="#2b1b12" opacity="0.14"/>
+  <rect x="230" y="280" width="620" height="1380" rx="124" fill="#1a0f09"/>
+  <rect x="240" y="290" width="600" height="1360" rx="114" fill="#0a0604"/>
+
+  <clipPath id="screen3">
+    <rect x="252" y="302" width="576" height="1336" rx="102" ry="102"/>
+  </clipPath>
+  <g clip-path="url(#screen3)">
+    <rect x="252" y="302" width="576" height="1336" fill="url(#screenBg)"/>
+
+    <text x="304" y="370" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#2b1b12">9:41</text>
+    <rect x="450" y="330" width="180" height="44" rx="22" fill="#0a0604"/>
+
+    <text x="276" y="440" font-family="Inter, sans-serif" font-size="20" font-weight="500" fill="#7a3e1d">‹ La Cabra</text>
+
+    <text x="300" y="510" font-family="Inter, sans-serif" font-size="15" font-weight="600" letter-spacing="2.5" fill="#7a3e1d">DIAL-IN COMPANION</text>
+    <text x="300" y="570" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="44" font-weight="500" fill="#2b1b12" letter-spacing="-0.8">New attempt</text>
+
+    <!-- dose / yield row -->
+    <g transform="translate(300 620)">
+      <rect x="0" y="0" width="230" height="120" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="20" y="38" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="2" fill="#8a6a45">DOSE</text>
+      <text x="20" y="92" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="48" font-weight="500" fill="#2b1b12">18<tspan font-size="22" fill="#6b5443">g</tspan></text>
+
+      <rect x="250" y="0" width="230" height="120" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="270" y="38" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="2" fill="#8a6a45">YIELD</text>
+      <text x="270" y="92" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="48" font-weight="500" fill="#2b1b12">38<tspan font-size="22" fill="#6b5443">g</tspan></text>
+    </g>
+
+    <!-- ratio chip -->
+    <g transform="translate(530 622)">
+      <rect x="-44" y="46" width="88" height="28" rx="14" fill="#fff8e7" stroke="#d9b580"/>
+      <text x="0" y="65" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#7a3e1d">1:2.1</text>
+    </g>
+
+    <!-- time / grind row -->
+    <g transform="translate(300 760)">
+      <rect x="0" y="0" width="230" height="120" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="20" y="38" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="2" fill="#8a6a45">TIME</text>
+      <text x="20" y="92" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="48" font-weight="500" fill="#2b1b12">28<tspan font-size="22" fill="#6b5443">s</tspan></text>
+
+      <rect x="250" y="0" width="230" height="120" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="270" y="38" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="2" fill="#8a6a45">GRIND</text>
+      <text x="270" y="92" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="48" font-weight="500" fill="#2b1b12">3.5</text>
+    </g>
+
+    <!-- taste slider -->
+    <g transform="translate(300 920)">
+      <text x="0" y="0" font-family="Inter, sans-serif" font-size="15" font-weight="600" letter-spacing="2" fill="#7a3e1d">TASTE</text>
+      <text x="478" y="0" text-anchor="end" font-family="Inter, sans-serif" font-size="15" fill="#2b1b12" font-weight="500">Balanced</text>
+      <rect x="0" y="22" width="480" height="10" rx="5" fill="#e5d8bf"/>
+      <rect x="0" y="22" width="240" height="10" rx="5" fill="#7a3e1d"/>
+      <circle cx="240" cy="27" r="14" fill="#2b1b12"/>
+      <g transform="translate(0 54)" font-family="Inter, sans-serif" font-size="12" fill="#8a6a45">
+        <text x="0">Sour</text>
+        <text x="480" text-anchor="end">Bitter</text>
+      </g>
+    </g>
+
+    <!-- texture slider -->
+    <g transform="translate(300 1020)">
+      <text x="0" y="0" font-family="Inter, sans-serif" font-size="15" font-weight="600" letter-spacing="2" fill="#7a3e1d">TEXTURE</text>
+      <text x="478" y="0" text-anchor="end" font-family="Inter, sans-serif" font-size="15" fill="#2b1b12" font-weight="500">Rich</text>
+      <rect x="0" y="22" width="480" height="10" rx="5" fill="#e5d8bf"/>
+      <rect x="240" y="22" width="80" height="10" rx="5" fill="#7a3e1d"/>
+      <circle cx="320" cy="27" r="14" fill="#2b1b12"/>
+      <g transform="translate(0 54)" font-family="Inter, sans-serif" font-size="12" fill="#8a6a45">
+        <text x="0">Watery</text>
+        <text x="480" text-anchor="end">Syrupy</text>
+      </g>
+    </g>
+
+    <!-- note -->
+    <g transform="translate(300 1130)">
+      <rect x="0" y="0" width="480" height="130" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="20" y="34" font-family="Inter, sans-serif" font-size="13" font-weight="600" letter-spacing="2" fill="#8a6a45">NOTE</text>
+      <text x="20" y="68" font-family="Inter, sans-serif" font-size="18" fill="#2b1b12">Bright, jammy berry. Go two</text>
+      <text x="20" y="94" font-family="Inter, sans-serif" font-size="18" fill="#2b1b12">clicks finer next time.</text>
+    </g>
+
+    <!-- actions -->
+    <g transform="translate(300 1300)">
+      <rect x="0" y="0" width="480" height="64" rx="32" fill="#2b1b12"/>
+      <text x="240" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#faf2e4">Save attempt</text>
+    </g>
+    <g transform="translate(300 1378)">
+      <rect x="0" y="0" width="480" height="56" rx="28" fill="none" stroke="#7a3e1d" stroke-width="1.5"/>
+      <text x="240" y="36" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#7a3e1d">Mark as dialed in</text>
+    </g>
+
+    <!-- bottom nav -->
+    <g transform="translate(252 1540)">
+      <rect x="0" y="0" width="576" height="98" fill="#ffffff"/>
+      <line x1="0" y1="0" x2="576" y2="0" stroke="#e5d8bf" stroke-width="1"/>
+    </g>
+  </g>
+
+  <text x="540" y="1800" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="22" font-weight="500" letter-spacing="3" fill="#7a3e1d">
+    CREMA.LIVE
+  </text>
+</svg>
