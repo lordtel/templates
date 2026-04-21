@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>Crema — Snap auto-fill · screenshot 05</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../../../app.css" />
+  <link rel="stylesheet" href="../../../features/bag-form/bag-form.css" />
+  <link rel="stylesheet" href="../../../features/nav/nav.css" />
+  <link rel="stylesheet" href="_frame.css" />
+  <style>
+    /* Only used for the photo preview in this static mock — the real app
+       uses an <img> with the user's uploaded photo. We render a matching
+       bag image via CSS so the OCR stage visuals are believable. */
+    .mock-photo {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #3a1e0e, #7a3e1d 55%, #b98555);
+      display: grid;
+      place-items: center;
+    }
+    .mock-photo-inner {
+      text-align: center;
+      color: #f0d48a;
+      padding: 0 12px;
+    }
+    .mock-photo-brand {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 22px;
+      letter-spacing: 0.18em;
+      font-weight: 500;
+    }
+    .mock-photo-sub {
+      margin-top: 8px;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      opacity: 0.85;
+    }
+    .mock-photo-meta {
+      margin-top: 14px;
+      font-size: 8px;
+      letter-spacing: 0.28em;
+      opacity: 0.65;
+    }
+    .mock-photo-frame::before,
+    .mock-photo-frame::after,
+    .mock-photo-frame > i::before,
+    .mock-photo-frame > i::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-color: #f0d48a;
+      border-style: solid;
+      border-width: 0;
+      opacity: 0.9;
+    }
+    .mock-photo-frame::before { top: 10px; left: 10px; border-top-width: 2.5px; border-left-width: 2.5px; }
+    .mock-photo-frame::after  { top: 10px; right: 10px; border-top-width: 2.5px; border-right-width: 2.5px; }
+    .mock-photo-frame > i::before { bottom: 10px; left: 10px; border-bottom-width: 2.5px; border-left-width: 2.5px; }
+    .mock-photo-frame > i::after  { bottom: 10px; right: 10px; border-bottom-width: 2.5px; border-right-width: 2.5px; }
+  </style>
+</head>
+<body class="poster">
+  <p class="poster-eyebrow">Snap → auto-fill</p>
+  <h1 class="poster-title">OCR reads the label for you.</h1>
+
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <span class="s-icons">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 18h3v-3H2v3zm5 0h3v-6H7v6zm5 0h3V9h-3v9zm5 0h3V4h-3v14z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12a11 11 0 0 1 14 0"/><path d="M8.5 15a7 7 0 0 1 7 0"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg>
+          <svg viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="13" rx="3"/><rect x="2" y="2" width="17" height="10" rx="2" fill="currentColor"/><rect x="22.5" y="4.5" width="2" height="5" rx="1" fill="currentColor"/></svg>
+        </span>
+      </div>
+
+      <div class="stage">
+        <div class="stage-inner">
+          <header class="masthead">
+            <a href="#" class="brand" aria-label="Crema home">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <span class="brand-name">Crema</span>
+            </a>
+          </header>
+
+          <main class="view" aria-live="polite">
+            <div class="page-head">
+              <div>
+                <p class="eyebrow">New bag</p>
+                <h1>Log a bag</h1>
+              </div>
+            </div>
+
+            <div class="card bag-form">
+              <div class="photo-slot mock-photo-frame" style="border-style: solid; border-color: rgba(43, 27, 18, 0.18);">
+                <i></i>
+                <div class="mock-photo">
+                  <div class="mock-photo-inner">
+                    <div class="mock-photo-brand">LA&nbsp;CABRA</div>
+                    <div class="mock-photo-sub">ETHIOPIA · WASHED</div>
+                    <div class="mock-photo-sub" style="margin-top: 4px; opacity: 0.7;">HAMBELA</div>
+                    <div class="mock-photo-meta">BLUEBERRY · JASMINE</div>
+                    <div class="mock-photo-meta" style="margin-top: 2px;">MILK CHOCOLATE</div>
+                    <div class="mock-photo-meta" style="margin-top: 10px; opacity: 0.5;">250g · 1800 MASL</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ocr-status">
+                <div class="ocr-bar"><span style="width: 69%"></span></div>
+                <p>Reading label… 69%</p>
+              </div>
+
+              <div class="field">
+                <label for="f-brand">Brand / Roaster</label>
+                <input type="text" id="f-brand" value="La Cabra" />
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="f-origin">Origin</label>
+                  <input type="text" id="f-origin" value="Ethiopia" />
+                </div>
+                <div class="field">
+                  <label for="f-variety">Variety</label>
+                  <input type="text" id="f-variety" value="Heirloom" />
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="f-process">Process</label>
+                  <input type="text" id="f-process" value="Washed" />
+                </div>
+                <div class="field">
+                  <label for="f-roast">Roast</label>
+                  <select id="f-roast"><option>light</option></select>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="f-weight">Weight (g)</label>
+                  <input type="number" id="f-weight" value="250" />
+                </div>
+                <div class="field">
+                  <label for="f-altitude">Altitude</label>
+                  <input type="text" id="f-altitude" value="1800 masl" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn ghost" type="button">Cancel</button>
+                <div class="spacer"></div>
+                <button class="btn" type="button">Save &amp; dial in →</button>
+              </div>
+            </div>
+          </main>
+
+          <nav class="nav" aria-label="Primary" style="position: absolute;">
+            <button type="button" class="nav-item">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span>
+              <span class="nav-label">Bags</span>
+            </button>
+            <button type="button" class="nav-item primary is-active">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+              <span class="nav-label">Add</span>
+            </button>
+            <button type="button" class="nav-item">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
+              <span class="nav-label">Stats</span>
+            </button>
+            <button type="button" class="nav-item">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
+              <span class="nav-label">Gear</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="poster-url">crema.live</p>
+</body>
+</html>
