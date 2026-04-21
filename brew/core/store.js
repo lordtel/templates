@@ -6,6 +6,7 @@ const LEGACY_BAGS_KEY = "brew.bags.v1";
 const LEGACY_EQUIPMENT_KEY = "brew.equipment.v1";
 const GUEST_FLAG_KEY = "crema.guest.v1";
 const GUEST_DATA_KEY = "crema.guest-data.v1";
+const GUEST_MERGE_PENDING_KEY = "crema.guest-merge-pending.v1";
 
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
@@ -39,6 +40,18 @@ export function exitGuestMode() {
   try {
     localStorage.removeItem(GUEST_FLAG_KEY);
     localStorage.removeItem(GUEST_DATA_KEY);
+    localStorage.removeItem(GUEST_MERGE_PENDING_KEY);
+  } catch {}
+}
+
+// Drop guest flag but keep the guest data blob so we can merge it into the
+// account on the next successful sign-in.
+export function prepareGuestMerge() {
+  try {
+    localStorage.removeItem(GUEST_FLAG_KEY);
+    if (localStorage.getItem(GUEST_DATA_KEY)) {
+      localStorage.setItem(GUEST_MERGE_PENDING_KEY, "1");
+    }
   } catch {}
 }
 
@@ -787,6 +800,117 @@ export async function migrateLegacyLocalStorage() {
     }
   } catch (err) {
     captureException(err, { where: "migrateLegacyLocalStorage" });
+    throw err;
+  }
+
+  return { migrated };
+}
+
+export async function migrateGuestData() {
+  let pending = false;
+  try { pending = localStorage.getItem(GUEST_MERGE_PENDING_KEY) === "1"; } catch {}
+  if (!pending) return { migrated: 0 };
+
+  const data = readGuestData();
+  if (!data.bags.length && !data.equipment) {
+    try {
+      localStorage.removeItem(GUEST_MERGE_PENDING_KEY);
+      localStorage.removeItem(GUEST_DATA_KEY);
+    } catch {}
+    return { migrated: 0 };
+  }
+
+  let migrated = 0;
+  try {
+    for (const bag of data.bags) {
+      const id = bag.id ?? uid();
+      const row = bagStateToRow(
+        {
+          id,
+          brand: bag.brand ?? "",
+          origin: bag.origin ?? "",
+          process: bag.process ?? "",
+          variety: bag.variety ?? "",
+          roast: bag.roast ?? "",
+          notes: bag.notes ?? "",
+          weight: bag.weight ?? "",
+          price: bag.price ?? "",
+          dose: bag.dose ?? "",
+          currency: bag.currency ?? "€",
+          altitude: bag.altitude ?? "",
+          ocrText: bag.ocrText ?? "",
+          photoPath: "",
+          dialedInAt: bag.dialedInAt ?? null,
+          dialedInRecipe: bag.dialedInRecipe ?? null,
+          finishedAt: bag.finishedAt ?? null,
+        },
+        state.userId
+      );
+
+      if (typeof bag.photo === "string" && bag.photo.startsWith("data:")) {
+        const path = `${state.userId}/${id}.jpg`;
+        try {
+          const blob = dataUrlToBlob(bag.photo);
+          const { error } = await sb.storage
+            .from("bag-photos")
+            .upload(path, blob, { upsert: true, contentType: "image/jpeg" });
+          if (!error) row.photo_path = path;
+        } catch (err) {
+          captureException(err, { where: "migrateGuest photo", id });
+        }
+      }
+
+      const { error } = await sb.from("bags").upsert(row, { onConflict: "id" });
+      if (error) throw error;
+
+      const ratings = Array.isArray(bag.ratings) ? bag.ratings : [];
+      if (ratings.length) {
+        const rRows = ratings.map((r) => ({
+          bag_id: id,
+          drink_type: r.drinkType,
+          user_id: state.userId,
+          rating: Number(r.rating) || 0,
+          grind_size: r.grindSize ?? null,
+          notes: r.notes ?? "",
+          date: r.date || null,
+        }));
+        const { error: rErr } = await sb.from("ratings").upsert(rRows, {
+          onConflict: "bag_id,drink_type",
+        });
+        if (rErr) throw rErr;
+      }
+
+      const dialIns = Array.isArray(bag.dialIns) ? bag.dialIns : [];
+      if (dialIns.length) {
+        const dRows = dialIns.map((log) =>
+          dialInStateToRow({ ...log, bagId: id }, state.userId)
+        );
+        const { error: dErr } = await sb.from("dial_in_logs").upsert(dRows, { onConflict: "id" });
+        if (dErr) throw dErr;
+      }
+
+      migrated++;
+    }
+
+    if (data.equipment) {
+      const eq = data.equipment;
+      const row = {
+        user_id: state.userId,
+        machine_id: eq.machine?.id ?? "",
+        machine_custom: eq.machine?.custom ?? "",
+        grinder_id: eq.grinder?.id ?? "",
+        grinder_custom: eq.grinder?.custom ?? "",
+      };
+      const { error } = await sb.from("equipment").upsert(row, { onConflict: "user_id" });
+      if (error) throw error;
+    }
+
+    try {
+      localStorage.removeItem(GUEST_DATA_KEY);
+      localStorage.removeItem(GUEST_MERGE_PENDING_KEY);
+    } catch {}
+  } catch (err) {
+    captureException(err, { where: "migrateGuestData" });
     throw err;
   }
 

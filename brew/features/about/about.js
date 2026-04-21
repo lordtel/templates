@@ -92,6 +92,12 @@ export function render(container) {
         <p>Want to show someone the pitch, or miss the jokes?</p>
         <button class="btn ghost small" type="button" id="replay-btn">Replay intro</button>
       </section>
+
+      <section class="card about-card">
+        <h2>Found a bug? Got an idea?</h2>
+        <p>Crema is a one-person side project — feedback is the difference between a feature landing next week and never. Tell me what broke, what felt off, or what you wish was here.</p>
+        <a class="btn small" href="mailto:nour@crema.live?subject=Crema%20feedback" rel="noopener">Email Nour</a>
+      </section>
     </div>
   `;
 

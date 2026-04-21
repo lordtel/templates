@@ -258,6 +258,14 @@ async function runOcr(dataUrl, state, el) {
   el.ocrStatus.hidden = false;
   el.ocrMessage.textContent = "Loading OCR engine…";
   el.ocrFill.style.width = "0%";
+  setSaveBusy(el, true, "Scanning…");
+
+  // If OCR hasn't progressed after a beat, nudge the copy.
+  const slowTimer = setTimeout(() => {
+    if (!el.ocrStatus.hidden) {
+      el.ocrMessage.textContent = "Scanning label (this can take a moment on first run)…";
+    }
+  }, 4000);
 
   try {
     const text = await ocrImage(dataUrl, ({ stage, progress }) => {
@@ -289,7 +297,29 @@ async function runOcr(dataUrl, state, el) {
     el.ocrMessage.textContent = "OCR failed — you can still fill in manually.";
     console.error(err);
     setTimeout(() => (el.ocrStatus.hidden = true), 2400);
+  } finally {
+    clearTimeout(slowTimer);
+    setSaveBusy(el, false);
   }
+}
+
+function setSaveBusy(el, busy, label) {
+  const btns = [el.save, el.saveDial].filter(Boolean);
+  btns.forEach((btn) => {
+    if (busy) {
+      if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent;
+      btn.disabled = true;
+      btn.setAttribute("aria-busy", "true");
+      if (label) btn.textContent = label;
+    } else {
+      btn.disabled = false;
+      btn.removeAttribute("aria-busy");
+      if (btn.dataset.origLabel) {
+        btn.textContent = btn.dataset.origLabel;
+        delete btn.dataset.origLabel;
+      }
+    }
+  });
 }
 
 function readAsDataUrl(file) {

@@ -4,9 +4,10 @@ import {
   loadInitialData,
   resetStore,
   migrateLegacyLocalStorage,
+  migrateGuestData,
   isGuest,
   enterGuestMode,
-  exitGuestMode,
+  prepareGuestMerge,
   loadGuestData,
 } from "./core/store.js";
 import { initRouter } from "./core/router.js";
@@ -115,10 +116,36 @@ async function boot(session) {
   }
 
   try {
-    await loadInitialData(session.user.id);
+    await migrateGuestData();
   } catch (err) {
-    captureException(err, { where: "boot.loadInitialData" });
-    viewEl.innerHTML = `<div class="empty-state"><h2>Couldn't load your data</h2><p>Check your connection and refresh. If it keeps failing, sign out and back in.</p></div>`;
+    captureException(err, { where: "boot.migrateGuest" });
+  }
+
+  let loaded = false;
+  for (let attempt = 1; attempt <= 3 && !loaded; attempt++) {
+    try {
+      await loadInitialData(session.user.id);
+      loaded = true;
+    } catch (err) {
+      captureException(err, { where: "boot.loadInitialData", attempt });
+      if (attempt < 3) {
+        await new Promise((r) => setTimeout(r, 400 * attempt));
+      }
+    }
+  }
+  if (!loaded) {
+    viewEl.innerHTML = `
+      <div class="empty-state">
+        <h2>Couldn't load your data</h2>
+        <p>Your connection dropped. Try again — your data is safe on the server.</p>
+        <div class="empty-cta"><button type="button" class="btn" id="boot-retry-btn">Retry</button></div>
+      </div>
+    `;
+    viewEl.querySelector("#boot-retry-btn")?.addEventListener("click", () => {
+      bootedOnce = false;
+      currentUserId = null;
+      boot(session);
+    });
     return;
   }
 
@@ -177,7 +204,7 @@ function renderFooter(user) {
       </div>
     `;
     footerEl.querySelector("#exit-guest-btn")?.addEventListener("click", () => {
-      exitGuestMode();
+      prepareGuestMerge();
       location.reload();
     });
     return;
@@ -214,7 +241,7 @@ function renderGuestBanner(show) {
     <button type="button" class="linklike" id="banner-signin">Sign in to sync</button>
   `;
   bannerEl.querySelector("#banner-signin")?.addEventListener("click", () => {
-    exitGuestMode();
+    prepareGuestMerge();
     location.reload();
   });
 }
