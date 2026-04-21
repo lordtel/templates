@@ -268,6 +268,8 @@ function bind(container, card, bagId, state, editingLog, scale) {
   }
 
   el.save.addEventListener("click", () => {
+    if (el.save.disabled) return;
+    el.save.disabled = true;
     const payload = {
       id: editingLog?.id,
       dose: el.dose.value,
@@ -336,7 +338,9 @@ function formatRecipe(r) {
   const bits = [];
   if (r.dose) bits.push(`${r.dose}g`);
   if (r.yield) bits.push(`→ ${r.yield}g`);
-  if (r.dose && r.yield) bits.push(`(1:${(Number(r.yield) / Number(r.dose)).toFixed(2)})`);
+  if (Number(r.dose) > 0 && Number(r.yield) > 0) {
+    bits.push(`(1:${(Number(r.yield) / Number(r.dose)).toFixed(2)})`);
+  }
   if (r.time) bits.push(`${r.time}s`);
   if (r.grind != null) bits.push(`grind ${r.grind}`);
   return bits.join(" · ");

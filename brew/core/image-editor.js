@@ -60,7 +60,21 @@ export function openImageEditor(sourceDataUrl) {
 
     const cleanup = () => {
       document.body.classList.remove("no-scroll");
+      window.removeEventListener("resize", refresh);
+      document.removeEventListener("keydown", onKeydown);
       modal.remove();
+    };
+
+    const cancel = () => {
+      cleanup();
+      resolve(null);
+    };
+
+    const onKeydown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        cancel();
+      }
     };
 
     const sizeCanvas = () => {
@@ -192,13 +206,13 @@ export function openImageEditor(sourceDataUrl) {
       refresh();
     });
 
-    cancelBtn.addEventListener("click", () => {
-      cleanup();
-      resolve(null);
+    cancelBtn.addEventListener("click", cancel);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) cancel();
     });
 
     applyBtn.addEventListener("click", () => {
-      const out = exportImage(state);
+      const out = exportImage(state, canvas);
       cleanup();
       resolve(out);
     });
@@ -218,17 +232,17 @@ export function openImageEditor(sourceDataUrl) {
 
     // Rerender on resize (rotation, viewport change)
     window.addEventListener("resize", refresh);
+    document.addEventListener("keydown", onKeydown);
   });
 }
 
-function exportImage(state) {
+function exportImage(state, previewCanvas) {
   const out = document.createElement("canvas");
   out.width = OUTPUT_WIDTH;
   out.height = OUTPUT_HEIGHT;
   const octx = out.getContext("2d");
 
   // Scale the preview math to the output dimensions
-  const previewCanvas = document.querySelector("#ie-canvas");
   const ratio = out.width / previewCanvas.width;
 
   octx.fillStyle = "#000";

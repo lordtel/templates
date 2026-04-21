@@ -133,10 +133,11 @@ function buildSlot(bagId, drink, rating, hint) {
   slot.addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
 
   if (!rating) {
-    const hintText = hint
+    const grindStr = formatHintGrind(hint);
+    const hintText = hint && grindStr
       ? (hint.hasData
-          ? `Try ${formatHintGrind(hint)} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}`
-          : `Try ${formatHintGrind(hint)} to start`)
+          ? `Try ${grindStr} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}`
+          : `Try ${grindStr} to start`)
       : "Not rated yet";
     slot.innerHTML = `
       <div class="slot-head">
@@ -162,6 +163,7 @@ function buildSlot(bagId, drink, rating, hint) {
 }
 
 function formatHintGrind(hint) {
+  if (hint?.grind == null || Number.isNaN(Number(hint.grind))) return "";
   const scale = hint?.grinder?.scale;
   const decimals = scale?.step && scale.step < 1
     ? Math.max(0, -Math.floor(Math.log10(scale.step)))
@@ -239,7 +241,9 @@ function buildDialInStats(r) {
   const stats = [];
   if (r.dose != null) stats.push({ label: "Dose", value: `${r.dose}g` });
   if (r.yield != null) stats.push({ label: "Yield", value: `${r.yield}g` });
-  if (r.dose && r.yield) stats.push({ label: "Ratio", value: `1:${(Number(r.yield) / Number(r.dose)).toFixed(2)}` });
+  if (Number(r.dose) > 0 && Number(r.yield) > 0) {
+    stats.push({ label: "Ratio", value: `1:${(Number(r.yield) / Number(r.dose)).toFixed(2)}` });
+  }
   if (r.time != null) stats.push({ label: "Time", value: `${r.time}s` });
   if (r.grind != null) stats.push({ label: "Grind", value: String(r.grind) });
   if (!stats.length) return `<p class="dial-in-section-sub">Recipe saved.</p>`;

@@ -2,6 +2,24 @@ import { navigate } from "../../core/router.js";
 
 const ENTRIES = [
   {
+    date: "2026-04-21",
+    title: "Launch polish",
+    tag: "polish",
+    items: [
+      "Guest data now merges into your account when you sign in — no more lost bags the moment you switch from guest mode.",
+      "Export everything as JSON from the Privacy page (works in guest mode too).",
+      "Retry button if Supabase hiccups on boot, with three silent retries before it shows up.",
+      "OCR: save buttons disable while the label is being scanned, and a 'this can take a moment' nudge shows up if the engine is warming up cold.",
+      "Photo editor: Escape key cancels, backdrop tap cancels, and the resize listener is torn down with the modal instead of leaking.",
+      "Fixed a divide-by-zero in the dial-in recipe ratio and per-shot cost when dose was zero.",
+      "Fixed a NaN that could slip into the starter-grind hint when the recommender had nothing to go on.",
+      "Added a bug-report mailto on the About page.",
+      "iOS status-bar meta for a cleaner standalone look on iPhone.",
+      "robots.txt + sitemap.xml for search engines.",
+      "Rewrote the README — storage paragraph was out of date.",
+    ],
+  },
+  {
     date: "2026-04-20",
     title: "Active & Finished bags",
     tag: "new",

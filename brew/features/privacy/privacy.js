@@ -1,4 +1,5 @@
 import { navigate } from "../../core/router.js";
+import { getState } from "../../core/store.js";
 
 export function render(container) {
   container.innerHTML = `
@@ -55,6 +56,12 @@ export function render(container) {
       </section>
 
       <section class="card about-card">
+        <h2>Export your data</h2>
+        <p>Download a JSON file with every bag, rating, dial-in log, and equipment preference you've saved. Works in both guest mode and while signed in.</p>
+        <button type="button" class="btn small" id="export-btn">Download my data (.json)</button>
+      </section>
+
+      <section class="card about-card">
         <h2>Deleting your data</h2>
         <p>You can delete individual bags (and their photos) from within the app at any time. To delete your entire account and all associated data, email <strong>nour@crema.live</strong> and we'll wipe it within 7 days.</p>
       </section>
@@ -74,5 +81,45 @@ export function render(container) {
   container.querySelector(".back-btn").addEventListener("click", () => {
     if (history.length > 1) history.back();
     else navigate("/");
+  });
+
+  container.querySelector("#export-btn")?.addEventListener("click", () => {
+    const s = getState();
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: 1,
+      mode: s.guest ? "guest" : "account",
+      equipment: s.equipment,
+      bags: (s.bags ?? []).map((b) => ({
+        id: b.id,
+        brand: b.brand,
+        origin: b.origin,
+        process: b.process,
+        variety: b.variety,
+        roast: b.roast,
+        notes: b.notes,
+        weight: b.weight,
+        price: b.price,
+        dose: b.dose,
+        currency: b.currency,
+        altitude: b.altitude,
+        ocrText: b.ocrText,
+        dialedInAt: b.dialedInAt,
+        dialedInRecipe: b.dialedInRecipe,
+        finishedAt: b.finishedAt,
+        ratings: b.ratings ?? [],
+        dialIns: b.dialIns ?? [],
+      })),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const d = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `crema-export-${d}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
   });
 }
