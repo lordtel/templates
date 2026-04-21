@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crema — Press Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf2e4;
+    --bg-deep: #e5d8bf;
+    --ink: #2b1b12;
+    --muted: #6b5443;
+    --accent: #7a3e1d;
+    --line: #d9c4a0;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--bg), var(--bg-deep));
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 64px 28px 120px; }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(44px, 7vw, 72px);
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin: 0 0 14px;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .lede {
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 0 28px;
+  }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 22px;
+    background: var(--ink);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .link-btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid rgba(43, 27, 18, 0.2);
+  }
+  section { margin-top: 64px; }
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.6px;
+    margin: 0 0 6px;
+  }
+  .section-sub { color: var(--muted); margin: 0 0 24px; font-size: 15px; }
+  .grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .grid.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .grid.shots { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    background: linear-gradient(180deg, #fdf7eb, #efe3c9);
+    aspect-ratio: 1 / 1;
+  }
+  .thumb.mono { background: #2b1b12; }
+  .thumb.wide { aspect-ratio: 3 / 1; }
+  .thumb.tall { aspect-ratio: 9 / 16; padding: 18px; }
+  .thumb.shot { aspect-ratio: 9 / 16; padding: 0; background: linear-gradient(180deg, #f0e6d2, #d8c8a8); }
+  .thumb img { max-width: 100%; max-height: 100%; display: block; }
+  .thumb.shot img { width: 100%; height: 100%; object-fit: contain; }
+  .meta {
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .meta-label { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .meta-sub { font-size: 12px; color: var(--muted); }
+  .meta a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 13px; }
+  .meta a:hover { text-decoration: underline; }
+
+  .palette { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .swatch { border-radius: 14px; padding: 16px; height: 120px; display: flex; flex-direction: column; justify-content: flex-end; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04); }
+  .swatch-name { font-size: 13px; font-weight: 600; }
+  .swatch-hex { font-size: 12px; opacity: 0.78; font-family: "SF Mono", Menlo, monospace; }
+  .on-dark { color: #faf2e4; }
+  .on-light { color: #2b1b12; }
+
+  .tagline-list, .copy-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .tagline-list li, .copy-list li {
+    background: var(--card);
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    font-size: 15px;
+  }
+  .tagline-list li strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .copy-list li em { font-style: normal; color: var(--muted); font-size: 12px; }
+
+  .pitch {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+  }
+  .pitch-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+  .pitch p { margin: 0; font-size: 16px; color: var(--ink); }
+
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Press Kit</p>
+  <h1>Crema <em>— media &amp; brand assets.</em></h1>
+  <p class="lede">Everything you need to write about, link to, or feature Crema — the espresso journal at <a href="https://crema.live" style="color: var(--accent); font-weight: 600;">crema.live</a>.</p>
+  <div class="links">
+    <a class="link-btn" href="https://crema.live">Open the app</a>
+    <a class="link-btn ghost" href="copy.md">Full copy deck (.md)</a>
+    <a class="link-btn ghost" href="mailto:nour@crema.live">Contact Nour</a>
+  </div>
+
+  <section>
+    <h2>One-liner</h2>
+    <p class="section-sub">The primary pitch. Copy-paste.</p>
+    <div class="pitch">
+      <p class="pitch-label">Primary</p>
+      <p><strong>Crema</strong> is a quiet espresso journal. Log every bag, rate every brew, and watch it learn which grind actually works for you.</p>
+    </div>
+    <div class="pitch">
+      <p class="pitch-label">30-word pitch</p>
+      <p>Crema is a free espresso journal for your phone. Snap a bag, OCR fills the details, rate each brew, and Crema suggests the grind that's worked for you on similar roasts.</p>
+    </div>
+    <div class="pitch">
+      <p class="pitch-label">100-word pitch</p>
+      <p>Crema is a small, beautifully-opinionated espresso journal. Photograph a new bag and on-device OCR extracts the details. Track each dial-in attempt — dose, yield, time, grind, taste, texture — and rate the drinks you make (espresso, cortado, iced latte, cappuccino, or your own). As your history grows, Crema suggests starting grind settings for new bags based on your own ratings on similar roasts. No app store, no account wall (guest mode keeps everything local), no tracking, no ads. Runs as a PWA, installs to your Home Screen, syncs across devices when you sign in.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Taglines</h2>
+    <p class="section-sub">Use the primary first. Everything else is swap-in.</p>
+    <ul class="tagline-list">
+      <li><strong>Primary</strong>Your espresso, dialed in.</li>
+      <li><strong>Alt</strong>A quiet espresso journal.</li>
+      <li><strong>Alt</strong>Log the bag. Nail the recipe.</li>
+      <li><strong>Alt</strong>Stop re-dialing the same bag twice.</li>
+      <li><strong>Alt</strong>Remember what worked.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Logos</h2>
+    <p class="section-sub">SVG — scale, recolor, embed anywhere. Right-click → Save Image As.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="thumb wide"><img src="logos/wordmark.svg" alt="Crema wordmark"></div>
+        <div class="meta">
+          <div><div class="meta-label">Wordmark</div><div class="meta-sub">Colour · horizontal</div></div>
+          <a href="logos/wordmark.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb wide"><img src="logos/wordmark-mono.svg" alt="Crema wordmark mono"></div>
+        <div class="meta">
+          <div><div class="meta-label">Wordmark · mono</div><div class="meta-sub">Single-color</div></div>
+          <a href="logos/wordmark-mono.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb"><img src="logos/stacked.svg" alt="Crema stacked lockup"></div>
+        <div class="meta">
+          <div><div class="meta-label">Stacked</div><div class="meta-sub">Bean + wordmark</div></div>
+          <a href="logos/stacked.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb"><img src="logos/icon-512.svg" alt="Crema app icon"></div>
+        <div class="meta">
+          <div><div class="meta-label">App icon</div><div class="meta-sub">512 × 512</div></div>
+          <a href="logos/icon-512.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb mono"><img src="logos/icon-mono.svg" alt="Crema mono icon"></div>
+        <div class="meta">
+          <div><div class="meta-label">Icon · mono</div><div class="meta-sub">For dark backgrounds</div></div>
+          <a href="logos/icon-mono.svg" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Social cards</h2>
+    <p class="section-sub">Drop these straight into Twitter / X, Instagram, LinkedIn.</p>
+    <div class="grid two">
+      <div class="card">
+        <div class="thumb wide"><img src="social/twitter-header.svg" alt="Twitter header"></div>
+        <div class="meta">
+          <div><div class="meta-label">Twitter / X header</div><div class="meta-sub">1500 × 500</div></div>
+          <a href="social/twitter-header.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb wide"><img src="social/linkedin-banner.svg" alt="LinkedIn banner"></div>
+        <div class="meta">
+          <div><div class="meta-label">LinkedIn banner</div><div class="meta-sub">1584 × 396</div></div>
+          <a href="social/linkedin-banner.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb"><img src="social/instagram-square.svg" alt="Instagram square"></div>
+        <div class="meta">
+          <div><div class="meta-label">Instagram · square</div><div class="meta-sub">1080 × 1080</div></div>
+          <a href="social/instagram-square.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb tall"><img src="social/instagram-story.svg" alt="Instagram story"></div>
+        <div class="meta">
+          <div><div class="meta-label">Instagram · story</div><div class="meta-sub">1080 × 1920</div></div>
+          <a href="social/instagram-story.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb wide"><img src="../../og-image.svg" alt="OG image"></div>
+        <div class="meta">
+          <div><div class="meta-label">OG image</div><div class="meta-sub">1200 × 630 · live</div></div>
+          <a href="../../og-image.svg" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Screenshots</h2>
+    <p class="section-sub">Device-framed mockups of the core flows. SVG — crisp at any size.</p>
+    <div class="grid shots">
+      <div class="card">
+        <div class="thumb shot"><img src="screenshots/01-home.svg" alt="Home shelf"></div>
+        <div class="meta">
+          <div><div class="meta-label">Your shelf</div><div class="meta-sub">Home screen</div></div>
+          <a href="screenshots/01-home.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb shot"><img src="screenshots/05-ocr.svg" alt="OCR scan"></div>
+        <div class="meta">
+          <div><div class="meta-label">Snap → auto-fill</div><div class="meta-sub">OCR in progress</div></div>
+          <a href="screenshots/05-ocr.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb shot"><img src="screenshots/02-bag-detail.svg" alt="Bag detail"></div>
+        <div class="meta">
+          <div><div class="meta-label">One bag</div><div class="meta-sub">Rate each brew</div></div>
+          <a href="screenshots/02-bag-detail.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb shot"><img src="screenshots/03-dial-in.svg" alt="Dial-in"></div>
+        <div class="meta">
+          <div><div class="meta-label">Dial-in companion</div><div class="meta-sub">Log an attempt</div></div>
+          <a href="screenshots/03-dial-in.svg" download>Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb shot"><img src="screenshots/04-analytics.svg" alt="Analytics"></div>
+        <div class="meta">
+          <div><div class="meta-label">Your coffee year</div><div class="meta-sub">Journal view</div></div>
+          <a href="screenshots/04-analytics.svg" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Key features</h2>
+    <p class="section-sub">The list, lifted for bullet slides.</p>
+    <ul class="copy-list">
+      <li><strong style="color: var(--ink)">Snap &amp; auto-fill</strong> — client-side OCR extracts brand, origin, process, roast, weight, altitude, notes.</li>
+      <li><strong style="color: var(--ink)">Built-in photo editor</strong> — 4:5 crop, rotate, enhance. Shelf stays visually consistent.</li>
+      <li><strong style="color: var(--ink)">Dial-in companion</strong> — per-bag log of every pull with dose, yield, time, grind, taste, texture. Ratio + per-shot cost computed.</li>
+      <li><strong style="color: var(--ink)">Ratings that teach</strong> — Crema suggests starting grind for new bags, weighted by your own 4/5-star pulls on similar roasts.</li>
+      <li><strong style="color: var(--ink)">Four drinks + custom</strong> — espresso, iced americano, iced latte, cappuccino, or your own (cortado, flat white, V60…).</li>
+      <li><strong style="color: var(--ink)">Active / Finished shelf</strong> — history stays, clutter doesn't.</li>
+      <li><strong style="color: var(--ink)">A real journal</strong> — top picks, 30-day timeline, grinder sweet-spot chart.</li>
+      <li><strong style="color: var(--ink)">Guest mode</strong> — no email, nothing leaves the browser.</li>
+      <li><strong style="color: var(--ink)">Sync</strong> — sign in with Google; guest data merges into your account.</li>
+      <li><strong style="color: var(--ink)">Export</strong> — one-click JSON dump of everything.</li>
+      <li><strong style="color: var(--ink)">Installs like an app</strong> — PWA with Home Screen icon, full-screen, survives Safari storage eviction.</li>
+      <li><strong style="color: var(--ink)">Secure</strong> — Postgres row-level security, private photo bucket, no passwords server-side.</li>
+      <li><strong style="color: var(--ink)">Free &amp; ad-free</strong> — optional Buy Me A Coffee is the only money.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Brand palette</h2>
+    <p class="section-sub">The whole thing lives on cream, accented with espresso.</p>
+    <div class="palette">
+      <div class="swatch on-light" style="background: #faf2e4;"><span class="swatch-name">Paper</span><span class="swatch-hex">#faf2e4</span></div>
+      <div class="swatch on-light" style="background: #e5d8bf;"><span class="swatch-name">Paper · deep</span><span class="swatch-hex">#e5d8bf</span></div>
+      <div class="swatch on-dark" style="background: #2b1b12;"><span class="swatch-name">Ink</span><span class="swatch-hex">#2b1b12</span></div>
+      <div class="swatch on-dark" style="background: #6b5443;"><span class="swatch-name">Muted</span><span class="swatch-hex">#6b5443</span></div>
+      <div class="swatch on-dark" style="background: #7a3e1d;"><span class="swatch-name">Accent</span><span class="swatch-hex">#7a3e1d</span></div>
+      <div class="swatch on-dark" style="background: #3e1e0b;"><span class="swatch-name">Bean</span><span class="swatch-hex">#3e1e0b</span></div>
+      <div class="swatch on-light" style="background: #b98555;"><span class="swatch-name">Bean · light</span><span class="swatch-hex">#b98555</span></div>
+      <div class="swatch on-light" style="background: #f0d48a;"><span class="swatch-name">Crema glow</span><span class="swatch-hex">#f0d48a</span></div>
+    </div>
+    <p class="section-sub" style="margin-top: 18px;">Typefaces: <strong>Fraunces</strong> (display, 400/500, italic for accents) · <strong>Inter</strong> (UI, 400/500/600).</p>
+  </section>
+
+  <section>
+    <h2>Technical profile</h2>
+    <ul class="copy-list">
+      <li><strong style="color: var(--ink)">Stack</strong> — Vanilla JS, ES modules, no build step. Single CSS file + feature-folder architecture.</li>
+      <li><strong style="color: var(--ink)">Auth</strong> — Google OAuth via Supabase.</li>
+      <li><strong style="color: var(--ink)">Database</strong> — Supabase Postgres with Row-Level Security on every table.</li>
+      <li><strong style="color: var(--ink)">Storage</strong> — Supabase private photo bucket (signed URLs).</li>
+      <li><strong style="color: var(--ink)">OCR</strong> — Tesseract.js, client-side only.</li>
+      <li><strong style="color: var(--ink)">Host</strong> — GitHub Pages + CloudFlare on a custom domain.</li>
+      <li><strong style="color: var(--ink)">Telemetry</strong> — Sentry for crashes. No analytics, no ads.</li>
+      <li><strong style="color: var(--ink)">Open source</strong> — MIT-licensed repo.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p class="section-sub">Built by Nour. For quotes, screenshots, interviews, or to flag anything broken.</p>
+    <div class="pitch">
+      <p class="pitch-label">Press</p>
+      <p><a href="mailto:nour@crema.live" style="color: var(--accent); font-weight: 600; text-decoration: none;">nour@crema.live</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Crema — made by Nour. MIT.</span>
+    <span><a href="https://crema.live">crema.live</a> · <a href="mailto:nour@crema.live">nour@crema.live</a></span>
+  </footer>
+</main>
+</body>
+</html>

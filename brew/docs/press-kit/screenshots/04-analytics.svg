@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0e6d2"/>
+      <stop offset="1" stop-color="#d8c8a8"/>
+    </linearGradient>
+    <linearGradient id="screenBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#faf2e4"/>
+      <stop offset="1" stop-color="#f2e6cf"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#pageBg)"/>
+
+  <text x="540" y="110" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="26" font-weight="600"
+        letter-spacing="4" fill="#7a3e1d">JOURNAL</text>
+  <text x="540" y="180" text-anchor="middle"
+        font-family="Fraunces 144pt, Fraunces, Georgia, serif"
+        font-size="60" font-weight="500" fill="#2b1b12"
+        letter-spacing="-1.2">Your coffee year, at a glance</text>
+
+  <rect x="220" y="290" width="640" height="1380" rx="130" fill="#2b1b12" opacity="0.14"/>
+  <rect x="230" y="280" width="620" height="1380" rx="124" fill="#1a0f09"/>
+  <rect x="240" y="290" width="600" height="1360" rx="114" fill="#0a0604"/>
+
+  <clipPath id="screen4">
+    <rect x="252" y="302" width="576" height="1336" rx="102" ry="102"/>
+  </clipPath>
+  <g clip-path="url(#screen4)">
+    <rect x="252" y="302" width="576" height="1336" fill="url(#screenBg)"/>
+
+    <text x="304" y="370" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#2b1b12">9:41</text>
+    <rect x="450" y="330" width="180" height="44" rx="22" fill="#0a0604"/>
+
+    <text x="300" y="460" font-family="Inter, sans-serif" font-size="15" font-weight="600" letter-spacing="2.5" fill="#7a3e1d">JOURNAL</text>
+    <text x="300" y="520" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="46" font-weight="500" fill="#2b1b12" letter-spacing="-1">Your year in coffee</text>
+
+    <!-- top stats row -->
+    <g transform="translate(300 560)" font-family="Inter, sans-serif">
+      <g>
+        <rect x="0" y="0" width="152" height="112" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+        <text x="20" y="42" font-size="14" font-weight="600" letter-spacing="2" fill="#8a6a45">BAGS</text>
+        <text x="20" y="90" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="44" font-weight="500" fill="#2b1b12">15</text>
+      </g>
+      <g transform="translate(164 0)">
+        <rect x="0" y="0" width="152" height="112" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+        <text x="20" y="42" font-size="14" font-weight="600" letter-spacing="2" fill="#8a6a45">RATINGS</text>
+        <text x="20" y="90" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="44" font-weight="500" fill="#2b1b12">47</text>
+      </g>
+      <g transform="translate(328 0)">
+        <rect x="0" y="0" width="152" height="112" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+        <text x="20" y="42" font-size="14" font-weight="600" letter-spacing="2" fill="#8a6a45">AVG</text>
+        <text x="20" y="90" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="44" font-weight="500" fill="#2b1b12">4.1</text>
+      </g>
+    </g>
+
+    <!-- top picks card -->
+    <g transform="translate(300 710)">
+      <rect x="0" y="0" width="480" height="230" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="24" y="42" font-family="Inter, sans-serif" font-size="14" font-weight="600" letter-spacing="2.5" fill="#7a3e1d">TOP PICKS</text>
+
+      <g transform="translate(24 60)">
+        <g>
+          <text font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#7a3e1d">01</text>
+          <text x="28" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="22" font-weight="500" fill="#2b1b12">La Cabra · Espresso</text>
+          <g transform="translate(378 -6)">
+            <circle r="4" fill="#7a3e1d"/><circle cx="12" r="4" fill="#7a3e1d"/><circle cx="24" r="4" fill="#7a3e1d"/><circle cx="36" r="4" fill="#7a3e1d"/><circle cx="48" r="4" fill="#7a3e1d"/>
+          </g>
+        </g>
+        <g transform="translate(0 44)">
+          <text font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#7a3e1d">02</text>
+          <text x="28" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="22" font-weight="500" fill="#2b1b12">Drop · Iced Latte</text>
+          <g transform="translate(378 -6)">
+            <circle r="4" fill="#7a3e1d"/><circle cx="12" r="4" fill="#7a3e1d"/><circle cx="24" r="4" fill="#7a3e1d"/><circle cx="36" r="4" fill="#7a3e1d"/><circle cx="48" r="4" fill="#7a3e1d" fill-opacity="0.28"/>
+          </g>
+        </g>
+        <g transform="translate(0 88)">
+          <text font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#7a3e1d">03</text>
+          <text x="28" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="22" font-weight="500" fill="#2b1b12">Manhattan · Espresso</text>
+          <g transform="translate(378 -6)">
+            <circle r="4" fill="#7a3e1d"/><circle cx="12" r="4" fill="#7a3e1d"/><circle cx="24" r="4" fill="#7a3e1d"/><circle cx="36" r="4" fill="#7a3e1d"/><circle cx="48" r="4" fill="#7a3e1d" fill-opacity="0.28"/>
+          </g>
+        </g>
+        <g transform="translate(0 132)">
+          <text font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#7a3e1d">04</text>
+          <text x="28" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="22" font-weight="500" fill="#2b1b12">Square Mile · Cortado</text>
+          <g transform="translate(378 -6)">
+            <circle r="4" fill="#7a3e1d"/><circle cx="12" r="4" fill="#7a3e1d"/><circle cx="24" r="4" fill="#7a3e1d"/><circle cx="36" r="4" fill="#7a3e1d"/><circle cx="48" r="4" fill="#7a3e1d" fill-opacity="0.28"/>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <!-- sweet spot card -->
+    <g transform="translate(300 970)">
+      <rect x="0" y="0" width="480" height="280" rx="18" fill="#ffffff" stroke="#e9d9be"/>
+      <text x="24" y="42" font-family="Inter, sans-serif" font-size="14" font-weight="600" letter-spacing="2.5" fill="#7a3e1d">GRIND SWEET SPOT · ESPRESSO</text>
+      <text x="24" y="76" font-family="Inter, sans-serif" font-size="15" fill="#6b5443">Your best-rated pulls land around grind 3.5</text>
+
+      <!-- chart -->
+      <g transform="translate(24 110)">
+        <!-- axis -->
+        <line x1="0" y1="140" x2="432" y2="140" stroke="#d9c4a0" stroke-width="1"/>
+        <g font-family="Inter, sans-serif" font-size="11" fill="#8a6a45">
+          <text x="0" y="158">2</text>
+          <text x="108" y="158">3</text>
+          <text x="216" y="158">3.5</text>
+          <text x="324" y="158">4</text>
+          <text x="432" y="158" text-anchor="end">5</text>
+        </g>
+        <!-- sweet spot band -->
+        <rect x="180" y="10" width="100" height="130" rx="4" fill="#7a3e1d" fill-opacity="0.08"/>
+        <line x1="230" y1="10" x2="230" y2="140" stroke="#7a3e1d" stroke-dasharray="4 4"/>
+        <!-- dots -->
+        <g fill="#7a3e1d">
+          <circle cx="60" cy="110" r="5" fill-opacity="0.4"/>
+          <circle cx="108" cy="90" r="6" fill-opacity="0.55"/>
+          <circle cx="150" cy="70" r="7" fill-opacity="0.75"/>
+          <circle cx="190" cy="40" r="9"/>
+          <circle cx="220" cy="28" r="10"/>
+          <circle cx="240" cy="36" r="9"/>
+          <circle cx="280" cy="60" r="7" fill-opacity="0.7"/>
+          <circle cx="320" cy="88" r="6" fill-opacity="0.55"/>
+          <circle cx="380" cy="118" r="5" fill-opacity="0.4"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- timeline strip -->
+    <g transform="translate(300 1280)">
+      <text font-family="Inter, sans-serif" font-size="14" font-weight="600" letter-spacing="2.5" fill="#7a3e1d">LAST 30 DAYS</text>
+      <g transform="translate(0 20)">
+        <g>
+          <rect x="0" y="80" width="14" height="20" rx="2" fill="#7a3e1d" fill-opacity="0.5"/>
+          <rect x="18" y="64" width="14" height="36" rx="2" fill="#7a3e1d" fill-opacity="0.65"/>
+          <rect x="36" y="84" width="14" height="16" rx="2" fill="#7a3e1d" fill-opacity="0.4"/>
+          <rect x="54" y="48" width="14" height="52" rx="2" fill="#7a3e1d" fill-opacity="0.75"/>
+          <rect x="72" y="32" width="14" height="68" rx="2" fill="#7a3e1d" fill-opacity="0.85"/>
+          <rect x="90" y="56" width="14" height="44" rx="2" fill="#7a3e1d" fill-opacity="0.7"/>
+          <rect x="108" y="72" width="14" height="28" rx="2" fill="#7a3e1d" fill-opacity="0.5"/>
+          <rect x="126" y="42" width="14" height="58" rx="2" fill="#7a3e1d" fill-opacity="0.8"/>
+          <rect x="144" y="58" width="14" height="42" rx="2" fill="#7a3e1d" fill-opacity="0.68"/>
+          <rect x="162" y="24" width="14" height="76" rx="2" fill="#7a3e1d"/>
+          <rect x="180" y="54" width="14" height="46" rx="2" fill="#7a3e1d" fill-opacity="0.72"/>
+          <rect x="198" y="70" width="14" height="30" rx="2" fill="#7a3e1d" fill-opacity="0.5"/>
+          <rect x="216" y="48" width="14" height="52" rx="2" fill="#7a3e1d" fill-opacity="0.75"/>
+          <rect x="234" y="40" width="14" height="60" rx="2" fill="#7a3e1d" fill-opacity="0.82"/>
+          <rect x="252" y="60" width="14" height="40" rx="2" fill="#7a3e1d" fill-opacity="0.65"/>
+          <rect x="270" y="34" width="14" height="66" rx="2" fill="#7a3e1d" fill-opacity="0.9"/>
+          <rect x="288" y="50" width="14" height="50" rx="2" fill="#7a3e1d" fill-opacity="0.74"/>
+          <rect x="306" y="38" width="14" height="62" rx="2" fill="#7a3e1d" fill-opacity="0.85"/>
+          <rect x="324" y="58" width="14" height="42" rx="2" fill="#7a3e1d" fill-opacity="0.68"/>
+          <rect x="342" y="26" width="14" height="74" rx="2" fill="#7a3e1d"/>
+          <rect x="360" y="52" width="14" height="48" rx="2" fill="#7a3e1d" fill-opacity="0.72"/>
+          <rect x="378" y="66" width="14" height="34" rx="2" fill="#7a3e1d" fill-opacity="0.55"/>
+          <rect x="396" y="44" width="14" height="56" rx="2" fill="#7a3e1d" fill-opacity="0.76"/>
+          <rect x="414" y="30" width="14" height="70" rx="2" fill="#7a3e1d" fill-opacity="0.9"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- bottom nav -->
+    <g transform="translate(252 1540)">
+      <rect x="0" y="0" width="576" height="98" fill="#ffffff"/>
+      <line x1="0" y1="0" x2="576" y2="0" stroke="#e5d8bf" stroke-width="1"/>
+      <g transform="translate(288 40)">
+        <circle r="4" fill="#2b1b12"/>
+        <text x="-20" y="32" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#2b1b12">Stats</text>
+      </g>
+    </g>
+  </g>
+
+  <text x="540" y="1800" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="22" font-weight="500" letter-spacing="3" fill="#7a3e1d">
+    CREMA.LIVE
+  </text>
+</svg>

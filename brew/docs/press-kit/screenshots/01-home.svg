@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0e6d2"/>
+      <stop offset="1" stop-color="#d8c8a8"/>
+    </linearGradient>
+    <linearGradient id="screenBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#faf2e4"/>
+      <stop offset="1" stop-color="#f2e6cf"/>
+    </linearGradient>
+    <radialGradient id="bean1" cx="30%" cy="28%" r="80%">
+      <stop offset="0%" stop-color="#d9b487"/>
+      <stop offset="60%" stop-color="#8a5230"/>
+      <stop offset="100%" stop-color="#3e1e0b"/>
+    </radialGradient>
+    <radialGradient id="bean2" cx="30%" cy="28%" r="80%">
+      <stop offset="0%" stop-color="#caa27a"/>
+      <stop offset="60%" stop-color="#7a3e1d"/>
+      <stop offset="100%" stop-color="#2b1b12"/>
+    </radialGradient>
+    <radialGradient id="bean3" cx="30%" cy="28%" r="80%">
+      <stop offset="0%" stop-color="#e2c09a"/>
+      <stop offset="60%" stop-color="#a5643a"/>
+      <stop offset="100%" stop-color="#4a281a"/>
+    </radialGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1080" height="1920" fill="url(#pageBg)"/>
+
+  <!-- caption -->
+  <text x="540" y="110" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="26" font-weight="600"
+        letter-spacing="4" fill="#7a3e1d">YOUR SHELF</text>
+  <text x="540" y="180" text-anchor="middle"
+        font-family="Fraunces 144pt, Fraunces, Georgia, serif"
+        font-size="60" font-weight="500" fill="#2b1b12"
+        letter-spacing="-1.2">Every bag, in one place</text>
+
+  <!-- phone shadow -->
+  <rect x="220" y="290" width="640" height="1380" rx="130" fill="#2b1b12" opacity="0.14"/>
+
+  <!-- phone outer -->
+  <rect x="230" y="280" width="620" height="1380" rx="124" fill="#1a0f09"/>
+  <rect x="240" y="290" width="600" height="1360" rx="114" fill="#0a0604"/>
+
+  <!-- screen -->
+  <g>
+    <clipPath id="screen1">
+      <rect x="252" y="302" width="576" height="1336" rx="102" ry="102"/>
+    </clipPath>
+    <g clip-path="url(#screen1)">
+      <rect x="252" y="302" width="576" height="1336" fill="url(#screenBg)"/>
+
+      <!-- status bar -->
+      <text x="304" y="370" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#2b1b12">9:41</text>
+      <g transform="translate(720 350)">
+        <rect x="0" y="0" width="22" height="14" rx="2" fill="#2b1b12"/>
+        <rect x="26" y="2" width="44" height="10" rx="3" fill="none" stroke="#2b1b12" stroke-width="1.5"/>
+        <rect x="28" y="4" width="34" height="6" rx="1.5" fill="#2b1b12"/>
+      </g>
+
+      <!-- dynamic island -->
+      <rect x="450" y="330" width="180" height="44" rx="22" fill="#0a0604"/>
+
+      <!-- brand header -->
+      <g transform="translate(300 430)">
+        <circle cx="10" cy="10" r="10" fill="#7a3e1d"/>
+        <text x="32" y="18" font-family="Inter, sans-serif" font-size="16" font-weight="600" letter-spacing="3" fill="#7a3e1d">CREMA</text>
+      </g>
+
+      <!-- heading -->
+      <text x="300" y="530" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="52" font-weight="500" fill="#2b1b12" letter-spacing="-1">Your shelf</text>
+      <text x="300" y="580" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#6b5443">3 bags · 1 dialed in</text>
+
+      <!-- tabs -->
+      <g transform="translate(300 620)">
+        <rect x="0" y="0" width="120" height="48" rx="24" fill="#2b1b12"/>
+        <text x="60" y="31" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#faf2e4">Active 3</text>
+        <text x="160" y="31" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#6b5443">Finished 12</text>
+      </g>
+
+      <!-- bag card 1: La Cabra -->
+      <g transform="translate(300 710)">
+        <rect x="0" y="0" width="480" height="180" rx="20" fill="#ffffff" stroke="#e5d8bf" stroke-width="1.5"/>
+        <g transform="translate(24 24)">
+          <rect x="0" y="0" width="132" height="132" rx="12" fill="#2b1b12"/>
+          <circle cx="66" cy="66" r="52" fill="url(#bean1)"/>
+          <path d="M 50 26 C 30 52 30 80 50 106" fill="none" stroke="#1a0f09" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <text x="180" y="52" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="26" font-weight="500" fill="#2b1b12">La Cabra</text>
+        <text x="180" y="82" font-family="Inter, sans-serif" font-size="17" fill="#6b5443">Ethiopia · Washed · Medium-light</text>
+        <g transform="translate(180 106)">
+          <circle cx="0" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="14" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="28" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="42" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="56" cy="0" r="5" fill="#7a3e1d" fill-opacity="0.28"/>
+          <text x="74" y="5" font-family="Inter, sans-serif" font-size="14" fill="#6b5443">4 brews rated</text>
+        </g>
+        <g transform="translate(180 138)">
+          <rect x="0" y="-14" width="104" height="26" rx="13" fill="#e9d9be"/>
+          <text x="52" y="4" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#5a3420">Dialed in</text>
+        </g>
+      </g>
+
+      <!-- bag card 2: Drop Coffee -->
+      <g transform="translate(300 914)">
+        <rect x="0" y="0" width="480" height="180" rx="20" fill="#ffffff" stroke="#e5d8bf" stroke-width="1.5"/>
+        <g transform="translate(24 24)">
+          <rect x="0" y="0" width="132" height="132" rx="12" fill="#2b1b12"/>
+          <circle cx="66" cy="66" r="52" fill="url(#bean2)"/>
+          <path d="M 50 26 C 30 52 30 80 50 106" fill="none" stroke="#1a0f09" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <text x="180" y="52" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="26" font-weight="500" fill="#2b1b12">Drop Coffee</text>
+        <text x="180" y="82" font-family="Inter, sans-serif" font-size="17" fill="#6b5443">Colombia · Honey · Medium</text>
+        <g transform="translate(180 106)">
+          <circle cx="0" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="14" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="28" cy="0" r="5" fill="#7a3e1d"/>
+          <circle cx="42" cy="0" r="5" fill="#7a3e1d" fill-opacity="0.28"/>
+          <circle cx="56" cy="0" r="5" fill="#7a3e1d" fill-opacity="0.28"/>
+          <text x="74" y="5" font-family="Inter, sans-serif" font-size="14" fill="#6b5443">2 brews rated</text>
+        </g>
+        <text x="180" y="155" font-family="Inter, sans-serif" font-size="14" fill="#8a6a45">2 dial-in attempts</text>
+      </g>
+
+      <!-- bag card 3: Manhattan -->
+      <g transform="translate(300 1118)">
+        <rect x="0" y="0" width="480" height="180" rx="20" fill="#ffffff" stroke="#e5d8bf" stroke-width="1.5"/>
+        <g transform="translate(24 24)">
+          <rect x="0" y="0" width="132" height="132" rx="12" fill="#2b1b12"/>
+          <circle cx="66" cy="66" r="52" fill="url(#bean3)"/>
+          <path d="M 50 26 C 30 52 30 80 50 106" fill="none" stroke="#1a0f09" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <text x="180" y="52" font-family="Fraunces 144pt, Fraunces, Georgia, serif" font-size="26" font-weight="500" fill="#2b1b12">Manhattan</text>
+        <text x="180" y="82" font-family="Inter, sans-serif" font-size="17" fill="#6b5443">Kenya · Natural · Medium-dark</text>
+        <text x="180" y="116" font-family="Inter, sans-serif" font-size="15" fill="#8a6a45">Not rated yet</text>
+      </g>
+
+      <!-- FAB -->
+      <g transform="translate(720 1430)">
+        <circle r="40" fill="#2b1b12"/>
+        <path d="M -14 0 L 14 0 M 0 -14 L 0 14" stroke="#faf2e4" stroke-width="4" stroke-linecap="round"/>
+      </g>
+
+      <!-- bottom nav -->
+      <g transform="translate(252 1540)">
+        <rect x="0" y="0" width="576" height="98" fill="#ffffff"/>
+        <line x1="0" y1="0" x2="576" y2="0" stroke="#e5d8bf" stroke-width="1"/>
+        <g transform="translate(118 40)">
+          <circle r="4" fill="#2b1b12"/>
+          <text x="-20" y="32" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#2b1b12">Shelf</text>
+        </g>
+        <g transform="translate(288 40)">
+          <circle r="4" fill="#a38466"/>
+          <text x="-26" y="32" font-family="Inter, sans-serif" font-size="13" fill="#8a6a45">Stats</text>
+        </g>
+        <g transform="translate(458 40)">
+          <circle r="4" fill="#a38466"/>
+          <text x="-20" y="32" font-family="Inter, sans-serif" font-size="13" fill="#8a6a45">Gear</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- footer -->
+  <text x="540" y="1800" text-anchor="middle"
+        font-family="Inter, sans-serif" font-size="22" font-weight="500" letter-spacing="3" fill="#7a3e1d">
+    CREMA.LIVE
+  </text>
+</svg>
