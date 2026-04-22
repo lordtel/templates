@@ -276,18 +276,25 @@ function escapeHtml(s) {
 }
 
 function formatShareText(bag) {
-  const stars = (n) => "★".repeat(Math.round(n || 0)) + "☆".repeat(5 - Math.round(n || 0));
-  const header = [bag.brand, bag.origin].filter(Boolean).join(" · ");
-  const tags = [bag.roast, bag.process, bag.variety].filter(Boolean).join(" · ");
-  const lines = [header, tags].filter(Boolean);
-  const ratings = (bag.ratings ?? []);
-  if (ratings.length) {
-    lines.push("");
-    ratings.forEach((r) => {
-      const row = `${stars(r.rating)} ${drinkLabel(r.drinkType)}`;
-      lines.push(r.notes ? `${row} — "${r.notes}"` : row);
-    });
+  // Headline: brand + one more bag detail (origin preferred, else roast, else process).
+  const secondary = bag.origin || bag.roast || bag.process || "";
+  const header = [bag.brand, secondary].filter(Boolean).join(" · ");
+  const lines = [header].filter(Boolean);
+
+  const r = bag.dialedInRecipe;
+  if (bag.dialedInAt && r) {
+    const recipe = [];
+    if (r.dose != null && r.yield != null) {
+      const ratio = Number(r.dose) > 0 ? (Number(r.yield) / Number(r.dose)).toFixed(2) : null;
+      recipe.push(`${r.dose}g → ${r.yield}g${ratio ? ` · 1:${ratio}` : ""}`);
+    }
+    if (r.time != null) recipe.push(`${r.time}s`);
+    if (r.grind != null) recipe.push(`grind ${r.grind}`);
+    if (recipe.length) {
+      lines.push("", "Dialed in:", recipe.join(" · "));
+    }
   }
+
   lines.push("", "Logged on Crema — crema.live");
   return lines.join("\n");
 }
