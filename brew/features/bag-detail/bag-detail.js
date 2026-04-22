@@ -72,6 +72,7 @@ function paint(container, bagId) {
     </dl>
     <div class="info-actions">
       ${statusBtn}
+      <button class="btn ghost small" id="share-btn">Share</button>
       <button class="btn ghost small" id="edit-btn">Edit</button>
     </div>
   `;
@@ -85,6 +86,7 @@ function paint(container, bagId) {
       markFinished(bag.id);
     }
   });
+  info.querySelector("#share-btn").addEventListener("click", () => shareBag(bag));
 
   container.appendChild(buildDialInSection(bag));
 
@@ -271,4 +273,58 @@ function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
+}
+
+function formatShareText(bag) {
+  const stars = (n) => "★".repeat(Math.round(n || 0)) + "☆".repeat(5 - Math.round(n || 0));
+  const header = [bag.brand, bag.origin].filter(Boolean).join(" · ");
+  const tags = [bag.roast, bag.process, bag.variety].filter(Boolean).join(" · ");
+  const lines = [header, tags].filter(Boolean);
+  const ratings = (bag.ratings ?? []);
+  if (ratings.length) {
+    lines.push("");
+    ratings.forEach((r) => {
+      const row = `${stars(r.rating)} ${drinkLabel(r.drinkType)}`;
+      lines.push(r.notes ? `${row} — "${r.notes}"` : row);
+    });
+  }
+  lines.push("", "Logged on Crema — crema.live");
+  return lines.join("\n");
+}
+
+async function shareBag(bag) {
+  const text = formatShareText(bag);
+  const title = `${bag.brand || "Coffee"} on Crema`;
+  const url = "https://crema.live/";
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text, url });
+      return;
+    } catch {
+      // User cancelled or share failed — fall through to clipboard
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(`${text}\n${url}`);
+    showCopyToast();
+  } catch {
+    // Clipboard not available (insecure context) — nothing to do
+  }
+}
+
+function showCopyToast() {
+  const existing = document.getElementById("crema-copy-toast");
+  if (existing) existing.remove();
+  const toast = document.createElement("div");
+  toast.id = "crema-copy-toast";
+  toast.className = "toast toast--show";
+  toast.setAttribute("role", "status");
+  toast.textContent = "Copied to clipboard";
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.remove("toast--show");
+    toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+  }, 2500);
 }
