@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>Crema — Instagram Reel (30s)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,1,400;9..144,1,500;9..144,1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:    #f4ede0;
+      --ink:   #2b1b12;
+      --soft:  #6b5443;
+      --faint: #a08a78;
+      --accent: #7a3e1d;
+      --crema: #d9b580;
+      --surface: #fdf8ee;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      width: 1080px; height: 1920px;
+      overflow: hidden;
+      font-family: "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    /* ─── Watermarks ────────────────────────────────────
+       Two versions: cream (for dark scenes) and dark (for light scenes).
+       Each animates in sync with its target scenes.                       */
+    .wm {
+      position: absolute;
+      top: 72px; left: 72px;
+      display: flex; align-items: center; gap: 18px;
+      z-index: 100;
+      animation-duration: 30s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    .wm-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+      box-shadow: 0 0 0 7px rgba(122,62,29,0.16);
+      flex-shrink: 0;
+    }
+    .wm-name {
+      font-family: "Fraunces", serif;
+      font-weight: 600; font-size: 40px; letter-spacing: 0.01em;
+    }
+    /* Cream watermark — shown during scene 1 and app scenes 3–8 */
+    .wm-cream { animation-name: wm-cream; }
+    .wm-cream .wm-name { color: rgba(253,248,238,0.88); text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+    @keyframes wm-cream {
+      0%          { opacity: 1; }   /* S1 */
+      5%, 6.7%    { opacity: 0; }   /* gap: hide during S2 */
+      16.7%       { opacity: 1; }   /* S3–S8 */
+      88.3%, 90%  { opacity: 0; }   /* gap: hide during S9 */
+      100%        { opacity: 0; }
+    }
+    /* Dark watermark — shown during scene 2 and scene 9 */
+    .wm-dark { animation-name: wm-dark; }
+    .wm-dark .wm-name { color: var(--accent); }
+    @keyframes wm-dark {
+      0%, 5%      { opacity: 0; }
+      6.7%        { opacity: 1; }   /* S2 */
+      15%, 16.7%  { opacity: 0; }   /* gap */
+      88.3%       { opacity: 0; }
+      90%         { opacity: 1; }   /* S9 */
+      100%        { opacity: 1; }
+    }
+
+    /* ─── Progress bar ──────────────────────────────── */
+    .progress-track {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 9px; background: rgba(43,27,18,0.1); z-index: 200;
+    }
+    .progress-bar {
+      height: 100%; width: 0;
+      background: linear-gradient(to right, var(--accent), var(--crema));
+      animation: prog 30s linear infinite;
+    }
+    @keyframes prog { to { width: 100%; } }
+
+    /* ─── Scene base ────────────────────────────────── */
+    .scene {
+      position: absolute; inset: 0;
+      opacity: 0;
+      animation-duration: 30s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+      animation-fill-mode: both;
+    }
+
+    /* ─── Scene timing ──────────────────────────────── */
+    /* S1 0:00–0:02  0%–6.7%   */
+    /* S2 0:02–0:05  6.7%–16.7%*/
+    /* S3 0:05–0:08  16.7%–26.7%*/
+    /* S4 0:08–0:12  26.7%–40% */
+    /* S5 0:12–0:16  40%–53.3% */
+    /* S6 0:16–0:19  53.3%–63.3%*/
+    /* S7 0:19–0:24  63.3%–80% */
+    /* S8 0:24–0:27  80%–90%   */
+    /* S9 0:27–0:30  90%–100%  */
+    /* crossfade: 0.5s = 1.7%  */
+
+    .s1 { animation-name: s1; }
+    @keyframes s1 {
+      0%     { opacity: 1; }
+      5%     { opacity: 1; }
+      6.7%   { opacity: 0; }
+      100%   { opacity: 0; }
+    }
+    .s2 { animation-name: s2; }
+    @keyframes s2 {
+      0%, 5%  { opacity: 0; }
+      6.7%    { opacity: 1; }
+      15%     { opacity: 1; }
+      16.7%   { opacity: 0; }
+      100%    { opacity: 0; }
+    }
+    .s3 { animation-name: s3; }
+    @keyframes s3 {
+      0%, 15%  { opacity: 0; }
+      16.7%    { opacity: 1; }
+      25%      { opacity: 1; }
+      26.7%    { opacity: 0; }
+      100%     { opacity: 0; }
+    }
+    .s4 { animation-name: s4; }
+    @keyframes s4 {
+      0%, 25%  { opacity: 0; }
+      26.7%    { opacity: 1; }
+      38.3%    { opacity: 1; }
+      40%      { opacity: 0; }
+      100%     { opacity: 0; }
+    }
+    .s5 { animation-name: s5; }
+    @keyframes s5 {
+      0%, 38.3%  { opacity: 0; }
+      40%        { opacity: 1; }
+      51.7%      { opacity: 1; }
+      53.3%      { opacity: 0; }
+      100%       { opacity: 0; }
+    }
+    .s6 { animation-name: s6; }
+    @keyframes s6 {
+      0%, 51.7%  { opacity: 0; }
+      53.3%      { opacity: 1; }
+      61.7%      { opacity: 1; }
+      63.3%      { opacity: 0; }
+      100%       { opacity: 0; }
+    }
+    .s7 { animation-name: s7; }
+    @keyframes s7 {
+      0%, 61.7%  { opacity: 0; }
+      63.3%      { opacity: 1; }
+      78.3%      { opacity: 1; }
+      80%        { opacity: 0; }
+      100%       { opacity: 0; }
+    }
+    .s8 { animation-name: s8; }
+    @keyframes s8 {
+      0%, 78.3%  { opacity: 0; }
+      80%        { opacity: 1; }
+      88.3%      { opacity: 1; }
+      90%        { opacity: 0; }
+      100%       { opacity: 0; }
+    }
+    .s9 { animation-name: s9; }
+    @keyframes s9 {
+      0%, 88.3%  { opacity: 0; }
+      90%        { opacity: 1; }
+      100%       { opacity: 1; }
+    }
+
+    /* ─── Scene 1 · Espresso hook ───────────────────── */
+    .s1-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 720px 560px at 50% 52%, #3d1a08 0%, transparent 65%),
+        #0a0402;
+    }
+    .s1-crema {
+      position: absolute;
+      width: 580px; height: 580px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 38% 35%,
+        #f2cc7a 0%,
+        #c88530 22%,
+        #864010 48%,
+        #3d1a08 72%,
+        transparent 100%
+      );
+      box-shadow:
+        0 0 90px rgba(210,135,48,0.45),
+        0 0 220px rgba(122,62,29,0.28),
+        inset 0 0 40px rgba(0,0,0,0.35);
+      animation: cremaBreath 3s ease-in-out infinite alternate;
+    }
+    @keyframes cremaBreath {
+      from { transform: translate(-50%,-50%) scale(1);    filter: brightness(1); }
+      to   { transform: translate(-50%,-50%) scale(1.04); filter: brightness(1.12); }
+    }
+    .s1-steam {
+      position: absolute;
+      top: calc(50% - 360px); left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 30px; align-items: flex-end;
+    }
+    .wisp {
+      width: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.14);
+      transform-origin: bottom center;
+      animation: steamRise 2.6s ease-in-out infinite;
+    }
+    .wisp:nth-child(1) { height: 90px;  animation-delay: 0s; }
+    .wisp:nth-child(2) { height: 130px; animation-delay: 0.55s; }
+    .wisp:nth-child(3) { height: 80px;  animation-delay: 1.1s; }
+    @keyframes steamRise {
+      0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+      30%  { opacity: 0.55; }
+      100% { opacity: 0; transform: translateY(-70px) scaleX(2.8); }
+    }
+
+    /* ─── Scene 2 · Problem ─────────────────────────── */
+    .s2-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 10%, rgba(217,181,128,0.35), transparent 55%),
+        linear-gradient(175deg, #f4ede0, #e8dbc8);
+    }
+    .s2-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 0 88px 160px;
+    }
+    .s2-eyebrow {
+      font-size: 28px; font-weight: 600;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--accent); opacity: 0.7;
+      margin: 0 0 36px;
+    }
+    .s2-content h2 {
+      font-family: "Fraunces", serif;
+      font-weight: 400; font-size: 116px;
+      line-height: 1.04; letter-spacing: -0.02em;
+      margin: 0; color: var(--ink);
+    }
+    .s2-content h2 em {
+      font-style: italic; font-weight: 500; color: var(--accent);
+    }
+    .s2-content p {
+      margin: 44px 0 0; font-size: 38px;
+      color: var(--soft); line-height: 1.45;
+      max-width: 840px;
+    }
+
+    /* ─── App scenes (full-bleed iframe + text overlay) */
+    .app-scene iframe {
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1920px;
+      border: 0; pointer-events: none; display: block;
+    }
+    /* dark gradient at top (behind watermark) */
+    .ov-top {
+      position: absolute; left: 0; right: 0; top: 0;
+      height: 280px; z-index: 10;
+      background: linear-gradient(to bottom, rgba(8,3,1,0.6), transparent);
+    }
+    /* dark gradient at bottom (behind text labels) */
+    .ov-bot {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 660px; z-index: 10;
+      background: linear-gradient(to bottom, transparent, rgba(8,3,1,0.78) 55%, rgba(4,2,1,0.92) 100%);
+    }
+    /* text block sitting above ov-bot */
+    .label {
+      position: absolute; bottom: 108px; left: 0; right: 0;
+      padding: 0 80px; z-index: 20;
+    }
+    .label .eye {
+      font-size: 27px; font-weight: 600;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: var(--crema); opacity: 0.82;
+      margin: 0 0 18px;
+    }
+    .label h2 {
+      font-family: "Fraunces", serif;
+      font-weight: 500; font-size: 80px;
+      line-height: 1.05; letter-spacing: -0.015em;
+      margin: 0; color: #fdf8ee;
+    }
+    .label h2 em { font-style: italic; color: var(--crema); }
+
+    /* ─── Scene 9 · CTA ──────────────────────────────── */
+    .s9-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 55% at 52% 42%, rgba(217,181,128,0.48), transparent 58%),
+        radial-gradient(ellipse 50% 40% at 15% 85%, rgba(122,62,29,0.1), transparent 55%),
+        linear-gradient(180deg, #f4ede0, #e5d4b8);
+    }
+    .s9-content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 0 80px;
+      gap: 0;
+    }
+    .s9-bean {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--crema), var(--accent) 78%);
+      box-shadow: 0 0 0 20px rgba(122,62,29,0.12);
+      margin-bottom: 60px;
+      animation: beanPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes beanPulse {
+      0%, 100% { box-shadow: 0 0 0 20px rgba(122,62,29,0.12); }
+      50%      { box-shadow: 0 0 0 32px rgba(122,62,29,0.07); }
+    }
+    .s9-url {
+      font-family: "Fraunces", serif;
+      font-weight: 500; font-size: 112px;
+      letter-spacing: -0.02em; line-height: 1;
+      margin: 0; color: var(--ink);
+    }
+    .s9-url em { font-style: italic; color: var(--accent); }
+    .s9-tag {
+      margin: 38px 0 0; font-size: 33px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--soft);
+    }
+    .s9-pill {
+      margin: 64px 0 0;
+      display: inline-flex; align-items: center; gap: 14px;
+      background: var(--accent); color: var(--surface);
+      font-size: 36px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 30px 72px; border-radius: 120px;
+      box-shadow: 0 10px 40px rgba(122,62,29,0.3);
+    }
+
+    /* ─── Utilities ──────────────────────────────────── */
+    body.paused * { animation-play-state: paused !important; }
+    body, iframe { scrollbar-width: none; }
+    body::-webkit-scrollbar, iframe::-webkit-scrollbar { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .s1 { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Watermark: cream for dark scenes, dark for light scenes -->
+  <div class="wm wm-cream" aria-hidden="true">
+    <span class="wm-dot"></span>
+    <span class="wm-name">Crema</span>
+  </div>
+  <div class="wm wm-dark" aria-hidden="true">
+    <span class="wm-dot"></span>
+    <span class="wm-name">Crema</span>
+  </div>
+
+  <!-- ── S1 · 0:00–0:02 · Espresso pull (hook) ─────── -->
+  <section class="scene s1" aria-label="Espresso crema">
+    <div class="s1-bg"></div>
+    <div class="s1-crema"></div>
+    <div class="s1-steam">
+      <div class="wisp"></div>
+      <div class="wisp"></div>
+      <div class="wisp"></div>
+    </div>
+  </section>
+
+  <!-- ── S2 · 0:02–0:05 · The problem ─────────────── -->
+  <section class="scene s2" aria-label="Problem">
+    <div class="s2-bg"></div>
+    <div class="s2-content">
+      <p class="s2-eyebrow">Sound familiar?</p>
+      <h2>You pulled an <em>incredible</em> shot.</h2>
+      <p>And then forgot everything about it.</p>
+    </div>
+  </section>
+
+  <!-- ── S3 · 0:05–0:08 · OCR — Snap the bag ──────── -->
+  <section class="scene s3 app-scene" aria-label="OCR scan">
+    <iframe src="../screenshots/05-ocr.html" title="OCR scan" loading="eager"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Auto-fill</p>
+      <h2>Snap the bag.</h2>
+    </div>
+  </section>
+
+  <!-- ── S4 · 0:08–0:12 · Bag detail ──────────────── -->
+  <section class="scene s4 app-scene" aria-label="Bag detail">
+    <iframe src="../screenshots/02-bag-detail.html" title="Bag detail" loading="eager"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Every detail</p>
+      <h2>Origin. Notes. <em>Roaster.</em></h2>
+    </div>
+  </section>
+
+  <!-- ── S5 · 0:12–0:16 · Dial-in ─────────────────── -->
+  <section class="scene s5 app-scene" aria-label="Dial-in">
+    <iframe src="../screenshots/03-dial-in.html" title="Dial-in" loading="eager"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Dial-in companion</p>
+      <h2>Dose. Yield. <em>Grind.</em></h2>
+    </div>
+  </section>
+
+  <!-- ── S6 · 0:16–0:19 · Rating ──────────────────── -->
+  <section class="scene s6 app-scene" aria-label="Rating">
+    <iframe src="../screenshots/02-bag-detail.html" title="Rating slots" loading="eager"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Four drink types</p>
+      <h2>Rate every brew.</h2>
+    </div>
+  </section>
+
+  <!-- ── S7 · 0:19–0:24 · Analytics journal ────────── -->
+  <section class="scene s7 app-scene" aria-label="Analytics">
+    <iframe src="../screenshots/04-analytics.html" title="Analytics journal" loading="eager"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Analytics</p>
+      <h2>Your coffee <em>journal.</em></h2>
+    </div>
+  </section>
+
+  <!-- ── S8 · 0:24–0:27 · Taste profile ───────────── -->
+  <section class="scene s8 app-scene" aria-label="Taste profile">
+    <iframe src="../screenshots/04-analytics.html" title="Taste profile" loading="eager" id="s8-iframe"></iframe>
+    <div class="ov-top"></div>
+    <div class="ov-bot"></div>
+    <div class="label">
+      <p class="eye">Taste profile</p>
+      <h2>Know your <em>taste.</em></h2>
+    </div>
+  </section>
+
+  <!-- ── S9 · 0:27–0:30 · CTA ──────────────────────── -->
+  <section class="scene s9" aria-label="CTA">
+    <div class="s9-bg"></div>
+    <div class="s9-content">
+      <div class="s9-bean" aria-hidden="true"></div>
+      <p class="s9-url"><em>crema</em>.live</p>
+      <p class="s9-tag">Free · No sign-up</p>
+      <span class="s9-pill">Start for free →</span>
+    </div>
+  </section>
+
+  <!-- Progress bar -->
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-bar"></div>
+  </div>
+
+  <script>
+    // Space = pause/resume · R = restart
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); document.body.classList.toggle("paused"); }
+      if (e.code === "KeyR")  location.reload();
+    });
+    document.body.addEventListener("click", () => document.body.classList.toggle("paused"));
+
+    // Scroll the S8 analytics iframe down to the taste profile section
+    document.getElementById("s8-iframe").addEventListener("load", () => {
+      try { document.getElementById("s8-iframe").contentWindow.scrollTo({ top: 920 }); }
+      catch (_) {}
+    });
+  </script>
+</body>
+</html>
