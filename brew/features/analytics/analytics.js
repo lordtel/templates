@@ -271,30 +271,12 @@ function miniDots(avg) {
 //   Strength — shot concentration (ratio)  (locked recipes)
 
 const SPIDER_AXES = [
-  {
-    key: "bright", label: "Bright",
-    desc: "Sour, citrus, wine. Pulled from your taste slider sour readings.",
-  },
-  {
-    key: "dose", label: "Dose",
-    desc: "Average coffee input weight per shot, from locked recipes.",
-  },
-  {
-    key: "long", label: "Long pull",
-    desc: "Extraction time. Short = fast & punchy; long = slow & complex.",
-  },
-  {
-    key: "bold", label: "Bold",
-    desc: "Bitter, dark chocolate, intensity. Opposite of bright.",
-  },
-  {
-    key: "rich", label: "Rich",
-    desc: "Body and mouthfeel. Low = light & watery; high = thick & syrupy.",
-  },
-  {
-    key: "strength", label: "Strength",
-    desc: "Shot concentration via yield ratio. High = tight ristretto.",
-  },
+  { key: "bright",   label: "Bright",    desc: "Sour, citrus notes" },
+  { key: "dose",     label: "Dose",      desc: "Coffee per shot" },
+  { key: "long",     label: "Long pull", desc: "Slow extraction" },
+  { key: "bold",     label: "Bold",      desc: "Bitter, intense notes" },
+  { key: "rich",     label: "Rich",      desc: "Thick, syrupy body" },
+  { key: "strength", label: "Strength",  desc: "Concentrated shots" },
 ];
 
 function tasteProfile(bags) {
@@ -411,7 +393,6 @@ function buildSpiderLegend(values, axes) {
     item.innerHTML = `
       <div class="spider-axis-head">
         <span class="spider-axis-name">${label}</span>
-        <span class="spider-axis-pct">${pct}%</span>
       </div>
       <div class="spider-axis-bar-wrap">
         <div class="spider-axis-bar" style="width:${pct}%"></div>
