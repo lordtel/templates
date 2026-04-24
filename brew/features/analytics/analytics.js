@@ -262,23 +262,39 @@ function miniDots(avg) {
 
 // ── Taste profile spider chart ────────────────────────
 //
-// 6 axes derived from real captured data:
+// 6 axes, clockwise from top, each normalised 0–1:
 //   Bright   — sour side of taste slider   (dial-in logs)
+//   Dose     — input weight                (locked recipes)
+//   Long     — extraction time             (locked recipes)
 //   Bold     — bitter side of taste slider (dial-in logs)
-//   Rich     — syrupy side of texture      (dial-in logs)
-//   Strength — shot concentration (1/ratio) from locked recipes
-//   Long     — extraction time             from locked recipes
-//   Dose     — input weight                from locked recipes
-//
-// Each axis is normalised 0–1 before plotting.
+//   Rich     — body/texture fullness       (dial-in logs)
+//   Strength — shot concentration (ratio)  (locked recipes)
 
 const SPIDER_AXES = [
-  { key: "bright",   label: "Bright"   },
-  { key: "dose",     label: "Dose"     },
-  { key: "long",     label: "Long pull" },
-  { key: "bold",     label: "Bold"     },
-  { key: "rich",     label: "Rich"     },
-  { key: "strength", label: "Strength" },
+  {
+    key: "bright", label: "Bright",
+    desc: "Sour, citrus, wine. Pulled from your taste slider sour readings.",
+  },
+  {
+    key: "dose", label: "Dose",
+    desc: "Average coffee input weight per shot, from locked recipes.",
+  },
+  {
+    key: "long", label: "Long pull",
+    desc: "Extraction time. Short = fast & punchy; long = slow & complex.",
+  },
+  {
+    key: "bold", label: "Bold",
+    desc: "Bitter, dark chocolate, intensity. Opposite of bright.",
+  },
+  {
+    key: "rich", label: "Rich",
+    desc: "Body and mouthfeel. Low = light & watery; high = thick & syrupy.",
+  },
+  {
+    key: "strength", label: "Strength",
+    desc: "Shot concentration via yield ratio. High = tight ristretto.",
+  },
 ];
 
 function tasteProfile(bags) {
@@ -286,13 +302,8 @@ function tasteProfile(bags) {
   section.className = "panel";
   section.innerHTML = `<h2>Your taste profile</h2>`;
 
-  // Collect all dial-in logs across all bags.
   const allLogs = bags.flatMap((b) => (b.dialIns ?? []).map((l) => ({ ...l, bag: b })));
-
-  // Collect locked recipes.
-  const locked = bags
-    .filter((b) => b.dialedInAt && b.dialedInRecipe)
-    .map((b) => b.dialedInRecipe);
+  const locked  = bags.filter((b) => b.dialedInAt && b.dialedInRecipe).map((b) => b.dialedInRecipe);
 
   if (!allLogs.length && !locked.length) {
     section.innerHTML += `<p class="panel-empty">Start dialing in bags to see your taste profile.</p>`;
@@ -300,60 +311,45 @@ function tasteProfile(bags) {
   }
 
   // ── Axis values ──────────────────────────────────────
-  // Taste: -3 (super sour) → +3 (super bitter)
-  const tasteVals = allLogs.map((l) => Number(l.taste) || 0);
-  const avgTaste = tasteVals.length
-    ? tasteVals.reduce((a, b) => a + b, 0) / tasteVals.length : 0;
-
-  // Texture: -3 (watery) → +3 (syrupy)
+  const tasteVals   = allLogs.map((l) => Number(l.taste)   || 0);
   const textureVals = allLogs.map((l) => Number(l.texture) || 0);
-  const avgTexture = textureVals.length
-    ? textureVals.reduce((a, b) => a + b, 0) / textureVals.length : 0;
+  const avgTaste    = tasteVals.length   ? tasteVals.reduce((a, b)   => a + b, 0) / tasteVals.length   : 0;
+  const avgTexture  = textureVals.length ? textureVals.reduce((a, b) => a + b, 0) / textureVals.length : 0;
 
-  // Locked recipe aggregates (dose, yield, time).
-  const avg = (arr, fn) => arr.length
-    ? arr.reduce((s, x) => s + (fn(x) || 0), 0) / arr.length : null;
-  const avgDose  = avg(locked, (r) => Number(r.dose));
-  const avgRatio = avg(
+  const avgOf = (arr, fn) => arr.length ? arr.reduce((s, x) => s + (fn(x) || 0), 0) / arr.length : null;
+  const avgDose  = avgOf(locked, (r) => Number(r.dose));
+  const avgRatio = avgOf(
     locked.filter((r) => Number(r.dose) > 0 && Number(r.yield) > 0),
     (r) => Number(r.yield) / Number(r.dose)
   );
-  const avgTime  = avg(locked.filter((r) => Number(r.time) > 0), (r) => Number(r.time));
+  const avgTime = avgOf(locked.filter((r) => Number(r.time) > 0), (r) => Number(r.time));
 
-  // Normalise each axis 0–1.
   const bright   = clamp(Math.max(0, -avgTaste) / 3, 0, 1);
   const bold     = clamp(Math.max(0, avgTaste)  / 3, 0, 1);
   const rich     = clamp((avgTexture + 3) / 6,        0, 1);
-  // Strength: ratio 1:1.5 (strong) → 1.0, ratio 1:3.5 (long) → 0.0
-  const strength = avgRatio != null
-    ? clamp(1 - (avgRatio - 1.5) / 2, 0, 1) : 0.5;
-  // Long pull: 18 s → 0, 40 s → 1
-  const long = avgTime != null
-    ? clamp((avgTime - 18) / 22, 0, 1) : 0.5;
-  // Dose: 14 g → 0, 22 g → 1
-  const dose = avgDose != null
-    ? clamp((avgDose - 14) / 8, 0, 1) : 0.5;
+  const strength = avgRatio != null ? clamp(1 - (avgRatio - 1.5) / 2, 0, 1) : 0.5;
+  const long     = avgTime  != null ? clamp((avgTime - 18) / 22,       0, 1) : 0.5;
+  const dose     = avgDose  != null ? clamp((avgDose - 14) / 8,        0, 1) : 0.5;
 
   const values = { bright, bold, rich, strength, long, dose };
 
-  // Whether we have real vs fallback data per axis.
-  const hasTaste   = tasteVals.length > 0;
-  const hasRecipes = locked.length > 0;
-
-  const sampleCount = allLogs.length;
-
-  // ── Build chart ──────────────────────────────────────
+  // ── Build UI ─────────────────────────────────────────
   const wrap = document.createElement("div");
   wrap.className = "spider-wrap";
-  wrap.innerHTML = spiderSvg(values, SPIDER_AXES);
 
-  // Legend / sample count
+  const chartArea = document.createElement("div");
+  chartArea.className = "spider-chart-area";
+  chartArea.innerHTML = spiderSvg(values, SPIDER_AXES);
+  wrap.appendChild(chartArea);
+
+  wrap.appendChild(buildSpiderLegend(values, SPIDER_AXES));
+
+  const parts = [];
+  if (tasteVals.length)  parts.push(`${allLogs.length} dial-in log${allLogs.length === 1 ? "" : "s"}`);
+  if (locked.length)     parts.push(`${locked.length} locked recipe${locked.length === 1 ? "" : "s"}`);
   const sub = document.createElement("p");
   sub.className = "spider-sub";
-  const parts = [];
-  if (hasTaste)   parts.push(`${sampleCount} dial-in log${sampleCount === 1 ? "" : "s"}`);
-  if (hasRecipes) parts.push(`${locked.length} locked recipe${locked.length === 1 ? "" : "s"}`);
-  sub.textContent = parts.length ? `Based on ${parts.join(" · ")}` : "Log some attempts to sharpen the shape.";
+  sub.textContent = parts.length ? `Based on ${parts.join(" · ")}` : "Log dial-in attempts to sharpen the shape.";
   wrap.appendChild(sub);
 
   section.appendChild(wrap);
@@ -361,60 +357,38 @@ function tasteProfile(bags) {
 }
 
 function spiderSvg(values, axes) {
-  const N   = axes.length;
-  const cx  = 110;
-  const cy  = 110;
-  const R   = 76;   // outer ring radius
+  const N  = axes.length;
+  const cx = 100, cy = 100, R = 84;
   const rings = [0.33, 0.66, 1];
 
-  // Angle for axis i: start at top (−π/2), go clockwise.
   const angle = (i) => (2 * Math.PI * i) / N - Math.PI / 2;
-
   const px = (i, t) => cx + t * R * Math.cos(angle(i));
   const py = (i, t) => cy + t * R * Math.sin(angle(i));
 
-  // Grid rings.
   const ringPaths = rings.map((t) => {
     const pts = axes.map((_, i) => `${px(i, t).toFixed(2)},${py(i, t).toFixed(2)}`).join(" ");
     return `<polygon points="${pts}" class="spider-ring"/>`;
   }).join("\n");
 
-  // Axis spokes.
   const spokes = axes.map((_, i) =>
     `<line x1="${cx}" y1="${cy}" x2="${px(i, 1).toFixed(2)}" y2="${py(i, 1).toFixed(2)}" class="spider-spoke"/>`
   ).join("\n");
 
-  // Data polygon.
   const dataPts = axes.map(({ key }, i) =>
     `${px(i, values[key]).toFixed(2)},${py(i, values[key]).toFixed(2)}`
   ).join(" ");
 
-  // Dot on each axis tip.
   const dots = axes.map(({ key }, i) => {
     const v = values[key];
-    return `<circle cx="${px(i, v).toFixed(2)}" cy="${py(i, v).toFixed(2)}" r="4" class="spider-dot"/>`;
+    return `<circle cx="${px(i, v).toFixed(2)}" cy="${py(i, v).toFixed(2)}" r="4.5" class="spider-dot"/>`;
   }).join("\n");
-
-  // Labels — pushed outward from the ring edge.
-  const LABEL_PAD = 18;
-  const labels = axes.map(({ label }, i) => {
-    const a = angle(i);
-    const lx = (cx + (R + LABEL_PAD) * Math.cos(a)).toFixed(2);
-    const ly = (cy + (R + LABEL_PAD) * Math.sin(a)).toFixed(2);
-    const anchor = Math.cos(a) > 0.1 ? "start" : Math.cos(a) < -0.1 ? "end" : "middle";
-    const dy = Math.sin(a) > 0.3 ? "1.1em" : Math.sin(a) < -0.3 ? "0" : "0.35em";
-    return `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}" class="spider-label">${label}</text>`;
-  }).join("\n");
-
-  const size = (cx + R + LABEL_PAD + 32) * 2;
-  const vb   = `0 0 ${size} ${size}`;
 
   return `
-    <svg viewBox="${vb}" class="spider-svg" role="img" aria-label="Taste profile radar chart">
+    <svg viewBox="0 0 200 200" class="spider-svg" role="img" aria-label="Taste profile radar chart">
       <defs>
         <radialGradient id="spider-fill-grad" cx="50%" cy="50%">
-          <stop offset="0"   stop-color="var(--accent)" stop-opacity="0.35"/>
-          <stop offset="100%" stop-color="var(--crema)"  stop-opacity="0.18"/>
+          <stop offset="0%"   stop-color="var(--accent)" stop-opacity="0.38"/>
+          <stop offset="100%" stop-color="var(--crema)"  stop-opacity="0.12"/>
         </radialGradient>
       </defs>
       ${ringPaths}
@@ -422,9 +396,32 @@ function spiderSvg(values, axes) {
       <polygon points="${dataPts}" class="spider-area"/>
       <polygon points="${dataPts}" class="spider-border"/>
       ${dots}
-      ${labels}
     </svg>
   `;
+}
+
+function buildSpiderLegend(values, axes) {
+  const legend = document.createElement("div");
+  legend.className = "spider-legend";
+
+  axes.forEach(({ key, label, desc }) => {
+    const pct = Math.round(values[key] * 100);
+    const item = document.createElement("div");
+    item.className = "spider-legend-item";
+    item.innerHTML = `
+      <div class="spider-axis-head">
+        <span class="spider-axis-name">${label}</span>
+        <span class="spider-axis-pct">${pct}%</span>
+      </div>
+      <div class="spider-axis-bar-wrap">
+        <div class="spider-axis-bar" style="width:${pct}%"></div>
+      </div>
+      <p class="spider-axis-desc">${desc}</p>
+    `;
+    legend.appendChild(item);
+  });
+
+  return legend;
 }
 
 function timeline(ratings) {

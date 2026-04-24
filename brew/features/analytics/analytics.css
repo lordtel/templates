@@ -350,40 +350,55 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0 2px;
+  gap: 22px;
+}
+
+/* On wider panels: chart left, legend right */
+@media (min-width: 480px) {
+  .spider-wrap {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+}
+
+.spider-chart-area {
+  flex: 0 0 auto;
+  width: 180px;
+  margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .spider-chart-area {
+    margin: 0;
+  }
 }
 
 .spider-svg {
   width: 100%;
-  max-width: 320px;
   height: auto;
   display: block;
-  margin: 0 auto;
-  overflow: visible;
 }
 
 .spider-ring {
   fill: none;
   stroke: var(--line);
   stroke-width: 1;
-  stroke-dasharray: 2 3;
-  opacity: 0.7;
+  stroke-dasharray: 2 4;
 }
 
 .spider-ring:last-of-type {
   stroke-dasharray: none;
-  opacity: 1;
+  stroke: var(--line-strong);
 }
 
 .spider-spoke {
   stroke: var(--line);
   stroke-width: 1;
-  opacity: 0.7;
 }
 
 .spider-area {
   fill: url(#spider-fill-grad);
-  transition: opacity 0.3s var(--ease);
 }
 
 .spider-border {
@@ -399,21 +414,82 @@
   stroke-width: 2;
 }
 
-.spider-label {
-  font-family: "Inter", sans-serif;
-  font-size: 10.5px;
-  font-weight: 600;
-  fill: var(--ink-soft);
-  letter-spacing: 0.08em;
+/* ── Legend ──────────────────────────────────────────── */
+.spider-legend {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+}
+
+@media (min-width: 480px) {
+  .spider-legend {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.spider-legend-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.spider-axis-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.spider-axis-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--ink);
+}
+
+.spider-axis-pct {
+  font-family: "Fraunces", serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.spider-axis-bar-wrap {
+  height: 4px;
+  background: rgba(122, 62, 29, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.spider-axis-bar {
+  height: 100%;
+  min-width: 2px;
+  background: linear-gradient(to right, var(--accent), var(--crema));
+  border-radius: 2px;
+  transition: width 0.5s var(--ease);
+}
+
+.spider-axis-desc {
+  margin: 0;
+  font-size: 11px;
+  color: var(--ink-faint);
+  line-height: 1.4;
 }
 
 .spider-sub {
-  margin: 12px 0 0;
-  font-size: 12px;
+  margin: 0;
+  font-size: 11.5px;
   color: var(--ink-faint);
   text-align: center;
   letter-spacing: 0.02em;
+  width: 100%;
 }
 
 /* ── Pour-row timeline ──────────────────────────────── */
