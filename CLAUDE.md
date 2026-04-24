@@ -123,6 +123,15 @@ git push -u origin <branch> --force-with-lease
 | #39 | Add full press kit: logos, social cards, screenshots, copy deck |
 | #40 | Press-kit screenshots: HTML renders using real app CSS |
 | #41 | Add 30s Product Hunt demo (1920×1080 auto-play loop) |
+| #42 | Service worker: offline support + app-shell precache |
+| #43 | SEO: JSON-LD (SoftwareApplication, WebSite, FAQPage), sitemap, sr-only H1 |
+| #44 | Share-a-bag: Web Share API + clipboard fallback (dialed-in recipe + 2 bag infos) |
+| #45 | Gear catalog: Decent DE1 Pro + Timemore Sculptor 064S |
+| #46 | Dial-in: Parameters/Results split + attempt count on bag detail |
+| #47 | Bug fix: replace confirm()/prompt() with inline UI (iOS PWA silent block) |
+| #48 | Analytics: financial view (spend, cost-per-shot ladder, best-value) |
+| #53 | Press kit: refresh screenshots + one-command PNG export (`npm run export-png`) |
+| #54 | UX polish: quick-rate stars, OCR skip link, best-value first, onboarding OCR lead, re-open toast |
 
 ## Local dev
 

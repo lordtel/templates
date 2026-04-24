@@ -1,4 +1,4 @@
-import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink, markFinished, markActive } from "../../core/store.js";
+import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink, markFinished, markActive, upsertRating } from "../../core/store.js";
 import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
 
@@ -72,7 +72,7 @@ function paint(container, bagId) {
     </dl>
     <div class="info-actions">
       ${statusBtn}
-      <button class="btn ghost small" id="share-btn">Share</button>
+      <button class="btn ghost small" id="share-btn">Share recipe</button>
       <button class="btn ghost small" id="edit-btn">Edit</button>
     </div>
   `;
@@ -110,7 +110,7 @@ function paint(container, bagId) {
   allDrinks.forEach((d) => {
     const r = byDrink.get(d.id);
     const hint = r ? null : suggestForDrink(d.id, bag);
-    slots.appendChild(buildSlot(bag.id, d, r, hint));
+    slots.appendChild(buildSlot(bag.id, d, r, hint, bag));
   });
   container.appendChild(slots);
 
@@ -154,28 +154,61 @@ function paint(container, bagId) {
   container.appendChild(addBtn);
 }
 
-function buildSlot(bagId, drink, rating, hint) {
-  const slot = document.createElement("button");
-  slot.type = "button";
-  slot.className = "rating-slot" + (rating ? " filled" : " empty");
-  slot.addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
-
+function buildSlot(bagId, drink, rating, hint, bag) {
   if (!rating) {
     const grindStr = formatHintGrind(hint);
     const hintText = hint && grindStr
       ? (hint.hasData
           ? `Try ${grindStr} · from ${hint.sampleSize} rating${hint.sampleSize === 1 ? "" : "s"}`
           : `Try ${grindStr} to start`)
-      : "Not rated yet";
-    slot.innerHTML = `
-      <div class="slot-head">
-        <h3>${drink.label}</h3>
-        <span class="slot-action">Rate</span>
-      </div>
-      <p class="slot-empty">${hintText}</p>
-    `;
+      : "Tap a star to quick-rate, or open for notes";
+
+    const slot = document.createElement("div");
+    slot.className = "rating-slot empty";
+
+    const head = document.createElement("div");
+    head.className = "slot-head";
+    head.innerHTML = `<h3>${drink.label}</h3><a class="slot-action" role="button" tabindex="0">Full form</a>`;
+    head.querySelector(".slot-action").addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
+    head.querySelector("h3").style.cursor = "pointer";
+    head.querySelector("h3").addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
+    slot.appendChild(head);
+
+    const hint_p = document.createElement("p");
+    hint_p.className = "slot-empty";
+    hint_p.textContent = hintText;
+    slot.appendChild(hint_p);
+
+    const stars = document.createElement("div");
+    stars.className = "slot-quick-stars";
+    stars.setAttribute("role", "group");
+    stars.setAttribute("aria-label", `Quick-rate ${drink.label}`);
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "slot-quick-star";
+      btn.setAttribute("aria-label", `${i} star${i > 1 ? "s" : ""}`);
+      btn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const grind = bag?.dialedInRecipe?.grind ?? null;
+        upsertRating(bagId, drink.id, {
+          rating: i,
+          grindSize: grind,
+          notes: "",
+          date: new Date().toISOString().slice(0, 10),
+        });
+      });
+      stars.appendChild(btn);
+    }
+    slot.appendChild(stars);
     return slot;
   }
+
+  const slot = document.createElement("button");
+  slot.type = "button";
+  slot.className = "rating-slot filled";
+  slot.addEventListener("click", () => navigate(`/bag/${bagId}/rate/${drink.id}`));
 
   const dateStr = formatDate(rating.date);
   const grindStr = rating.grindSize != null ? `Grind ${rating.grindSize}` : "";

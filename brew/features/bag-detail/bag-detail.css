@@ -319,3 +319,42 @@
   color: var(--ink-soft);
   line-height: 1.5;
 }
+
+.slot-quick-stars {
+  display: flex;
+  gap: 0;
+  margin-top: 10px;
+}
+
+.slot-quick-star {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--line-strong);
+  cursor: pointer;
+  padding: 6px 2px;
+  transition: color 0.12s var(--ease), transform 0.12s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slot-quick-star svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  display: block;
+  margin: 0 auto;
+}
+
+.slot-quick-star:hover,
+.slot-quick-star:focus-visible {
+  color: var(--accent);
+  transform: scale(1.15);
+  outline: none;
+}
+
+.slot-quick-star:active {
+  transform: scale(0.96);
+}

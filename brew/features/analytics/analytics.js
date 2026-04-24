@@ -205,6 +205,17 @@ function financialView(bags) {
         x.avgRating / x.perShot > best.avgRating / best.perShot ? x : best)
     : null;
 
+  if (bestValue) {
+    const callout = document.createElement("p");
+    callout.className = "best-value-callout";
+    callout.innerHTML = `
+      <span class="best-value-star">✦</span>
+      Best value: <strong>${escapeHtml(bestValue.bag.brand || "Untitled")}</strong>
+      · ${bestValue.avgRating.toFixed(1)}★ at ${sym}${bestValue.perShot.toFixed(2)}/shot
+    `;
+    section.appendChild(callout);
+  }
+
   const subTitle = document.createElement("p");
   subTitle.className = "spend-subtitle";
   subTitle.textContent = "Cost per shot — cheapest to priciest";
@@ -237,17 +248,6 @@ function financialView(bags) {
     rows.appendChild(row);
   });
   section.appendChild(rows);
-
-  if (bestValue) {
-    const callout = document.createElement("p");
-    callout.className = "best-value-callout";
-    callout.innerHTML = `
-      <span class="best-value-star">✦</span>
-      Best value: <strong>${escapeHtml(bestValue.bag.brand || "Untitled")}</strong>
-      · ${bestValue.avgRating.toFixed(1)}★ at ${sym}${bestValue.perShot.toFixed(2)}/shot
-    `;
-    section.appendChild(callout);
-  }
 
   return section;
 }
