@@ -188,3 +188,33 @@ input[type="range"].bipolar.water-syrup {
   font-weight: 500;
   border-color: var(--accent);
 }
+
+/* ── Inline confirmations (replaces native confirm/prompt) ── */
+.inline-confirm {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inline-confirm-q {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.inline-confirm-input {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xs);
+  background: var(--surface-solid);
+  color: var(--ink);
+  outline: none;
+}
+
+.inline-confirm-input:focus {
+  border-color: var(--accent);
+}

@@ -119,11 +119,37 @@ function paint(container, bagId) {
   addBtn.className = "btn ghost small add-drink";
   addBtn.textContent = "+ Add another drink";
   addBtn.addEventListener("click", () => {
-    const name = prompt("What drink did you brew?\n(e.g. Flat white, Cortado, V60)");
-    if (!name) return;
-    const slug = slugifyDrink(name);
-    if (!slug) return;
-    navigate(`/bag/${bag.id}/rate/${slug}`);
+    addBtn.style.display = "none";
+    const row = document.createElement("span");
+    row.className = "inline-confirm";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "inline-confirm-input";
+    input.placeholder = "Flat white, V60, …";
+    input.maxLength = 40;
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "linklike";
+    cancel.textContent = "Cancel";
+    const go = document.createElement("button");
+    go.type = "button";
+    go.className = "btn small";
+    go.textContent = "Go";
+    row.appendChild(input);
+    row.appendChild(cancel);
+    row.appendChild(go);
+    addBtn.after(row);
+    input.focus();
+    const submit = () => {
+      const name = input.value.trim();
+      if (!name) return;
+      const slug = slugifyDrink(name);
+      if (!slug) return;
+      navigate(`/bag/${bag.id}/rate/${slug}`);
+    };
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") submit(); });
+    go.addEventListener("click", submit);
+    cancel.addEventListener("click", () => { row.remove(); addBtn.style.display = ""; });
   });
   container.appendChild(addBtn);
 }
