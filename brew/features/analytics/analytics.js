@@ -43,7 +43,7 @@ function paint(container, state) {
   container.appendChild(hero(bags, ratings));
   container.appendChild(topPicks(bags));
   container.appendChild(financialView(bags));
-  container.appendChild(grindSweetSpot(ratings));
+  container.appendChild(tasteProfile(bags));
   container.appendChild(timeline(ratings));
 }
 
@@ -260,91 +260,171 @@ function miniDots(avg) {
   return out;
 }
 
-function grindSweetSpot(ratings) {
+// ── Taste profile spider chart ────────────────────────
+//
+// 6 axes derived from real captured data:
+//   Bright   — sour side of taste slider   (dial-in logs)
+//   Bold     — bitter side of taste slider (dial-in logs)
+//   Rich     — syrupy side of texture      (dial-in logs)
+//   Strength — shot concentration (1/ratio) from locked recipes
+//   Long     — extraction time             from locked recipes
+//   Dose     — input weight                from locked recipes
+//
+// Each axis is normalised 0–1 before plotting.
+
+const SPIDER_AXES = [
+  { key: "bright",   label: "Bright"   },
+  { key: "dose",     label: "Dose"     },
+  { key: "long",     label: "Long pull" },
+  { key: "bold",     label: "Bold"     },
+  { key: "rich",     label: "Rich"     },
+  { key: "strength", label: "Strength" },
+];
+
+function tasteProfile(bags) {
   const section = document.createElement("section");
   section.className = "panel";
-  section.innerHTML = `<h2>The dial</h2>`;
+  section.innerHTML = `<h2>Your taste profile</h2>`;
 
-  if (!ratings.length) {
-    section.innerHTML += `<p class="panel-empty">No ratings yet.</p>`;
+  // Collect all dial-in logs across all bags.
+  const allLogs = bags.flatMap((b) => (b.dialIns ?? []).map((l) => ({ ...l, bag: b })));
+
+  // Collect locked recipes.
+  const locked = bags
+    .filter((b) => b.dialedInAt && b.dialedInRecipe)
+    .map((b) => b.dialedInRecipe);
+
+  if (!allLogs.length && !locked.length) {
+    section.innerHTML += `<p class="panel-empty">Start dialing in bags to see your taste profile.</p>`;
     return section;
   }
 
-  const grid = document.createElement("div");
-  grid.className = "dial-grid";
+  // ── Axis values ──────────────────────────────────────
+  // Taste: -3 (super sour) → +3 (super bitter)
+  const tasteVals = allLogs.map((l) => Number(l.taste) || 0);
+  const avgTaste = tasteVals.length
+    ? tasteVals.reduce((a, b) => a + b, 0) / tasteVals.length : 0;
 
-  DRINK_TYPES.forEach((d) => {
-    const list = ratings.filter((r) => r.drinkType === d.id && r.grindSize != null && r.rating);
-    if (!list.length) {
-      grid.appendChild(dialSvg(d.label, null));
-      return;
-    }
-    const weighted = list.reduce((s, r) => s + r.grindSize * r.rating, 0);
-    const totalR = list.reduce((s, r) => s + Number(r.rating), 0);
-    const bestGrind = weighted / totalR;
-    grid.appendChild(dialSvg(d.label, bestGrind, list.length));
-  });
+  // Texture: -3 (watery) → +3 (syrupy)
+  const textureVals = allLogs.map((l) => Number(l.texture) || 0);
+  const avgTexture = textureVals.length
+    ? textureVals.reduce((a, b) => a + b, 0) / textureVals.length : 0;
 
-  section.appendChild(grid);
+  // Locked recipe aggregates (dose, yield, time).
+  const avg = (arr, fn) => arr.length
+    ? arr.reduce((s, x) => s + (fn(x) || 0), 0) / arr.length : null;
+  const avgDose  = avg(locked, (r) => Number(r.dose));
+  const avgRatio = avg(
+    locked.filter((r) => Number(r.dose) > 0 && Number(r.yield) > 0),
+    (r) => Number(r.yield) / Number(r.dose)
+  );
+  const avgTime  = avg(locked.filter((r) => Number(r.time) > 0), (r) => Number(r.time));
+
+  // Normalise each axis 0–1.
+  const bright   = clamp(Math.max(0, -avgTaste) / 3, 0, 1);
+  const bold     = clamp(Math.max(0, avgTaste)  / 3, 0, 1);
+  const rich     = clamp((avgTexture + 3) / 6,        0, 1);
+  // Strength: ratio 1:1.5 (strong) → 1.0, ratio 1:3.5 (long) → 0.0
+  const strength = avgRatio != null
+    ? clamp(1 - (avgRatio - 1.5) / 2, 0, 1) : 0.5;
+  // Long pull: 18 s → 0, 40 s → 1
+  const long = avgTime != null
+    ? clamp((avgTime - 18) / 22, 0, 1) : 0.5;
+  // Dose: 14 g → 0, 22 g → 1
+  const dose = avgDose != null
+    ? clamp((avgDose - 14) / 8, 0, 1) : 0.5;
+
+  const values = { bright, bold, rich, strength, long, dose };
+
+  // Whether we have real vs fallback data per axis.
+  const hasTaste   = tasteVals.length > 0;
+  const hasRecipes = locked.length > 0;
+
+  const sampleCount = allLogs.length;
+
+  // ── Build chart ──────────────────────────────────────
+  const wrap = document.createElement("div");
+  wrap.className = "spider-wrap";
+  wrap.innerHTML = spiderSvg(values, SPIDER_AXES);
+
+  // Legend / sample count
+  const sub = document.createElement("p");
+  sub.className = "spider-sub";
+  const parts = [];
+  if (hasTaste)   parts.push(`${sampleCount} dial-in log${sampleCount === 1 ? "" : "s"}`);
+  if (hasRecipes) parts.push(`${locked.length} locked recipe${locked.length === 1 ? "" : "s"}`);
+  sub.textContent = parts.length ? `Based on ${parts.join(" · ")}` : "Log some attempts to sharpen the shape.";
+  wrap.appendChild(sub);
+
+  section.appendChild(wrap);
   return section;
 }
 
-function dialSvg(label, bestGrind, sampleSize) {
-  const wrap = document.createElement("div");
-  wrap.className = "dial-tile" + (bestGrind == null ? " muted" : "");
+function spiderSvg(values, axes) {
+  const N   = axes.length;
+  const cx  = 110;
+  const cy  = 110;
+  const R   = 76;   // outer ring radius
+  const rings = [0.33, 0.66, 1];
 
-  const w = 120;
-  const h = 84;
-  const cx = w / 2;
-  const cy = 72;
-  const r = 48;
+  // Angle for axis i: start at top (−π/2), go clockwise.
+  const angle = (i) => (2 * Math.PI * i) / N - Math.PI / 2;
 
-  const startA = Math.PI;
-  const endA = 0;
-  const ax = cx + r * Math.cos(startA);
-  const ay = cy + r * Math.sin(startA);
-  const bx = cx + r * Math.cos(endA);
-  const by = cy + r * Math.sin(endA);
+  const px = (i, t) => cx + t * R * Math.cos(angle(i));
+  const py = (i, t) => cy + t * R * Math.sin(angle(i));
 
-  let marker = "";
-  let value = "—";
-  let hint = "not enough data";
+  // Grid rings.
+  const ringPaths = rings.map((t) => {
+    const pts = axes.map((_, i) => `${px(i, t).toFixed(2)},${py(i, t).toFixed(2)}`).join(" ");
+    return `<polygon points="${pts}" class="spider-ring"/>`;
+  }).join("\n");
 
-  if (bestGrind != null) {
-    const t = clamp((bestGrind - 1) / 29, 0, 1);
-    const ang = Math.PI - t * Math.PI;
-    const mx = cx + r * Math.cos(ang);
-    const my = cy + r * Math.sin(ang);
-    marker = `
-      <circle cx="${mx.toFixed(2)}" cy="${my.toFixed(2)}" r="8" fill="url(#crema-glow-${label.replace(/\s/g, "-")})" opacity="0.55"/>
-      <circle cx="${mx.toFixed(2)}" cy="${my.toFixed(2)}" r="4.5" fill="var(--accent)" stroke="var(--surface-solid)" stroke-width="2"/>
-    `;
-    value = bestGrind.toFixed(1);
-    hint = `${sampleSize} rating${sampleSize === 1 ? "" : "s"}`;
-  }
+  // Axis spokes.
+  const spokes = axes.map((_, i) =>
+    `<line x1="${cx}" y1="${cy}" x2="${px(i, 1).toFixed(2)}" y2="${py(i, 1).toFixed(2)}" class="spider-spoke"/>`
+  ).join("\n");
 
-  wrap.innerHTML = `
-    <svg viewBox="0 0 ${w} ${h}" class="dial-svg" role="img" aria-label="${label} grind dial">
+  // Data polygon.
+  const dataPts = axes.map(({ key }, i) =>
+    `${px(i, values[key]).toFixed(2)},${py(i, values[key]).toFixed(2)}`
+  ).join(" ");
+
+  // Dot on each axis tip.
+  const dots = axes.map(({ key }, i) => {
+    const v = values[key];
+    return `<circle cx="${px(i, v).toFixed(2)}" cy="${py(i, v).toFixed(2)}" r="4" class="spider-dot"/>`;
+  }).join("\n");
+
+  // Labels — pushed outward from the ring edge.
+  const LABEL_PAD = 18;
+  const labels = axes.map(({ label }, i) => {
+    const a = angle(i);
+    const lx = (cx + (R + LABEL_PAD) * Math.cos(a)).toFixed(2);
+    const ly = (cy + (R + LABEL_PAD) * Math.sin(a)).toFixed(2);
+    const anchor = Math.cos(a) > 0.1 ? "start" : Math.cos(a) < -0.1 ? "end" : "middle";
+    const dy = Math.sin(a) > 0.3 ? "1.1em" : Math.sin(a) < -0.3 ? "0" : "0.35em";
+    return `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}" class="spider-label">${label}</text>`;
+  }).join("\n");
+
+  const size = (cx + R + LABEL_PAD + 32) * 2;
+  const vb   = `0 0 ${size} ${size}`;
+
+  return `
+    <svg viewBox="${vb}" class="spider-svg" role="img" aria-label="Taste profile radar chart">
       <defs>
-        <linearGradient id="dial-track-${label.replace(/\s/g, "-")}" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0" stop-color="var(--accent)" stop-opacity="0.45"/>
-          <stop offset="0.55" stop-color="var(--crema)" stop-opacity="0.7"/>
-          <stop offset="1" stop-color="var(--line-strong)"/>
-        </linearGradient>
-        <radialGradient id="crema-glow-${label.replace(/\s/g, "-")}">
-          <stop offset="0" stop-color="var(--crema)" stop-opacity="0.9"/>
-          <stop offset="1" stop-color="var(--crema)" stop-opacity="0"/>
+        <radialGradient id="spider-fill-grad" cx="50%" cy="50%">
+          <stop offset="0"   stop-color="var(--accent)" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="var(--crema)"  stop-opacity="0.18"/>
         </radialGradient>
       </defs>
-      <path d="M ${ax.toFixed(2)} ${ay.toFixed(2)} A ${r} ${r} 0 0 1 ${bx.toFixed(2)} ${by.toFixed(2)}"
-        fill="none" stroke="url(#dial-track-${label.replace(/\s/g, "-")})" stroke-width="6" stroke-linecap="round"/>
-      ${marker}
-      <text x="${cx}" y="${cy - 6}" text-anchor="middle" class="dial-value">${value}</text>
+      ${ringPaths}
+      ${spokes}
+      <polygon points="${dataPts}" class="spider-area"/>
+      <polygon points="${dataPts}" class="spider-border"/>
+      ${dots}
+      ${labels}
     </svg>
-    <p class="dial-label">${label}</p>
-    <p class="dial-hint">${hint}</p>
   `;
-  return wrap;
 }
 
 function timeline(ratings) {
