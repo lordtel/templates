@@ -110,6 +110,8 @@ function paint(container, bagId, logId) {
   const card = document.createElement("div");
   card.className = "card dial-in-form";
   card.innerHTML = `
+    <p class="di-section-title">Parameters</p>
+
     <div class="field-row">
       <div class="field">
         <label for="di-dose">Dose in (g)</label>
@@ -144,6 +146,8 @@ function paint(container, bagId, logId) {
         <span>Coarse (${scale.max})</span>
       </div>
     </div>
+
+    <p class="di-section-title di-section-title--results">Results</p>
 
     <div class="field">
       <label for="di-taste">
