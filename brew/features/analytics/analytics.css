@@ -439,9 +439,7 @@
 
 .spider-axis-head {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  gap: 6px;
 }
 
 .spider-axis-name {
@@ -450,15 +448,6 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
-}
-
-.spider-axis-pct {
-  font-family: "Fraunces", serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 .spider-axis-bar-wrap {
