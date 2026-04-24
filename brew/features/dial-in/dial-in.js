@@ -100,10 +100,10 @@ function paint(container, bagId, logId) {
       <button type="button" class="btn ghost small" id="reopen-btn">Re-open</button>
     `;
     container.appendChild(locked);
-    locked.querySelector("#reopen-btn").addEventListener("click", () => {
-      if (confirm("Open this bag back up for new attempts? The current recipe stays saved.")) {
+    locked.querySelector("#reopen-btn").addEventListener("click", (e) => {
+      inlineConfirm(e.currentTarget, "Re-open for new attempts?", "Re-open", () => {
         unmarkDialedIn(bagId);
-      }
+      });
     });
   }
 
@@ -263,11 +263,11 @@ function bind(container, card, bagId, state, editingLog, scale) {
   el.cancel.addEventListener("click", () => navigate(`/bag/${bagId}`));
 
   if (el.del && editingLog) {
-    el.del.addEventListener("click", () => {
-      if (confirm("Delete this attempt?")) {
+    el.del.addEventListener("click", (e) => {
+      inlineConfirm(e.currentTarget, "Delete this attempt?", "Delete", () => {
         removeDialInLog(bagId, editingLog.id);
         navigate(`/bag/${bagId}/dial-in`);
-      }
+      });
     });
   }
 
@@ -323,8 +323,8 @@ function buildLogCard(bagId, log, scale) {
   card.querySelector('[data-act="edit"]').addEventListener("click", () => {
     navigate(`/bag/${bagId}/dial-in/${log.id}`);
   });
-  card.querySelector('[data-act="lock"]').addEventListener("click", () => {
-    if (confirm("Lock this recipe in as the dialed-in setup?")) {
+  card.querySelector('[data-act="lock"]').addEventListener("click", (e) => {
+    inlineConfirm(e.currentTarget, "Lock this in as your recipe?", "Lock it in", () => {
       markDialedIn(bagId, {
         dose: log.dose,
         yield: log.yield,
@@ -332,7 +332,7 @@ function buildLogCard(bagId, log, scale) {
         grind: log.grind,
       });
       navigate(`/bag/${bagId}`);
-    }
+    });
   });
 
   return card;
@@ -380,4 +380,27 @@ function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
+}
+
+function inlineConfirm(btn, question, confirmLabel, onConfirm) {
+  btn.style.display = "none";
+  const row = document.createElement("span");
+  row.className = "inline-confirm";
+  const q = document.createElement("span");
+  q.className = "inline-confirm-q";
+  q.textContent = question;
+  const cancel = document.createElement("button");
+  cancel.type = "button";
+  cancel.className = "linklike";
+  cancel.textContent = "Cancel";
+  const yes = document.createElement("button");
+  yes.type = "button";
+  yes.className = "btn small";
+  yes.textContent = confirmLabel;
+  row.appendChild(q);
+  row.appendChild(cancel);
+  row.appendChild(yes);
+  btn.after(row);
+  cancel.addEventListener("click", () => { row.remove(); btn.style.display = ""; });
+  yes.addEventListener("click", () => { row.remove(); btn.style.display = ""; onConfirm(); });
 }
