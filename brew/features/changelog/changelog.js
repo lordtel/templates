@@ -3,6 +3,15 @@ import { navigate } from "../../core/router.js";
 const ENTRIES = [
   {
     date: "2026-04-24",
+    title: "Taste profile chart",
+    tag: "new",
+    items: [
+      "Replaced 'The dial' in the journal with a 6-axis spider chart of your taste profile: Bright, Bold, Rich, Strength, Long pull, and Dose, drawn from your dial-in logs and locked recipes.",
+      "The shape grows sharper the more attempts you log — an at-a-glance portrait of how you actually pull shots.",
+    ],
+  },
+  {
+    date: "2026-04-24",
     title: "UX polish batch",
     tag: "polish",
     items: [
