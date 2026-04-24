@@ -8,6 +8,8 @@ Browsable index: open `index.html` in your browser.
 press-kit/
 ├── index.html          # visual index of everything here
 ├── copy.md             # all text: taglines, pitches, features, FAQ
+├── package.json        # npm run export-png → HTML → PNG
+├── export-png.mjs      # Playwright renderer for all posters
 ├── logos/
 │   ├── wordmark.svg        # horizontal, full color
 │   ├── wordmark-mono.svg   # single color
@@ -22,15 +24,12 @@ press-kit/
 └── screenshots/
     ├── _frame.css             iPhone chrome shared by all HTML screenshots
     ├── 01-home.html           device-framed shelf view
-    ├── 02-bag-detail.html     one bag, four drinks
-    ├── 03-dial-in.html        dial-in companion
-    ├── 04-analytics.html      your coffee year (journal)
+    ├── 02-bag-detail.html     one bag, share, dial-in, rating slots
+    ├── 03-dial-in.html        dial-in companion (parameters + results)
+    ├── 04-analytics.html      your coffee year (journal + spend)
     ├── 05-ocr.html            snap → auto-fill
-    ├── 01-home.svg            older SVG mockups (kept as fallback)
-    ├── 02-bag-detail.svg
-    ├── 03-dial-in.svg
-    ├── 04-analytics.svg
-    └── 05-ocr.svg
+    ├── *.svg                  older SVG mockups (fallback)
+    └── png/                   exported 1080×1920 PNGs (gitignored)
 ```
 
 Also at the site root: `og-image.svg` / `og-image.png` (1200×630 social card).
@@ -43,19 +42,34 @@ what you see is pixel-identical to the running app, not an approximation.
 Each file is a 1080 × 1920 poster: tagline at top, phone mockup in the
 middle, `crema.live` URL at bottom. Drop the PNG into a social post as-is.
 
-**Browser:** open the file in Chrome at 100 % zoom and take a full-page
-screenshot (DevTools → Cmd-Shift-P → "Capture full size screenshot").
+### Export every screenshot to PNG (one command)
 
-**Headless (exact 1080 × 1920 PNG):**
+From this folder (`brew/docs/press-kit/`):
+
 ```bash
-# via Playwright (recommended — handles web fonts reliably)
+npm install       # first time only — pulls Playwright + Chromium
+npm run export-png
+```
+
+This renders every `screenshots/*.html` poster to a crisp 1080 × 1920 PNG in
+`screenshots/png/`. Re-run any time you tweak a screenshot.
+
+### Ad-hoc alternatives
+
+If you only need one PNG, or Node isn't available:
+
+```bash
+# via Playwright
 npx playwright screenshot --viewport-size=1080,1920 --wait-for-timeout=800 \
   screenshots/01-home.html 01-home.png
 
-# via Chrome
+# via headless Chrome
 google-chrome --headless --hide-scrollbars --window-size=1080,1920 \
   --screenshot=$(pwd)/01-home.png \
   file://$(pwd)/screenshots/01-home.html
+
+# via the browser — open the file at 100 % zoom, then
+# DevTools → Cmd-Shift-P → "Capture full size screenshot"
 ```
 
 The older static `.svg` files remain in the folder as a fallback.

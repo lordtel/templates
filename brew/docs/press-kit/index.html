@@ -322,45 +322,65 @@
     <h2>Screenshots</h2>
     <p class="section-sub">
       Rendered with the real app's HTML + CSS — pixel-identical to production.
-      Open any one and screenshot at 1080 × 1920, or use headless Chrome / Playwright to export PNGs (see <a href="README.md">README</a>).
+      Each card has a <strong>Download&nbsp;PNG</strong> link that renders a 1080 × 1920 PNG on the fly (needs Node + Playwright — see <a href="README.md">README</a>).
     </p>
     <div class="grid shots">
       <div class="card">
         <div class="thumb shot"><iframe src="screenshots/01-home.html" title="Home shelf" loading="lazy"></iframe></div>
         <div class="meta">
           <div><div class="meta-label">Your shelf</div><div class="meta-sub">Home screen</div></div>
-          <a href="screenshots/01-home.html" target="_blank" rel="noopener">Open</a>
+          <div style="display: flex; gap: 10px;">
+            <a href="screenshots/01-home.html" target="_blank" rel="noopener">Open</a>
+            <a href="screenshots/png/01-home.png" download>PNG</a>
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="thumb shot"><iframe src="screenshots/05-ocr.html" title="OCR scan" loading="lazy"></iframe></div>
         <div class="meta">
           <div><div class="meta-label">Snap → auto-fill</div><div class="meta-sub">OCR in progress</div></div>
-          <a href="screenshots/05-ocr.html" target="_blank" rel="noopener">Open</a>
+          <div style="display: flex; gap: 10px;">
+            <a href="screenshots/05-ocr.html" target="_blank" rel="noopener">Open</a>
+            <a href="screenshots/png/05-ocr.png" download>PNG</a>
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="thumb shot"><iframe src="screenshots/02-bag-detail.html" title="Bag detail" loading="lazy"></iframe></div>
         <div class="meta">
-          <div><div class="meta-label">One bag</div><div class="meta-sub">Rate each brew</div></div>
-          <a href="screenshots/02-bag-detail.html" target="_blank" rel="noopener">Open</a>
+          <div><div class="meta-label">One bag</div><div class="meta-sub">Rate, share, dial in</div></div>
+          <div style="display: flex; gap: 10px;">
+            <a href="screenshots/02-bag-detail.html" target="_blank" rel="noopener">Open</a>
+            <a href="screenshots/png/02-bag-detail.png" download>PNG</a>
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="thumb shot"><iframe src="screenshots/03-dial-in.html" title="Dial-in" loading="lazy"></iframe></div>
         <div class="meta">
-          <div><div class="meta-label">Dial-in companion</div><div class="meta-sub">Log an attempt</div></div>
-          <a href="screenshots/03-dial-in.html" target="_blank" rel="noopener">Open</a>
+          <div><div class="meta-label">Dial-in companion</div><div class="meta-sub">Parameters → results</div></div>
+          <div style="display: flex; gap: 10px;">
+            <a href="screenshots/03-dial-in.html" target="_blank" rel="noopener">Open</a>
+            <a href="screenshots/png/03-dial-in.png" download>PNG</a>
+          </div>
         </div>
       </div>
       <div class="card">
         <div class="thumb shot"><iframe src="screenshots/04-analytics.html" title="Analytics" loading="lazy"></iframe></div>
         <div class="meta">
-          <div><div class="meta-label">Your coffee year</div><div class="meta-sub">Journal view</div></div>
-          <a href="screenshots/04-analytics.html" target="_blank" rel="noopener">Open</a>
+          <div><div class="meta-label">Your coffee year</div><div class="meta-sub">Journal + spend</div></div>
+          <div style="display: flex; gap: 10px;">
+            <a href="screenshots/04-analytics.html" target="_blank" rel="noopener">Open</a>
+            <a href="screenshots/png/04-analytics.png" download>PNG</a>
+          </div>
         </div>
       </div>
     </div>
+    <p class="section-sub" style="margin-top: 18px;">
+      To regenerate every PNG at once, run
+      <code style="font-family: 'SF Mono', Menlo, monospace; background: rgba(43,27,18,0.06); padding: 2px 6px; border-radius: 4px;">npm run export-png</code>
+      from <code style="font-family: 'SF Mono', Menlo, monospace; background: rgba(43,27,18,0.06); padding: 2px 6px; border-radius: 4px;">brew/docs/press-kit/</code>.
+    </p>
   </section>
 
   <section>
@@ -388,14 +408,18 @@
     <ul class="copy-list">
       <li><strong style="color: var(--ink)">Snap &amp; auto-fill</strong> — client-side OCR extracts brand, origin, process, roast, weight, altitude, notes.</li>
       <li><strong style="color: var(--ink)">Built-in photo editor</strong> — 4:5 crop, rotate, enhance. Shelf stays visually consistent.</li>
-      <li><strong style="color: var(--ink)">Dial-in companion</strong> — per-bag log of every pull with dose, yield, time, grind, taste, texture. Ratio + per-shot cost computed.</li>
+      <li><strong style="color: var(--ink)">Dial-in companion</strong> — two-panel form: <em>Parameters</em> (dose, yield, time, ratio, grind) on top, <em>Results</em> (taste, texture) underneath. Every attempt counted on the bag.</li>
       <li><strong style="color: var(--ink)">Ratings that teach</strong> — Crema suggests starting grind for new bags, weighted by your own 4/5-star pulls on similar roasts.</li>
       <li><strong style="color: var(--ink)">Four drinks + custom</strong> — espresso, iced americano, iced latte, cappuccino, or your own (cortado, flat white, V60…).</li>
+      <li><strong style="color: var(--ink)">Share a bag</strong> — one tap publishes just the dialed-in recipe + two bag facts. Web Share API on mobile, clipboard fallback elsewhere.</li>
+      <li><strong style="color: var(--ink)">Financial view</strong> — total spent, avg €/shot, bags finished; a cost-per-shot ladder finds your <em>best value</em> (highest rating ÷ cheapest pull).</li>
+      <li><strong style="color: var(--ink)">Gear catalogue</strong> — machines and grinders you actually use, from Breville Bambino to Decent DE1 Pro and Timemore Sculptor 064S.</li>
       <li><strong style="color: var(--ink)">Active / Finished shelf</strong> — history stays, clutter doesn't.</li>
       <li><strong style="color: var(--ink)">A real journal</strong> — top picks, 30-day timeline, grinder sweet-spot chart.</li>
       <li><strong style="color: var(--ink)">Guest mode</strong> — no email, nothing leaves the browser.</li>
       <li><strong style="color: var(--ink)">Sync</strong> — sign in with Google; guest data merges into your account.</li>
       <li><strong style="color: var(--ink)">Export</strong> — one-click JSON dump of everything.</li>
+      <li><strong style="color: var(--ink)">Works offline</strong> — service worker precaches the shell so Crema opens with no network.</li>
       <li><strong style="color: var(--ink)">Installs like an app</strong> — PWA with Home Screen icon, full-screen, survives Safari storage eviction.</li>
       <li><strong style="color: var(--ink)">Secure</strong> — Postgres row-level security, private photo bucket, no passwords server-side.</li>
       <li><strong style="color: var(--ink)">Free &amp; ad-free</strong> — optional Buy Me A Coffee is the only money.</li>
