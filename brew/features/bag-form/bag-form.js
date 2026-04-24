@@ -260,9 +260,28 @@ async function runOcr(dataUrl, state, el) {
   el.ocrFill.style.width = "0%";
   setSaveBusy(el, true, "Scanning…");
 
+  let skipRequested = false;
+  let skipLink = null;
+
+  // After 6 s with no result, offer a manual-fill escape hatch.
+  const skipTimer = setTimeout(() => {
+    if (!el.ocrStatus.hidden && !skipLink) {
+      skipLink = document.createElement("button");
+      skipLink.type = "button";
+      skipLink.className = "ocr-skip-link";
+      skipLink.textContent = "Skip, fill manually";
+      skipLink.addEventListener("click", () => {
+        skipRequested = true;
+        el.ocrStatus.hidden = true;
+        setSaveBusy(el, false);
+      });
+      el.ocrStatus.appendChild(skipLink);
+    }
+  }, 6000);
+
   // If OCR hasn't progressed after a beat, nudge the copy.
   const slowTimer = setTimeout(() => {
-    if (!el.ocrStatus.hidden) {
+    if (!el.ocrStatus.hidden && !skipRequested) {
       el.ocrMessage.textContent = "Scanning label (this can take a moment on first run)…";
     }
   }, 4000);
@@ -287,19 +306,24 @@ async function runOcr(dataUrl, state, el) {
     if (parsed.altitude && !el.altitude.value) el.altitude.value = parsed.altitude;
     if (parsed.notes && !el.notes.value) el.notes.value = parsed.notes;
 
+    if (skipRequested) return;
     const filled = Object.entries(parsed).filter(([k, v]) => v && k !== "raw").length;
     el.ocrFill.style.width = "100%";
+    if (skipLink) skipLink.remove();
     el.ocrMessage.textContent = filled
       ? `Prefilled ${filled} field${filled === 1 ? "" : "s"} — review and adjust.`
       : "Couldn't auto-detect much. Fill in manually.";
     setTimeout(() => (el.ocrStatus.hidden = true), 2400);
   } catch (err) {
-    el.ocrMessage.textContent = "OCR failed — you can still fill in manually.";
-    console.error(err);
-    setTimeout(() => (el.ocrStatus.hidden = true), 2400);
+    if (!skipRequested) {
+      el.ocrMessage.textContent = "OCR failed — you can still fill in manually.";
+      console.error(err);
+      setTimeout(() => (el.ocrStatus.hidden = true), 2400);
+    }
   } finally {
     clearTimeout(slowTimer);
-    setSaveBusy(el, false);
+    clearTimeout(skipTimer);
+    if (!skipRequested) setSaveBusy(el, false);
   }
 }
 

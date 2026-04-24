@@ -97,6 +97,24 @@
   font-weight: 500;
 }
 
+.ocr-skip-link {
+  display: block;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ocr-skip-link:hover {
+  color: var(--ink);
+}
+
 .form-actions {
   display: flex;
   align-items: center;

@@ -3,7 +3,15 @@ const SLIDES = [
     eyebrow: "Welcome",
     title: "You don't need another app.",
     body: "Your phone is a graveyard of habits you tried once. A sleep tracker you outsmarted. A journal that lasted three days. A running app with a single 2 km PR from 2022. The last thing the world needs is another icon.",
+    tail: "Unless it fills itself in.",
     art: "mug",
+  },
+  {
+    eyebrow: "How it works",
+    title: "Snap a bag. It fills itself in.",
+    body: "Point your camera at a coffee bag — on-device OCR reads the label and pre-fills brand, origin, roast, process, and notes. No typing. Then brew it up to four ways: espresso, iced americano, iced latte, cappuccino.",
+    tail: "Rate each, jot the grind. Crema remembers and nudges the slider toward the number that actually tasted good.",
+    art: "dial",
   },
   {
     eyebrow: "Unless…",
@@ -11,13 +19,6 @@ const SLIDES = [
     body: "You own a scale you don't use for baking. You have opinions about milk temperature. You've said the word \"crema\" in public, unprompted. Your friends sigh when you mention dialing in.",
     tail: "This one's for you.",
     art: "beans",
-  },
-  {
-    eyebrow: "How it works",
-    title: "Log once. Rate four times.",
-    body: "Snap a photo of the bag — the OCR fills in the boring fields. Then brew it four ways: espresso, iced americano, iced latte, cappuccino. Rate each, jot the grind.",
-    tail: "Crema remembers. Over time it nudges the grind slider toward the number that actually tasted good — weighted by roast, origin, and your ratings.",
-    art: "dial",
   },
   {
     eyebrow: "No feed. No streaks.",

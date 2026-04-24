@@ -94,16 +94,15 @@ function paint(container, bagId, logId) {
     locked.className = "dialed-locked";
     locked.innerHTML = `
       <div>
-        <p class="dialed-locked-title">Dialed-in recipe</p>
+        <p class="dialed-locked-title">Locked recipe — aiming to match:</p>
         <p class="dialed-locked-sub">${formatRecipe(existingRecipe)}</p>
       </div>
       <button type="button" class="btn ghost small" id="reopen-btn">Re-open</button>
     `;
     container.appendChild(locked);
-    locked.querySelector("#reopen-btn").addEventListener("click", (e) => {
-      inlineConfirm(e.currentTarget, "Re-open for new attempts?", "Re-open", () => {
-        unmarkDialedIn(bagId);
-      });
+    locked.querySelector("#reopen-btn").addEventListener("click", () => {
+      unmarkDialedIn(bagId);
+      showDialInToast("Recipe unlocked. Mark an attempt as dialed in when you're happy.");
     });
   }
 
@@ -380,6 +379,21 @@ function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
+}
+
+function showDialInToast(msg) {
+  const existing = document.getElementById("di-toast");
+  if (existing) existing.remove();
+  const toast = document.createElement("div");
+  toast.id = "di-toast";
+  toast.className = "toast toast--show";
+  toast.setAttribute("role", "status");
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.remove("toast--show");
+    toast.addEventListener("transitionend", () => toast.remove(), { once: true });
+  }, 4000);
 }
 
 function inlineConfirm(btn, question, confirmLabel, onConfirm) {

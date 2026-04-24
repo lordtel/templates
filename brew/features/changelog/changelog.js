@@ -2,6 +2,22 @@ import { navigate } from "../../core/router.js";
 
 const ENTRIES = [
   {
+    date: "2026-04-24",
+    title: "UX polish batch",
+    tag: "polish",
+    items: [
+      "Quick-rate: tap a star directly on an empty drink slot to log a rating in one tap — no form required. The full form is still one tap away for notes.",
+      "OCR escape hatch: if scanning takes more than 6 seconds, a 'Skip, fill manually' link appears so you're never stuck waiting.",
+      "Best-value answer is now the first thing you see in the Spend panel, above the cost-per-shot ladder.",
+      "Onboarding now leads with OCR — 'Snap a bag. It fills itself in.' — so the killer feature is visible in the first 5 seconds.",
+      "Home welcome copy trimmed and the primary CTA now reads 'Add your first bag →'.",
+      "Re-opening a locked dial-in recipe is now a single tap with a confirmation toast instead of an inline confirm.",
+      "The locked-recipe banner in the dial-in form now reads 'Locked recipe — aiming to match:' so the intent is clearer.",
+      "Share button renamed to 'Share recipe' so users know exactly what gets shared.",
+      "Rating-form star buttons now span the full row width with no gap, making all five stars easy to hit on mobile.",
+    ],
+  },
+  {
     date: "2026-04-21",
     title: "Launch polish",
     tag: "polish",

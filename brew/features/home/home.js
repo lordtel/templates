@@ -107,21 +107,21 @@ function renderWelcome(listEl) {
   empty.className = "empty-state";
   empty.innerHTML = `
     <h2>Welcome to Crema</h2>
-    <p>Log each coffee bag once, rate how it brews as espresso, iced americano, iced latte and cappuccino, and get tuned grind suggestions over time. Everything stays on this device.</p>
-    ${hasGear ? "" : `<p class="empty-hint">Tip — set your machine &amp; grinder first so suggestions match your setup.</p>`}
+    <p>Snap a bag, rate your brews, get grind suggestions based on your history.</p>
+    ${hasGear ? "" : `<p class="empty-hint">Tip — set your grinder first so suggestions match your setup.</p>`}
   `;
   const actions = document.createElement("div");
   actions.className = "empty-actions";
   if (!hasGear) {
     const gearBtn = document.createElement("button");
     gearBtn.className = "btn ghost";
-    gearBtn.textContent = "Set up equipment";
+    gearBtn.textContent = "Set up gear";
     gearBtn.addEventListener("click", () => navigate("/equipment"));
     actions.appendChild(gearBtn);
   }
   const addBtn = document.createElement("button");
   addBtn.className = "btn";
-  addBtn.textContent = "Add your first bag";
+  addBtn.textContent = "Add your first bag →";
   addBtn.addEventListener("click", () => navigate("/bag/new"));
   actions.appendChild(addBtn);
   empty.appendChild(actions);
