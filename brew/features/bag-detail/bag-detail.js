@@ -203,11 +203,12 @@ function buildDialInSection(bag) {
   const dialed = bag.dialedInAt && bag.dialedInRecipe;
   const attempts = bag.dialIns?.length ?? 0;
 
+  const attemptsBadge = attempts > 0
+    ? `<span class="dialed-badge pending">${attempts} attempt${attempts === 1 ? "" : "s"}</span>`
+    : "";
   const badge = dialed
-    ? `<span class="dialed-badge">Dialed in</span>`
-    : attempts > 0
-      ? `<span class="dialed-badge pending">${attempts} attempt${attempts === 1 ? "" : "s"}</span>`
-      : "";
+    ? `<span class="dialed-badge">Dialed in</span>${attemptsBadge}`
+    : attemptsBadge;
 
   const btnLabel = dialed
     ? "Log another attempt"

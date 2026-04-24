@@ -2,6 +2,21 @@
   padding: 28px;
 }
 
+.di-section-title {
+  margin: 0 0 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.di-section-title--results {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
 .dial-in-form .ratio-display {
   margin: 0;
   padding: 12px 14px;
