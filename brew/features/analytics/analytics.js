@@ -42,7 +42,7 @@ function paint(container, state) {
 
   container.appendChild(hero(bags, ratings));
   container.appendChild(topPicks(bags));
-  container.appendChild(drinkBreakdown(ratings));
+  container.appendChild(financialView(bags));
   container.appendChild(grindSweetSpot(ratings));
   container.appendChild(timeline(ratings));
 }
@@ -141,32 +141,123 @@ function topPicks(bags) {
   return section;
 }
 
-function drinkBreakdown(ratings) {
+function financialView(bags) {
   const section = document.createElement("section");
   section.className = "panel";
-  section.innerHTML = `<h2>By drink</h2>`;
+  section.innerHTML = `<h2>Your spend</h2>`;
 
-  const byType = DRINK_TYPES.map((d) => {
-    const list = ratings.filter((r) => r.drinkType === d.id);
-    const avg = list.length
+  const sym = bags.find((b) => b.currency)?.currency || "€";
+
+  const enriched = bags.map((b) => {
+    const price = Number(b.price);
+    const weight = Number(b.weight);
+    const dose = Number(b.dose) || 18;
+    const perShot = price && weight ? (price * dose) / weight : null;
+    const list = b.ratings ?? [];
+    const avgRating = list.length
       ? list.reduce((s, r) => s + (Number(r.rating) || 0), 0) / list.length
-      : 0;
-    return { label: d.label, count: list.length, avg };
+      : null;
+    return { bag: b, price, perShot, avgRating };
   });
 
-  const maxCount = Math.max(1, ...byType.map((x) => x.count));
+  const totalSpent = enriched.reduce((s, x) => s + (x.price || 0), 0);
+  const withShot = enriched.filter((x) => x.perShot != null);
+  const avgPerShot = withShot.length
+    ? withShot.reduce((s, x) => s + x.perShot, 0) / withShot.length
+    : null;
+
+  // ── Summary row ──
+  const summary = document.createElement("div");
+  summary.className = "spend-summary";
+  summary.innerHTML = `
+    <div class="spend-kv">
+      <span class="spend-kv-val">${sym}${totalSpent.toFixed(2)}</span>
+      <span class="spend-kv-label">Total spent</span>
+    </div>
+    <div class="spend-kv">
+      <span class="spend-kv-val">${avgPerShot != null ? sym + avgPerShot.toFixed(2) : "—"}</span>
+      <span class="spend-kv-label">Avg / shot</span>
+    </div>
+    <div class="spend-kv">
+      <span class="spend-kv-val">${bags.filter((b) => b.finishedAt).length}</span>
+      <span class="spend-kv-label">Bags finished</span>
+    </div>
+  `;
+  section.appendChild(summary);
+
+  if (!withShot.length) {
+    const hint = document.createElement("p");
+    hint.className = "panel-empty";
+    hint.textContent = "Add price and weight to bags to see cost analysis.";
+    section.appendChild(hint);
+    return section;
+  }
+
+  // ── Cost-per-shot ladder (cheapest → priciest) ──
+  const ladder = [...withShot].sort((a, b) => a.perShot - b.perShot);
+  const maxCost = Math.max(...ladder.map((x) => x.perShot));
+  const minCost = Math.min(...ladder.map((x) => x.perShot));
+
+  // Best value = highest (avgRating / perShot), only bags that have both
+  const withBoth = ladder.filter((x) => x.avgRating != null);
+  const bestValue = withBoth.length
+    ? withBoth.reduce((best, x) =>
+        x.avgRating / x.perShot > best.avgRating / best.perShot ? x : best)
+    : null;
+
+  const subTitle = document.createElement("p");
+  subTitle.className = "spend-subtitle";
+  subTitle.textContent = "Cost per shot — cheapest to priciest";
+  section.appendChild(subTitle);
 
   const rows = document.createElement("div");
-  rows.className = "drink-rows";
-  rows.innerHTML = byType.map((x) => `
-    <div class="drink-line">
-      <span class="drink-line-label">${x.label}</span>
-      <div class="drink-bar"><span style="width: ${(x.count / maxCount) * 100}%"></span></div>
-      <span class="drink-line-val">${x.avg ? x.avg.toFixed(1) : "—"} · ${x.count}</span>
-    </div>
-  `).join("");
+  rows.className = "cost-ladder";
+
+  ladder.forEach(({ bag, perShot, avgRating }) => {
+    const pct = maxCost > minCost
+      ? 20 + ((perShot - minCost) / (maxCost - minCost)) * 80
+      : 60;
+    const isBest = bestValue && bag.id === bestValue.bag.id;
+    const dotsHtml = avgRating != null ? miniDots(avgRating) : "";
+
+    const row = document.createElement("div");
+    row.className = "cost-row" + (isBest ? " best-value" : "");
+    row.innerHTML = `
+      <div class="cost-row-name">
+        <span>${escapeHtml(bag.brand || "Untitled")}</span>
+        ${dotsHtml ? `<span class="cost-row-dots">${dotsHtml}</span>` : ""}
+      </div>
+      <div class="cost-bar-wrap">
+        <div class="cost-bar" style="width:${pct.toFixed(1)}%"></div>
+      </div>
+      <span class="cost-row-val">${sym}${perShot.toFixed(2)}</span>
+      ${isBest ? `<span class="best-value-pip" title="Best value">✦</span>` : `<span></span>`}
+    `;
+    row.addEventListener("click", () => navigate(`/bag/${bag.id}`));
+    rows.appendChild(row);
+  });
   section.appendChild(rows);
+
+  if (bestValue) {
+    const callout = document.createElement("p");
+    callout.className = "best-value-callout";
+    callout.innerHTML = `
+      <span class="best-value-star">✦</span>
+      Best value: <strong>${escapeHtml(bestValue.bag.brand || "Untitled")}</strong>
+      · ${bestValue.avgRating.toFixed(1)}★ at ${sym}${bestValue.perShot.toFixed(2)}/shot
+    `;
+    section.appendChild(callout);
+  }
+
   return section;
+}
+
+function miniDots(avg) {
+  const filled = Math.round(avg);
+  let out = `<span class="mini-dots">`;
+  for (let i = 1; i <= 5; i++) out += `<span class="dot${i <= filled ? " on" : ""}"></span>`;
+  out += `</span>`;
+  return out;
 }
 
 function grindSweetSpot(ratings) {
