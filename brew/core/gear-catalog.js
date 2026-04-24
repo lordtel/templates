@@ -2,6 +2,7 @@ export const MACHINES = [
   { id: "bambino-plus", brand: "Breville", model: "Bambino Plus" },
   { id: "barista-express", brand: "Breville", model: "Barista Express" },
   { id: "dual-boiler", brand: "Breville", model: "Dual Boiler (BES920)" },
+  { id: "de1-pro", brand: "Decent", model: "DE1 Pro" },
   { id: "linea-mini", brand: "La Marzocco", model: "Linea Mini" },
   { id: "linea-micra", brand: "La Marzocco", model: "Linea Micra" },
   { id: "silvia-pro-x", brand: "Rancilio", model: "Silvia Pro X" },
@@ -112,6 +113,15 @@ export const GRINDERS = [
     scale: { min: 0, max: 30, step: 0.5, unit: "" },
     espressoRange: [4, 9],
     filterRange: [13, 19],
+  },
+  {
+    id: "timemore-sculptor-064s",
+    brand: "Timemore",
+    model: "Sculptor 064S",
+    burrSize: "64mm flat",
+    scale: { min: 0, max: 10, step: 0.1, unit: "turn" },
+    espressoRange: [2.0, 3.5],
+    filterRange: [4.5, 7.0],
   },
 ];
 
