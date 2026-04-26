@@ -25,18 +25,122 @@ const COMMON_PROCESSES = [
   "Pulped Natural", "Lactic", "Thermal Shock", "Double Anaerobic",
 ];
 
-function buildDatalist(id, options) {
+// Dedupe + trim a list of suggestions, preserving order.
+function dedupeOptions(options) {
   const seen = new Set();
-  const items = [];
+  const out = [];
   options.forEach((v) => {
     const key = String(v ?? "").trim();
     const lc = key.toLowerCase();
     if (key && !seen.has(lc)) {
       seen.add(lc);
-      items.push(escapeHtml(key));
+      out.push(key);
     }
   });
-  return `<datalist id="${id}">${items.map((v) => `<option value="${v}"></option>`).join("")}</datalist>`;
+  return out;
+}
+
+// Wraps a text input with a custom dropdown that shows options on focus
+// and filters as the user types. Free-text input still works.
+function setupCombobox(input, options) {
+  const cleanOptions = dedupeOptions(options);
+  if (!cleanOptions.length) return; // nothing to suggest — leave as plain input
+
+  const field = input.closest(".field");
+  if (!field) return;
+  field.classList.add("combo-field");
+
+  // Replace input's parent .field with a wrapper so we can pin a panel.
+  const wrap = document.createElement("div");
+  wrap.className = "combo-wrap";
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+
+  const arrow = document.createElement("span");
+  arrow.className = "combo-arrow";
+  arrow.setAttribute("aria-hidden", "true");
+  arrow.innerHTML = `<svg viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  wrap.appendChild(arrow);
+
+  const panel = document.createElement("ul");
+  panel.className = "combo-panel";
+  panel.setAttribute("role", "listbox");
+  panel.hidden = true;
+  wrap.appendChild(panel);
+
+  let activeIndex = -1;
+
+  function render(filterText) {
+    const q = filterText.trim().toLowerCase();
+    const matches = q
+      ? cleanOptions.filter((o) => o.toLowerCase().includes(q))
+      : cleanOptions;
+
+    if (!matches.length) {
+      panel.hidden = true;
+      return;
+    }
+
+    panel.innerHTML = matches
+      .slice(0, 50)
+      .map((o, i) => `<li role="option" data-value="${escapeHtml(o)}" class="combo-option">${escapeHtml(o)}</li>`)
+      .join("");
+    activeIndex = -1;
+    panel.hidden = false;
+  }
+
+  function pick(value) {
+    input.value = value;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    panel.hidden = true;
+    activeIndex = -1;
+  }
+
+  input.addEventListener("focus", () => render(input.value));
+  input.addEventListener("input", () => render(input.value));
+  input.addEventListener("keydown", (e) => {
+    const items = Array.from(panel.querySelectorAll(".combo-option"));
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (panel.hidden) render(input.value);
+      activeIndex = Math.min(items.length - 1, activeIndex + 1);
+      items.forEach((it, i) => it.classList.toggle("active", i === activeIndex));
+      items[activeIndex]?.scrollIntoView({ block: "nearest" });
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      activeIndex = Math.max(0, activeIndex - 1);
+      items.forEach((it, i) => it.classList.toggle("active", i === activeIndex));
+      items[activeIndex]?.scrollIntoView({ block: "nearest" });
+    } else if (e.key === "Enter" && activeIndex >= 0 && !panel.hidden) {
+      e.preventDefault();
+      pick(items[activeIndex].dataset.value);
+    } else if (e.key === "Escape") {
+      panel.hidden = true;
+      activeIndex = -1;
+    }
+  });
+
+  // Use mousedown so click fires before blur hides the panel.
+  panel.addEventListener("mousedown", (e) => {
+    const li = e.target.closest(".combo-option");
+    if (!li) return;
+    e.preventDefault();
+    pick(li.dataset.value);
+  });
+
+  // Hide panel when clicking outside.
+  document.addEventListener("mousedown", (e) => {
+    if (!wrap.contains(e.target)) {
+      panel.hidden = true;
+      activeIndex = -1;
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    // Slight delay so a click on the panel can fire first.
+    setTimeout(() => { panel.hidden = true; }, 120);
+  });
 }
 
 function escapeHtml(s) {
@@ -109,24 +213,24 @@ export function render(container, params = {}) {
 
       <div class="field">
         <label for="f-brand">Brand / Roaster</label>
-        <input type="text" id="f-brand" list="dl-brand" autocomplete="off" placeholder="e.g. La Cabra" />
+        <input type="text" id="f-brand" autocomplete="off" placeholder="e.g. La Cabra" />
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="f-origin">Origin</label>
-          <input type="text" id="f-origin" list="dl-origin" autocomplete="off" placeholder="Ethiopia" />
+          <input type="text" id="f-origin" autocomplete="off" placeholder="Ethiopia" />
         </div>
         <div class="field">
           <label for="f-variety">Variety</label>
-          <input type="text" id="f-variety" list="dl-variety" autocomplete="off" placeholder="Heirloom" />
+          <input type="text" id="f-variety" autocomplete="off" placeholder="Heirloom" />
         </div>
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="f-process">Process</label>
-          <input type="text" id="f-process" list="dl-process" autocomplete="off" placeholder="Washed" />
+          <input type="text" id="f-process" autocomplete="off" placeholder="Washed" />
         </div>
         <div class="field">
           <label for="f-roast">Roast</label>
@@ -186,17 +290,12 @@ export function render(container, params = {}) {
         }
       </div>
     </div>
-
-    ${buildDatalist("dl-brand",   suggest.brands)}
-    ${buildDatalist("dl-origin",  suggest.origins)}
-    ${buildDatalist("dl-variety", suggest.varieties)}
-    ${buildDatalist("dl-process", suggest.processes)}
   `;
 
-  bind(container, state, editing, params.id);
+  bind(container, state, editing, params.id, suggest);
 }
 
-function bind(container, state, editing, id) {
+function bind(container, state, editing, id, suggest) {
   const el = {
     photoSlot: container.querySelector("#photo-slot"),
     photoInput: container.querySelector("#photo-input"),
@@ -223,6 +322,14 @@ function bind(container, state, editing, id) {
   };
 
   paintFields(el, state);
+
+  // Combobox dropdowns for the four searchable text fields.
+  if (suggest) {
+    setupCombobox(el.brand,   suggest.brands);
+    setupCombobox(el.origin,  suggest.origins);
+    setupCombobox(el.variety, suggest.varieties);
+    setupCombobox(el.process, suggest.processes);
+  }
 
   el.photoSlot.addEventListener("click", () => el.photoInput.click());
   el.photoSlot.addEventListener("keydown", (e) => {
