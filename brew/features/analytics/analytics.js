@@ -262,7 +262,9 @@ function miniDots(avg) {
 
 // ── Taste profile spider chart ────────────────────────
 //
-// 6 axes, clockwise from top, each normalised 0–1:
+// 6 axes, clockwise from top, each normalised 0–1 for chart geometry.
+// The legend shows real units (g, s, X.X / 10) per axis.
+//
 //   Bright   — sour side of taste slider   (dial-in logs)
 //   Dose     — input weight                (locked recipes)
 //   Long     — extraction time             (locked recipes)
@@ -270,18 +272,27 @@ function miniDots(avg) {
 //   Rich     — body/texture fullness       (dial-in logs)
 //   Strength — shot concentration (ratio)  (locked recipes)
 
+const SPIDER_ICONS = {
+  bean: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="6" ry="9" transform="rotate(-30 12 12)"/><path d="M9 6.5 Q11.5 12 9 17.5"/></svg>`,
+  scoop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13 Q5 18 9 18 Q13 18 13 13 Z"/><line x1="13" y1="13" x2="20" y2="6"/><line x1="5" y1="13" x2="13" y2="13"/></svg>`,
+  drop: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3 C8 9 7 13 7 15.5 A5 5 0 0 0 17 15.5 C17 13 16 9 12 3 Z"/></svg>`,
+  cup: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10 H17 V14 A4 4 0 0 1 13 18 H9 A4 4 0 0 1 5 14 Z"/><path d="M17 11.5 Q21 11.5 21 14 Q21 16.5 17 16.5"/><path d="M9 5 Q10 6.5 9 8" stroke-opacity="0.65"/><path d="M12 5 Q13 6.5 12 8" stroke-opacity="0.65"/></svg>`,
+  syrup: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M6.5 4.5 C6.5 8 8.5 10 8.5 12 C8.5 14 6.5 14.5 6.5 17 A2 2 0 0 0 10.5 17 C10.5 14.5 8.5 14 8.5 12 C8.5 10 10.5 8 10.5 4.5 Z"/><path d="M14.5 7 C14.5 10.5 16.5 12 16.5 14 C16.5 16 14.5 16.5 14.5 19 A2 2 0 0 0 18.5 19 C18.5 16.5 16.5 16 16.5 14 C16.5 12 18.5 10.5 18.5 7 Z"/></svg>`,
+  shot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6 H16 L15 19 A2 2 0 0 1 13 21 H11 A2 2 0 0 1 9 19 Z"/><path d="M8.6 9 H15.4" stroke-opacity="0.6"/></svg>`,
+};
+
 const SPIDER_AXES = [
-  { key: "bright",   label: "Bright",    desc: "Sour, citrus notes" },
-  { key: "dose",     label: "Dose",      desc: "Coffee per shot" },
-  { key: "long",     label: "Long pull", desc: "Slow extraction" },
-  { key: "bold",     label: "Bold",      desc: "Bitter, intense notes" },
-  { key: "rich",     label: "Rich",      desc: "Thick, syrupy body" },
-  { key: "strength", label: "Strength",  desc: "Concentrated shots" },
+  { key: "bright",   label: "Bright",    desc: "Sour, citrus notes",    icon: SPIDER_ICONS.bean  },
+  { key: "dose",     label: "Dose",      desc: "Coffee per shot",       icon: SPIDER_ICONS.scoop },
+  { key: "long",     label: "Long pull", desc: "Slow extraction",       icon: SPIDER_ICONS.drop  },
+  { key: "bold",     label: "Bold",      desc: "Bitter, intense notes", icon: SPIDER_ICONS.cup   },
+  { key: "rich",     label: "Rich",      desc: "Thick, syrupy body",    icon: SPIDER_ICONS.syrup },
+  { key: "strength", label: "Strength",  desc: "Concentrated shots",    icon: SPIDER_ICONS.shot  },
 ];
 
 function tasteProfile(bags) {
   const section = document.createElement("section");
-  section.className = "panel";
+  section.className = "panel taste-panel";
   section.innerHTML = `<h2>Your taste profile</h2>`;
 
   const allLogs = bags.flatMap((b) => (b.dialIns ?? []).map((l) => ({ ...l, bag: b })));
@@ -315,6 +326,16 @@ function tasteProfile(bags) {
 
   const values = { bright, bold, rich, strength, long, dose };
 
+  // Display values with real units, falling back to "—"
+  const displayValues = {
+    bright:   `${(bright   * 10).toFixed(1)} / 10`,
+    bold:     `${(bold     * 10).toFixed(1)} / 10`,
+    rich:     `${(rich     * 10).toFixed(1)} / 10`,
+    strength: `${(strength * 10).toFixed(1)} / 10`,
+    dose: avgDose != null ? `${avgDose.toFixed(avgDose >= 10 ? 0 : 1)}g` : "—",
+    long: avgTime != null ? `${Math.round(avgTime)}s`                     : "—",
+  };
+
   // ── Build UI ─────────────────────────────────────────
   const wrap = document.createElement("div");
   wrap.className = "spider-wrap";
@@ -324,7 +345,8 @@ function tasteProfile(bags) {
   chartArea.innerHTML = spiderSvg(values, SPIDER_AXES);
   wrap.appendChild(chartArea);
 
-  wrap.appendChild(buildSpiderLegend(values, SPIDER_AXES));
+  const legendArea = document.createElement("div");
+  legendArea.className = "spider-side";
 
   const parts = [];
   if (tasteVals.length)  parts.push(`${allLogs.length} dial-in log${allLogs.length === 1 ? "" : "s"}`);
@@ -332,7 +354,10 @@ function tasteProfile(bags) {
   const sub = document.createElement("p");
   sub.className = "spider-sub";
   sub.textContent = parts.length ? `Based on ${parts.join(" · ")}` : "Log dial-in attempts to sharpen the shape.";
-  wrap.appendChild(sub);
+  legendArea.appendChild(sub);
+
+  legendArea.appendChild(buildSpiderLegend(values, displayValues, SPIDER_AXES));
+  wrap.appendChild(legendArea);
 
   section.appendChild(wrap);
   return section;
@@ -340,16 +365,17 @@ function tasteProfile(bags) {
 
 function spiderSvg(values, axes) {
   const N  = axes.length;
-  const cx = 100, cy = 100, R = 84;
+  const cx = 170, cy = 160, R = 88;
   const rings = [0.33, 0.66, 1];
 
   const angle = (i) => (2 * Math.PI * i) / N - Math.PI / 2;
   const px = (i, t) => cx + t * R * Math.cos(angle(i));
   const py = (i, t) => cy + t * R * Math.sin(angle(i));
 
-  const ringPaths = rings.map((t) => {
-    const pts = axes.map((_, i) => `${px(i, t).toFixed(2)},${py(i, t).toFixed(2)}`).join(" ");
-    return `<polygon points="${pts}" class="spider-ring"/>`;
+  const ringPaths = rings.map((t, i) => {
+    const pts = axes.map((_, j) => `${px(j, t).toFixed(2)},${py(j, t).toFixed(2)}`).join(" ");
+    const cls = i === rings.length - 1 ? "spider-ring spider-ring-outer" : "spider-ring";
+    return `<polygon points="${pts}" class="${cls}"/>`;
   }).join("\n");
 
   const spokes = axes.map((_, i) =>
@@ -365,8 +391,31 @@ function spiderSvg(values, axes) {
     return `<circle cx="${px(i, v).toFixed(2)}" cy="${py(i, v).toFixed(2)}" r="4.5" class="spider-dot"/>`;
   }).join("\n");
 
+  // Axis labels — positioned just outside the ring
+  const LABEL_PAD = 22;
+  const labels = axes.map(({ label }, i) => {
+    const a = angle(i);
+    const lx = cx + (R + LABEL_PAD) * Math.cos(a);
+    const ly = cy + (R + LABEL_PAD) * Math.sin(a);
+    const cosA = Math.cos(a), sinA = Math.sin(a);
+    const anchor = cosA > 0.15 ? "start" : cosA < -0.15 ? "end" : "middle";
+    const words = label.split(" ");
+
+    if (words.length === 1) {
+      const dy = sinA > 0.3 ? "0.85em" : sinA < -0.3 ? "0" : "0.35em";
+      return `<text x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" text-anchor="${anchor}" dy="${dy}" class="spider-label">${label}</text>`;
+    }
+
+    // Multi-word labels stack on two lines
+    const dyStart = sinA > 0.3 ? "0.55em" : sinA < -0.3 ? "-0.6em" : "-0.05em";
+    return `<text x="${lx.toFixed(2)}" y="${ly.toFixed(2)}" text-anchor="${anchor}" class="spider-label">
+      <tspan x="${lx.toFixed(2)}" dy="${dyStart}">${words[0]}</tspan>
+      <tspan x="${lx.toFixed(2)}" dy="1.05em">${words.slice(1).join(" ")}</tspan>
+    </text>`;
+  }).join("\n");
+
   return `
-    <svg viewBox="0 0 200 200" class="spider-svg" role="img" aria-label="Taste profile radar chart">
+    <svg viewBox="0 0 340 320" class="spider-svg" role="img" aria-label="Taste profile radar chart">
       <defs>
         <radialGradient id="spider-fill-grad" cx="50%" cy="50%">
           <stop offset="0%"   stop-color="var(--accent)" stop-opacity="0.38"/>
@@ -378,26 +427,31 @@ function spiderSvg(values, axes) {
       <polygon points="${dataPts}" class="spider-area"/>
       <polygon points="${dataPts}" class="spider-border"/>
       ${dots}
+      ${labels}
     </svg>
   `;
 }
 
-function buildSpiderLegend(values, axes) {
+function buildSpiderLegend(values, displayValues, axes) {
   const legend = document.createElement("div");
   legend.className = "spider-legend";
 
-  axes.forEach(({ key, label, desc }) => {
+  axes.forEach(({ key, label, desc, icon }) => {
     const pct = Math.round(values[key] * 100);
     const item = document.createElement("div");
     item.className = "spider-legend-item";
     item.innerHTML = `
-      <div class="spider-axis-head">
-        <span class="spider-axis-name">${label}</span>
+      <p class="spider-axis-name">${label}</p>
+      <div class="spider-axis-bar-row">
+        <div class="spider-axis-bar-wrap">
+          <div class="spider-axis-bar" style="width:${pct}%"></div>
+        </div>
+        <span class="spider-axis-value">${displayValues[key]}</span>
       </div>
-      <div class="spider-axis-bar-wrap">
-        <div class="spider-axis-bar" style="width:${pct}%"></div>
+      <div class="spider-axis-info">
+        <span class="spider-axis-icon" aria-hidden="true">${icon}</span>
+        <span class="spider-axis-desc">${desc}</span>
       </div>
-      <p class="spider-axis-desc">${desc}</p>
     `;
     legend.appendChild(item);
   });
