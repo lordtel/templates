@@ -106,6 +106,47 @@ function paint(container, bagId, logId) {
     });
   }
 
+  // "Same as last attempt?" prefill banner — only on a brand new attempt
+  // when there's at least one prior log to copy from.
+  const allLogs = getDialInLogs(bagId);
+  if (!editingLog && allLogs.length > 0) {
+    const lastLog = allLogs[0];
+    const banner = document.createElement("div");
+    banner.className = "last-attempt";
+    banner.innerHTML = `
+      <span class="last-attempt-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>
+        </svg>
+      </span>
+      <div class="last-attempt-body">
+        <p class="last-attempt-title">Same as last attempt?</p>
+        <p class="last-attempt-recipe">${escapeHtml(formatLastAttempt(lastLog, scale))}</p>
+      </div>
+      <button type="button" class="btn small" id="copy-last-btn">Copy</button>
+    `;
+    container.appendChild(banner);
+    banner.querySelector("#copy-last-btn").addEventListener("click", () => {
+      const ids = [
+        ["di-dose", lastLog.dose],
+        ["di-yield", lastLog.yield],
+        ["di-time", lastLog.time],
+        ["di-grind", lastLog.grind],
+      ];
+      ids.forEach(([id, val]) => {
+        const input = document.getElementById(id);
+        if (input && val != null && val !== "") {
+          input.value = val;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      });
+      const btn = banner.querySelector("#copy-last-btn");
+      btn.textContent = "Copied ✓";
+      btn.disabled = true;
+      banner.classList.add("last-attempt--used");
+    });
+  }
+
   const card = document.createElement("div");
   card.className = "card dial-in-form";
   card.innerHTML = `
@@ -114,18 +155,30 @@ function paint(container, bagId, logId) {
     <div class="field-row">
       <div class="field">
         <label for="di-dose">Dose in (g)</label>
-        <input type="number" id="di-dose" min="6" max="30" step="0.1" value="${state.dose}" placeholder="18" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" data-target="di-dose" data-step="-0.5" aria-label="Decrease dose">−</button>
+          <input type="number" id="di-dose" min="6" max="30" step="0.1" inputmode="decimal" value="${state.dose}" placeholder="18" />
+          <button type="button" class="stepper-btn" data-target="di-dose" data-step="0.5" aria-label="Increase dose">+</button>
+        </div>
       </div>
       <div class="field">
         <label for="di-yield">Yield out (g)</label>
-        <input type="number" id="di-yield" min="10" max="80" step="0.1" value="${state.yield}" placeholder="36" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" data-target="di-yield" data-step="-1" aria-label="Decrease yield">−</button>
+          <input type="number" id="di-yield" min="10" max="80" step="0.1" inputmode="decimal" value="${state.yield}" placeholder="36" />
+          <button type="button" class="stepper-btn" data-target="di-yield" data-step="1" aria-label="Increase yield">+</button>
+        </div>
       </div>
     </div>
 
     <div class="field-row">
       <div class="field">
         <label for="di-time">Shot time (s)</label>
-        <input type="number" id="di-time" min="8" max="60" step="0.5" value="${state.time}" placeholder="28" />
+        <div class="stepper">
+          <button type="button" class="stepper-btn" data-target="di-time" data-step="-1" aria-label="Decrease time">−</button>
+          <input type="number" id="di-time" min="8" max="60" step="0.5" inputmode="decimal" value="${state.time}" placeholder="28" />
+          <button type="button" class="stepper-btn" data-target="di-time" data-step="1" aria-label="Increase time">+</button>
+        </div>
       </div>
       <div class="field">
         <label>Ratio</label>
@@ -247,6 +300,26 @@ function bind(container, card, bagId, state, editingLog, scale) {
   el.dose.addEventListener("input", syncRatio);
   el.yield.addEventListener("input", syncRatio);
 
+  // Stepper buttons (− / +) on dose, yield, time
+  card.querySelectorAll(".stepper-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = card.querySelector(`#${btn.dataset.target}`);
+      if (!target) return;
+      const step = Number(btn.dataset.step);
+      const min = Number(target.min);
+      const max = Number(target.max);
+      const fallback = Number(target.placeholder) || 0;
+      // First tap on an empty input snaps to placeholder; otherwise step.
+      let next = target.value === ""
+        ? fallback
+        : Number(target.value) + step;
+      if (Number.isFinite(min)) next = Math.max(min, next);
+      if (Number.isFinite(max)) next = Math.min(max, next);
+      target.value = +next.toFixed(1);
+      target.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  });
+
   el.grind.addEventListener("input", () => {
     el.grindTag.textContent = formatGrind(el.grind.value, scale);
   });
@@ -346,6 +419,16 @@ function formatRecipe(r) {
   }
   if (r.time) bits.push(`${r.time}s`);
   if (r.grind != null) bits.push(`grind ${r.grind}`);
+  return bits.join(" · ");
+}
+
+function formatLastAttempt(log, scale) {
+  const bits = [];
+  if (log.date) bits.push(formatDate(log.date));
+  if (log.dose && log.yield) bits.push(`${log.dose}g → ${log.yield}g`);
+  else if (log.dose) bits.push(`${log.dose}g in`);
+  if (log.time) bits.push(`${log.time}s`);
+  if (log.grind != null && log.grind !== "") bits.push(`grind ${formatGrind(log.grind, scale)}`);
   return bits.join(" · ");
 }
 
