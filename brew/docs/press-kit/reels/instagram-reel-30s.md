@@ -23,6 +23,8 @@
 
 ## Voiceover (continuous)
 
+### Reflective tone (default)
+
 > You pulled an incredible shot…
 >
 > …and forgot everything about it.
@@ -40,6 +42,26 @@
 > Finally know what you love — and how to make it again.
 >
 > Crema dot live. Free.
+
+### Active tone (alternative)
+
+> Pulled the perfect shot today?
+>
+> You'll forget how next week.
+>
+> Meet Crema. Snap the bag — it fills itself in.
+>
+> Save every roaster, origin, tasting note.
+>
+> Track every dial-in: dose, yield, grind, time.
+>
+> Rate every brew. Get smarter grind tips.
+>
+> See your best bags. Your cost per shot. Your taste profile.
+>
+> Pull that shot again. Whenever you want.
+>
+> Crema dot live. Free. Start now.
 
 ---
 
