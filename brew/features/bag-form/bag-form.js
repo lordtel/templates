@@ -1,10 +1,60 @@
-import { addBag, updateBag, getBag, removeBag } from "../../core/store.js";
+import { addBag, updateBag, getBag, removeBag, getState } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
 import { ocrImage, parseBagText } from "../../core/ocr.js";
 import { openImageEditor } from "../../core/image-editor.js";
 
 const ROASTS = ["light", "medium-light", "medium", "medium-dark", "dark", "filter", "omni"];
 const CURRENCIES = ["€", "$", "£", "¥", "CHF", "SEK", "NOK", "DKK", "AUD", "CAD"];
+
+// Curated suggestions — merged with values from the user's prior bags.
+const COMMON_ORIGINS = [
+  "Ethiopia", "Colombia", "Brazil", "Kenya", "Guatemala", "Costa Rica",
+  "Honduras", "Rwanda", "Burundi", "Panama", "El Salvador", "Indonesia",
+  "Yemen", "Peru", "Mexico", "Tanzania", "Uganda", "DR Congo",
+  "Bolivia", "Nicaragua", "Ecuador", "India", "Vietnam", "Papua New Guinea",
+];
+const COMMON_VARIETIES = [
+  "Heirloom", "Bourbon", "Typica", "Caturra", "Catuai", "Geisha",
+  "Pacamara", "SL28", "SL34", "Mundo Novo", "Pink Bourbon", "Yellow Bourbon",
+  "Red Bourbon", "Castillo", "Wush Wush", "Sidra", "Pacas", "Maragogype",
+  "Tabi", "Java", "Villa Sarchi", "Kent",
+];
+const COMMON_PROCESSES = [
+  "Washed", "Natural", "Honey", "White Honey", "Yellow Honey", "Red Honey",
+  "Black Honey", "Anaerobic", "Carbonic Maceration", "Wet Hulled",
+  "Pulped Natural", "Lactic", "Thermal Shock", "Double Anaerobic",
+];
+
+function buildDatalist(id, options) {
+  const seen = new Set();
+  const items = [];
+  options.forEach((v) => {
+    const key = String(v ?? "").trim();
+    const lc = key.toLowerCase();
+    if (key && !seen.has(lc)) {
+      seen.add(lc);
+      items.push(escapeHtml(key));
+    }
+  });
+  return `<datalist id="${id}">${items.map((v) => `<option value="${v}"></option>`).join("")}</datalist>`;
+}
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+function fieldSuggestions(currentBagId) {
+  const bags = (getState().bags ?? []).filter((b) => b.id !== currentBagId);
+  const pluck = (key) => bags.map((b) => b[key]).filter(Boolean);
+  return {
+    brands:    pluck("brand").sort(),
+    origins:   [...pluck("origin"),  ...COMMON_ORIGINS],
+    varieties: [...pluck("variety"), ...COMMON_VARIETIES],
+    processes: [...pluck("process"), ...COMMON_PROCESSES],
+  };
+}
 
 export function render(container, params = {}) {
   const editing = !!params.id;
@@ -32,6 +82,8 @@ export function render(container, params = {}) {
     ocrText: existing?.ocrText ?? "",
   };
 
+  const suggest = fieldSuggestions(params.id);
+
   container.innerHTML = `
     <div class="page-head">
       <div>
@@ -57,24 +109,24 @@ export function render(container, params = {}) {
 
       <div class="field">
         <label for="f-brand">Brand / Roaster</label>
-        <input type="text" id="f-brand" placeholder="e.g. La Cabra" />
+        <input type="text" id="f-brand" list="dl-brand" autocomplete="off" placeholder="e.g. La Cabra" />
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="f-origin">Origin</label>
-          <input type="text" id="f-origin" placeholder="Ethiopia" />
+          <input type="text" id="f-origin" list="dl-origin" autocomplete="off" placeholder="Ethiopia" />
         </div>
         <div class="field">
           <label for="f-variety">Variety</label>
-          <input type="text" id="f-variety" placeholder="Heirloom" />
+          <input type="text" id="f-variety" list="dl-variety" autocomplete="off" placeholder="Heirloom" />
         </div>
       </div>
 
       <div class="field-row">
         <div class="field">
           <label for="f-process">Process</label>
-          <input type="text" id="f-process" placeholder="Washed" />
+          <input type="text" id="f-process" list="dl-process" autocomplete="off" placeholder="Washed" />
         </div>
         <div class="field">
           <label for="f-roast">Roast</label>
@@ -134,6 +186,11 @@ export function render(container, params = {}) {
         }
       </div>
     </div>
+
+    ${buildDatalist("dl-brand",   suggest.brands)}
+    ${buildDatalist("dl-origin",  suggest.origins)}
+    ${buildDatalist("dl-variety", suggest.varieties)}
+    ${buildDatalist("dl-process", suggest.processes)}
   `;
 
   bind(container, state, editing, params.id);
