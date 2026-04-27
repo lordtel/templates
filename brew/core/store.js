@@ -287,7 +287,7 @@ export function addBag(bag) {
   emit();
   if (state.guest) {
     writeGuestData();
-  } else {
+  } else if (state.userId) {
     persistBag(newBag).catch((err) => captureException(err, { where: "addBag", id }));
   }
   return id;
@@ -304,7 +304,7 @@ export function updateBag(id, patch) {
   emit();
   if (state.guest) {
     writeGuestData();
-  } else {
+  } else if (state.userId) {
     persistBag(bag).catch((err) => captureException(err, { where: "updateBag", id }));
   }
 }
@@ -317,6 +317,7 @@ export function removeBag(id) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
   (async () => {
     try {
       if (bag?.photoPath) {
@@ -351,6 +352,7 @@ export function upsertRating(bagId, drinkType, rating) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
 
   (async () => {
     try {
@@ -376,6 +378,7 @@ export function removeRating(bagId, drinkType) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
 
   (async () => {
     try {
@@ -418,6 +421,7 @@ export function upsertDialInLog(bagId, log) {
     writeGuestData();
     return id;
   }
+  if (!state.userId) return id;
 
   (async () => {
     try {
@@ -444,6 +448,7 @@ export function removeDialInLog(bagId, logId) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
 
   (async () => {
     try {
@@ -474,6 +479,7 @@ export function markDialedIn(bagId, recipe) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
   persistBag(bag).catch((err) => { captureException(err, { where: "markDialedIn", bagId }); emitSaveError("Couldn't save recipe"); });
 }
 
@@ -488,6 +494,7 @@ export function unmarkDialedIn(bagId) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
   persistBag(bag).catch((err) => { captureException(err, { where: "unmarkDialedIn", bagId }); emitSaveError("Couldn't save recipe"); });
 }
 
@@ -501,6 +508,7 @@ export function markFinished(bagId) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
   persistBag(bag).catch((err) => { captureException(err, { where: "markFinished", bagId }); emitSaveError("Couldn't archive bag"); });
 }
 
@@ -514,6 +522,7 @@ export function markActive(bagId) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
   persistBag(bag).catch((err) => { captureException(err, { where: "markActive", bagId }); emitSaveError("Couldn't restore bag"); });
 }
 
@@ -525,6 +534,7 @@ export function setEquipment(patch) {
     writeGuestData();
     return;
   }
+  if (!state.userId) return;
 
   (async () => {
     try {
