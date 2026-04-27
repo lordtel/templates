@@ -273,7 +273,7 @@ export function render(container, params = {}) {
 
       <div class="field">
         <label for="f-notes">Tasting notes</label>
-        <textarea id="f-notes" placeholder="Blueberry, milk chocolate, caramel"></textarea>
+        <textarea id="f-notes" placeholder="Blueberry, milk chocolate, caramel" maxlength="500"></textarea>
       </div>
 
       <div class="form-actions">

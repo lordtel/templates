@@ -8,7 +8,7 @@ const GUEST_FLAG_KEY = "crema.guest.v1";
 const GUEST_DATA_KEY = "crema.guest-data.v1";
 const GUEST_MERGE_PENDING_KEY = "crema.guest-merge-pending.v1";
 
-const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
+const SIGNED_URL_TTL = 60 * 60 * 24;
 
 const listeners = new Set();
 

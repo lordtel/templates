@@ -10,6 +10,35 @@ export function initSentry() {
     integrations: [Sentry.browserTracingIntegration()],
     tracesSampleRate: 0.1,
     environment: location.hostname === "localhost" ? "development" : "production",
+    beforeSend(event) {
+      // Scrub potentially sensitive data from all event fields
+      if (event.request?.url) {
+        // Remove query parameters that might contain sensitive data
+        try {
+          const url = new URL(event.request.url);
+          url.search = "";
+          event.request.url = url.toString();
+        } catch (e) {
+          // Ignore invalid URLs
+        }
+      }
+      // Remove potentially sensitive breadcrumb data
+      if (event.breadcrumbs) {
+        event.breadcrumbs = event.breadcrumbs.map(breadcrumb => {
+          if (breadcrumb.data?.url) {
+            try {
+              const url = new URL(breadcrumb.data.url);
+              url.search = "";
+              breadcrumb.data.url = url.toString();
+            } catch (e) {
+              // Ignore invalid URLs
+            }
+          }
+          return breadcrumb;
+        });
+      }
+      return event;
+    },
   });
   initialized = true;
 }

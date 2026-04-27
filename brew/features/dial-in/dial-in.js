@@ -234,7 +234,7 @@ function paint(container, bagId, logId) {
 
     <div class="field">
       <label for="di-note">Notes</label>
-      <textarea id="di-note" placeholder="Bright, bit sour, pulled fast — tighten grind next.">${escapeHtml(state.note)}</textarea>
+      <textarea id="di-note" placeholder="Bright, bit sour, pulled fast — tighten grind next." maxlength="1000">${escapeHtml(state.note)}</textarea>
     </div>
 
     <div class="form-actions">

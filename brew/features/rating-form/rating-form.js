@@ -77,7 +77,7 @@ export function render(container, params) {
 
       <div class="field">
         <label for="r-notes">Notes</label>
-        <textarea id="r-notes" placeholder="Bright, clean, slight acidity — dialed in nicely.">${escapeHtml(state.notes)}</textarea>
+        <textarea id="r-notes" placeholder="Bright, clean, slight acidity — dialed in nicely." maxlength="1000">${escapeHtml(state.notes)}</textarea>
       </div>
 
       <div class="form-actions">
