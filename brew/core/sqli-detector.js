@@ -2,97 +2,81 @@ import { sb } from "./supabase.js";
 
 // SQL injection patterns that indicate attack attempts
 const SQL_INJECTION_PATTERNS = [
-  /(\b(UNION|SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|SCRIPT|JAVASCRIPT|ONCLICK)\b)/i,
-  /(-{2}|\/\*|\*\/|;|\||&&)/,  // SQL comments and delimiters
-  /('|")(.*)(OR|AND)(.*)('|")/i,  // Boolean-based injection
-  /(CAST|CONVERT|CHAR|ASCII|SUBSTRING|LENGTH|INSTR|POSITION)\s*\(/i,  // Function-based techniques
+  /(\b(UNION\s+SELECT|DROP\s+(TABLE|DATABASE)|INSERT\s+INTO|DELETE\s+FROM|EXEC\s*\(|EXECUTE\s*\()\b)/i,
+  /(-{2,}|\/\*|\*\/)\s*(SELECT|UPDATE|DELETE|INSERT|DROP)/i,
+  /('|")(\s*)(OR|AND)(\s+)('|")?\d+('|")?\s*=\s*('|")?\d+/i,
 ];
 
-const THRESHOLD = 3;  // Suspend after 3 attempts
+const THRESHOLD = 3;
+const ATTEMPT_KEY = "crema.security.attempts.v1";
 
 export async function checkForSQLInjection(text, userId) {
   if (!text || typeof text !== "string") return false;
 
-  const ismalicious = SQL_INJECTION_PATTERNS.some(pattern => pattern.test(text));
+  const isMalicious = SQL_INJECTION_PATTERNS.some(pattern => pattern.test(text));
+  if (!isMalicious) return false;
 
-  if (ismalicious) {
-    await logSuspiciousAttempt(userId, text);
-    const attemptCount = await incrementSuspiciousCount(userId);
+  // Track attempts in localStorage as a fallback (non-blocking)
+  const attemptCount = incrementLocalAttempts();
 
-    if (attemptCount >= THRESHOLD) {
-      await suspendUser(userId);
-      return { blocked: true, suspended: true };
-    }
+  // Best-effort logging (don't break the app if this fails)
+  logSuspiciousAttempt(userId, text).catch(() => {});
 
-    return { blocked: true, suspended: false };
+  if (attemptCount >= THRESHOLD) {
+    flagUserAsSuspended(userId).catch(() => {});
+    return { blocked: true, suspended: true };
   }
 
-  return false;
+  return { blocked: true, suspended: false };
 }
 
-async function logSuspiciousAttempt(userId, payload) {
+function incrementLocalAttempts() {
   try {
-    await sb.from("security_logs").insert({
-      user_id: userId,
-      event_type: "sql_injection_attempt",
-      payload: payload.substring(0, 500),  // Log first 500 chars only
-      timestamp: new Date().toISOString(),
-      ip_address: null,  // Could be enhanced with IP logging
-    });
-  } catch (err) {
-    console.error("[SQLi] Failed to log attempt:", err);
-  }
-}
-
-async function incrementSuspiciousCount(userId) {
-  try {
-    const { data: user } = await sb.from("user_profiles")
-      .select("suspicious_attempts")
-      .eq("id", userId)
-      .single();
-
-    const newCount = (user?.suspicious_attempts ?? 0) + 1;
-
-    await sb.from("user_profiles")
-      .update({ suspicious_attempts: newCount, last_suspicious_at: new Date().toISOString() })
-      .eq("id", userId);
-
-    return newCount;
-  } catch (err) {
-    console.error("[SQLi] Failed to increment count:", err);
+    const current = Number(localStorage.getItem(ATTEMPT_KEY) ?? 0);
+    const next = current + 1;
+    localStorage.setItem(ATTEMPT_KEY, String(next));
+    return next;
+  } catch {
     return 0;
   }
 }
 
-async function suspendUser(userId) {
+async function logSuspiciousAttempt(userId, payload) {
+  if (!userId) return;
   try {
-    // Update user metadata to flag as suspended
-    const { error } = await sb.auth.admin.updateUserById(userId, {
-      user_metadata: { suspended_for_security: true, suspended_at: new Date().toISOString() },
-    });
-
-    if (error) throw error;
-
-    // Log suspension
     await sb.from("security_logs").insert({
       user_id: userId,
-      event_type: "user_suspended",
-      payload: "Automatic suspension due to repeated SQL injection attempts",
+      event_type: "sql_injection_attempt",
+      payload: payload.substring(0, 500),
       timestamp: new Date().toISOString(),
     });
-
-    console.warn(`[SQLi] User ${userId} suspended after ${THRESHOLD} attempts`);
   } catch (err) {
-    console.error("[SQLi] Failed to suspend user:", err);
+    console.warn("[SQLi] Failed to log attempt:", err);
+  }
+}
+
+async function flagUserAsSuspended(userId) {
+  if (!userId) return;
+  try {
+    await sb.from("user_profiles").upsert({
+      id: userId,
+      suspended_for_security: true,
+      last_suspicious_at: new Date().toISOString(),
+    }, { onConflict: "id" });
+  } catch (err) {
+    console.warn("[SQLi] Failed to flag user:", err);
   }
 }
 
 export async function checkUserSuspension(userId) {
+  if (!userId) return false;
   try {
-    const { data: { user } } = await sb.auth.admin.getUserById(userId);
-    return user?.user_metadata?.suspended_for_security ?? false;
-  } catch (err) {
-    console.error("[Auth] Failed to check suspension:", err);
+    const { data } = await sb.from("user_profiles")
+      .select("suspended_for_security")
+      .eq("id", userId)
+      .maybeSingle();
+    return data?.suspended_for_security ?? false;
+  } catch {
     return false;
   }
 }

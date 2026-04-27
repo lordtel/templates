@@ -8,15 +8,7 @@ export async function getSession() {
 
 export async function getUser() {
   const { data } = await sb.auth.getUser();
-  const user = data.user ?? null;
-
-  // Check if user is suspended for security violations
-  if (user?.user_metadata?.suspended_for_security) {
-    await signOut();
-    throw new Error("Account suspended due to security violation. Please contact support.");
-  }
-
-  return user;
+  return data.user ?? null;
 }
 
 export async function signInWithGoogle() {
