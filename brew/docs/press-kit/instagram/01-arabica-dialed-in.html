@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1080" />
+  <title>Crema — % Arabica dialed in · Instagram story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../../../app.css" />
+  <link rel="stylesheet" href="../../../features/bag-detail/bag-detail.css" />
+  <link rel="stylesheet" href="../../../features/nav/nav.css" />
+  <link rel="stylesheet" href="../screenshots/_frame.css" />
+  <style>
+    .poster-eyebrow {
+      top: 70px;
+      font-size: 24px;
+      letter-spacing: 0.18em;
+    }
+    .poster-title {
+      top: 118px;
+      font-size: 56px;
+      line-height: 1.1;
+    }
+    .poster-tag {
+      position: absolute;
+      top: 245px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 500;
+      color: #2b1b12;
+      margin: 0;
+      font-family: "Inter", sans-serif;
+    }
+    .poster-tag b {
+      font-weight: 600;
+      color: #7a3e1d;
+    }
+    .phone {
+      top: 295px;
+    }
+    /* %Arabica-style hero: white minimal with black % */
+    .arabica-hero {
+      background: #ffffff !important;
+      display: grid !important;
+      place-items: center !important;
+      padding: 14px;
+      position: relative;
+      aspect-ratio: auto !important;
+      height: 200px !important;
+      max-width: 320px !important;
+    }
+    .arabica-hero::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(0,0,0,0.08);
+      pointer-events: none;
+    }
+    .arabica-percent {
+      font-family: "Inter", sans-serif;
+      font-size: 64px;
+      font-weight: 300;
+      color: #0a0a0a;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .arabica-name {
+      margin-top: 10px;
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.32em;
+      color: #0a0a0a;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+    .arabica-origin {
+      margin-top: 8px;
+      font-family: "Inter", sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.28em;
+      color: #555;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+    .arabica-line {
+      width: 28px;
+      height: 1px;
+      background: #0a0a0a;
+      margin: 10px auto 0;
+    }
+    .arabica-roaster {
+      margin-top: 8px;
+      font-family: "Inter", sans-serif;
+      font-size: 7px;
+      letter-spacing: 0.4em;
+      color: #888;
+      text-transform: uppercase;
+    }
+    /* Compact bag-info: just name + origin + pills */
+    .bag-info-compact .bag-notes,
+    .bag-info-compact .kv,
+    .bag-info-compact .info-actions { display: none !important; }
+    .bag-info-compact { padding-bottom: 14px !important; }
+  </style>
+</head>
+<body class="poster">
+  <p class="poster-eyebrow">Dialed in</p>
+  <h1 class="poster-title">% Arabica · Ethiopia</h1>
+  <p class="poster-tag">Locked recipe — <b>1:2 in 28s</b></p>
+
+  <div class="phone">
+    <div class="phone-screen">
+      <div class="phone-notch"></div>
+      <div class="status-bar">
+        <span>9:41</span>
+        <span class="s-icons">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 18h3v-3H2v3zm5 0h3v-6H7v6zm5 0h3V9h-3v9zm5 0h3V4h-3v14z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12a11 11 0 0 1 14 0"/><path d="M8.5 15a7 7 0 0 1 7 0"/><circle cx="12" cy="18" r="1.2" fill="currentColor"/></svg>
+          <svg viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="0.5" y="0.5" width="21" height="13" rx="3"/><rect x="2" y="2" width="17" height="10" rx="2" fill="currentColor"/><rect x="22.5" y="4.5" width="2" height="5" rx="1" fill="currentColor"/></svg>
+        </span>
+      </div>
+
+      <div class="stage">
+        <div class="stage-inner">
+          <header class="masthead">
+            <a href="#" class="brand" aria-label="Crema home">
+              <span class="brand-mark" aria-hidden="true"></span>
+              <span class="brand-name">Crema</span>
+            </a>
+          </header>
+
+          <main class="view" aria-live="polite">
+            <button type="button" class="back-btn"><span aria-hidden="true">‹</span> Bags</button>
+
+            <div class="bag-hero arabica-hero">
+              <div style="text-align: center;">
+                <div class="arabica-percent">%</div>
+                <div class="arabica-name">Arabica</div>
+                <div class="arabica-line"></div>
+                <div class="arabica-origin">Ethiopia · Yirgacheffe</div>
+                <div class="arabica-origin" style="margin-top: 4px;">Washed · Heirloom</div>
+                <div class="arabica-roaster">Kyoto · Roasted in Hong Kong</div>
+              </div>
+            </div>
+
+            <section class="bag-info card bag-info-compact">
+              <h1>% Arabica</h1>
+              <p class="bag-origin">Ethiopia · Yirgacheffe</p>
+              <div class="pill-row">
+                <span class="pill">Light</span>
+                <span class="pill">Washed</span>
+                <span class="pill">Heirloom</span>
+              </div>
+            </section>
+
+            <section class="dial-in-section card">
+              <div class="dial-in-section-top">
+                <p class="eyebrow">Dial-in</p>
+                <span class="dialed-badge">Dialed in</span>
+                <span class="dialed-badge pending">5 attempts</span>
+              </div>
+              <dl class="dial-in-stats">
+                <div><dt>Dose</dt><dd>18g</dd></div>
+                <div><dt>Yield</dt><dd>36g</dd></div>
+                <div><dt>Ratio</dt><dd>1:2.00</dd></div>
+                <div><dt>Time</dt><dd>28s</dd></div>
+                <div><dt>Grind</dt><dd>2.8</dd></div>
+              </dl>
+              <button type="button" class="btn small dial-in-section-btn">Log another attempt</button>
+            </section>
+          </main>
+
+          <nav class="nav" aria-label="Primary" style="position: absolute;">
+            <button type="button" class="nav-item is-active">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg></span>
+              <span class="nav-label">Bags</span>
+            </button>
+            <button type="button" class="nav-item primary">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+              <span class="nav-label">Add</span>
+            </button>
+            <button type="button" class="nav-item">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
+              <span class="nav-label">Stats</span>
+            </button>
+            <button type="button" class="nav-item">
+              <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
+              <span class="nav-label">Gear</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="poster-url">crema.live</p>
+</body>
+</html>
