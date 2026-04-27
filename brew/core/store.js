@@ -1,6 +1,7 @@
 import { sb } from "./supabase.js";
 import { captureException } from "./sentry.js";
 import { load, remove } from "./storage.js";
+import { checkForSQLInjection, checkUserSuspension } from "./sqli-detector.js";
 
 const LEGACY_BAGS_KEY = "brew.bags.v1";
 const LEGACY_EQUIPMENT_KEY = "brew.equipment.v1";
@@ -356,6 +357,17 @@ export function upsertRating(bagId, drinkType, rating) {
 
   (async () => {
     try {
+      // Check for SQL injection in notes
+      const result = await checkForSQLInjection(entry.notes, state.userId);
+      if (result?.blocked) {
+        emitSaveError(
+          result.suspended
+            ? "Access revoked due to security violation. Please contact support."
+            : "Input contains invalid characters. Please try again."
+        );
+        return;
+      }
+
       const { error } = await sb.from("ratings").upsert(
         ratingStateToRow(bagId, state.userId, entry),
         { onConflict: "bag_id,drink_type" }
@@ -425,6 +437,17 @@ export function upsertDialInLog(bagId, log) {
 
   (async () => {
     try {
+      // Check for SQL injection in note
+      const result = await checkForSQLInjection(entry.note, state.userId);
+      if (result?.blocked) {
+        emitSaveError(
+          result.suspended
+            ? "Access revoked due to security violation. Please contact support."
+            : "Input contains invalid characters. Please try again."
+        );
+        return;
+      }
+
       const { error } = await sb
         .from("dial_in_logs")
         .upsert(dialInStateToRow(entry, state.userId), { onConflict: "id" });
@@ -555,6 +578,9 @@ export function setEquipment(patch) {
 }
 
 async function persistBag(bag) {
+  // Check for SQL injection attempts in text fields
+  await validateBagInput(bag);
+
   if (bag.photoUpload?.startsWith("data:")) {
     const path = `${state.userId}/${bag.id}.jpg`;
     const blob = dataUrlToBlob(bag.photoUpload);
@@ -574,6 +600,22 @@ async function persistBag(bag) {
   const row = bagStateToRow(bag, state.userId);
   const { error } = await sb.from("bags").upsert(row, { onConflict: "id" });
   if (error) throw error;
+}
+
+async function validateBagInput(bag) {
+  const fieldsToCheck = ["brand", "origin", "process", "variety", "notes", "altitude"];
+
+  for (const field of fieldsToCheck) {
+    const result = await checkForSQLInjection(bag[field], state.userId);
+    if (result?.blocked) {
+      emitSaveError(
+        result.suspended
+          ? "Access revoked due to security violation. Please contact support."
+          : "Input contains invalid characters. Please try again."
+      );
+      throw new Error(`SQL injection attempt detected in ${field}`);
+    }
+  }
 }
 
 function bagRowToState(r) {
