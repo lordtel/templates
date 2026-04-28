@@ -1,6 +1,6 @@
 import { navigate } from "../../core/router.js";
 
-const ENTRIES = [
+export const ENTRIES = [
   {
     date: "2026-04-24",
     title: "Taste profile chart",

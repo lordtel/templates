@@ -25,6 +25,7 @@ import { render as renderEquipment } from "./features/equipment/equipment.js";
 import { render as renderAbout } from "./features/about/about.js";
 import { render as renderPrivacy } from "./features/privacy/privacy.js";
 import { render as renderChangelog } from "./features/changelog/changelog.js";
+import { maybeShowWhatsNew } from "./features/whats-new/whats-new.js";
 
 initSentry();
 
@@ -72,6 +73,7 @@ function bootGuest() {
   } else {
     location.hash = "";
   }
+  maybeShowWhatsNew();
 }
 
 async function boot(session) {
@@ -164,6 +166,7 @@ async function boot(session) {
         renderEquipStrip(equipEl);
         initRouter(viewEl, routes);
         routerStarted = true;
+        maybeShowWhatsNew();
       },
     });
     return;
@@ -177,6 +180,7 @@ async function boot(session) {
   } else {
     location.hash = "";
   }
+  maybeShowWhatsNew();
 }
 
 function renderFooter(user) {

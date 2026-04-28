@@ -6,7 +6,7 @@
 // caches are purged on activate. CDN assets (Supabase, Tesseract, fonts)
 // are not intercepted — we let the browser handle them normally.
 
-const VERSION = "v3";
+const VERSION = "v4";
 const CACHE_NAME = `crema-${VERSION}`;
 
 const APP_SHELL = [
@@ -56,6 +56,8 @@ const APP_SHELL = [
   "./features/rating-form/rating-form.js",
   "./features/sign-in/sign-in.css",
   "./features/sign-in/sign-in.js",
+  "./features/whats-new/whats-new.css",
+  "./features/whats-new/whats-new.js",
 ];
 
 self.addEventListener("install", (event) => {
