@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080" />
+<title>Crema — Taste profile reel (30s)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:      #f4ede0;
+    --bg2:     #e2d2ad;
+    --ink:     #2b1b12;
+    --soft:    #6b5443;
+    --faint:   #a08a78;
+    --accent:  #7a3e1d;
+    --crema:   #d9b580;
+    --surface: #fdf8ee;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    width: 1080px; height: 1920px;
+    overflow: hidden;
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--bg), var(--bg2));
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(217,181,128,0.55), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ───── Watermark ───── */
+  .wm {
+    position: absolute;
+    top: 76px; left: 76px;
+    display: flex; align-items: center; gap: 18px;
+    z-index: 100;
+  }
+  .wm-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+    box-shadow: 0 0 0 7px rgba(122,62,29,0.16);
+  }
+  .wm-name {
+    font-family: "Fraunces", serif;
+    font-weight: 600; font-size: 40px; letter-spacing: 0.01em;
+    color: var(--accent);
+  }
+
+  /* ───── Progress bar ───── */
+  .progress-track {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 9px; background: rgba(43,27,18,0.1); z-index: 200;
+  }
+  .progress-bar {
+    height: 100%; width: 0;
+    background: linear-gradient(to right, var(--accent), var(--crema));
+    animation: prog 30s linear infinite;
+  }
+  @keyframes prog { to { width: 100%; } }
+
+  /* ───── Eyebrow + Title ─────
+     Fades in 0–2s, sticks until 17s, then swaps. */
+  .eyebrow {
+    position: absolute;
+    top: 220px; left: 0; right: 0;
+    text-align: center;
+    font-size: 28px; font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--accent);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: titleFade 30s ease-in-out infinite;
+  }
+  .title {
+    position: absolute;
+    top: 280px; left: 0; right: 0;
+    text-align: center;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 96px;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    padding: 0 80px;
+    opacity: 0;
+    animation: titleFade 30s ease-in-out infinite;
+  }
+  .title em {
+    font-style: italic;
+    color: var(--accent);
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+  }
+  @keyframes titleFade {
+    0%   { opacity: 0; transform: translateY(20px); }
+    6%   { opacity: 1; transform: translateY(0); }
+    55%  { opacity: 1; transform: translateY(0); }
+    60%  { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 0; transform: translateY(-20px); }
+  }
+
+  .title-2 {
+    position: absolute;
+    top: 280px; left: 0; right: 0;
+    text-align: center;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 96px;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    padding: 0 80px;
+    opacity: 0;
+    animation: title2Fade 30s ease-in-out infinite;
+  }
+  .title-2 em {
+    font-style: italic;
+    color: var(--accent);
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+  }
+  @keyframes title2Fade {
+    0%, 58%   { opacity: 0; transform: translateY(20px); }
+    62%       { opacity: 1; transform: translateY(0); }
+    85%       { opacity: 1; transform: translateY(0); }
+    90%       { opacity: 0; transform: translateY(-20px); }
+    100%      { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* ───── Spider chart container ───── */
+  .chart-wrap {
+    position: absolute;
+    top: 540px; left: 50%;
+    transform: translateX(-50%);
+    width: 900px; height: 900px;
+  }
+  .chart-svg {
+    width: 100%; height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* Hex rings — draw in sequence */
+  .ring {
+    fill: none;
+    stroke: rgba(122, 62, 29, 0.22);
+    stroke-width: 1.5;
+    stroke-dasharray: 2400;
+    stroke-dashoffset: 2400;
+    animation: drawRing 30s ease-out infinite;
+  }
+  .ring-outer {
+    stroke: rgba(122, 62, 29, 0.42);
+    stroke-width: 2;
+  }
+  .ring-1 { animation-delay: 0s; }
+  .ring-2 { animation-delay: 0s; }
+  .ring-3 { animation-delay: 0s; }
+  @keyframes drawRing {
+    0%, 6%      { stroke-dashoffset: 2400; opacity: 0; }
+    9%          { stroke-dashoffset: 2400; opacity: 1; }
+    18%         { stroke-dashoffset: 0;    opacity: 1; }
+    100%        { stroke-dashoffset: 0;    opacity: 1; }
+  }
+
+  /* Spokes — radial draw out from center */
+  .spoke {
+    stroke: rgba(122, 62, 29, 0.22);
+    stroke-width: 1.5;
+    stroke-dasharray: 350;
+    stroke-dashoffset: 350;
+    animation: drawSpoke 30s ease-out infinite;
+  }
+  .spoke-0 { animation-delay: 0s; }
+  .spoke-1 { animation-delay: 0s; }
+  .spoke-2 { animation-delay: 0s; }
+  .spoke-3 { animation-delay: 0s; }
+  .spoke-4 { animation-delay: 0s; }
+  .spoke-5 { animation-delay: 0s; }
+  @keyframes drawSpoke {
+    0%, 13%   { stroke-dashoffset: 350; opacity: 0; }
+    16%       { stroke-dashoffset: 350; opacity: 1; }
+    22%       { stroke-dashoffset: 0;   opacity: 1; }
+    100%      { stroke-dashoffset: 0;   opacity: 1; }
+  }
+
+  /* Axis labels — fade in clockwise */
+  .axis-label {
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    fill: var(--ink-soft, #5a4530);
+    opacity: 0;
+    animation: labelIn 30s ease-out infinite;
+  }
+  .axis-label-0 { animation-delay: 0s; }
+  .axis-label-1 { animation-delay: 0s; }
+  .axis-label-2 { animation-delay: 0s; }
+  .axis-label-3 { animation-delay: 0s; }
+  .axis-label-4 { animation-delay: 0s; }
+  .axis-label-5 { animation-delay: 0s; }
+
+  @keyframes labelIn {
+    0%, 22%   { opacity: 0; }
+    /* Stagger via opacity ranges */
+    100%      { opacity: 1; }
+  }
+  /* Stagger labels via individual keyframe positions */
+  .axis-label-0 { animation-name: lbl0; }
+  .axis-label-1 { animation-name: lbl1; }
+  .axis-label-2 { animation-name: lbl2; }
+  .axis-label-3 { animation-name: lbl3; }
+  .axis-label-4 { animation-name: lbl4; }
+  .axis-label-5 { animation-name: lbl5; }
+  @keyframes lbl0 { 0%, 22% { opacity: 0; } 25% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes lbl1 { 0%, 24% { opacity: 0; } 27% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes lbl2 { 0%, 26% { opacity: 0; } 29% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes lbl3 { 0%, 28% { opacity: 0; } 31% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes lbl4 { 0%, 30% { opacity: 0; } 33% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes lbl5 { 0%, 32% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 1; } }
+
+  /* Data dots — pop in with bounce, staggered clockwise */
+  .data-dot {
+    fill: var(--accent);
+    stroke: var(--surface);
+    stroke-width: 4;
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(0);
+    animation: dotIn 30s ease-out infinite;
+  }
+  .data-dot-0 { animation-name: dot0; }
+  .data-dot-1 { animation-name: dot1; }
+  .data-dot-2 { animation-name: dot2; }
+  .data-dot-3 { animation-name: dot3; }
+  .data-dot-4 { animation-name: dot4; }
+  .data-dot-5 { animation-name: dot5; }
+  @keyframes dot0 { 0%, 38% { transform: scale(0); } 40% { transform: scale(1.5); } 42% { transform: scale(1); } 100% { transform: scale(1); } }
+  @keyframes dot1 { 0%, 40% { transform: scale(0); } 42% { transform: scale(1.5); } 44% { transform: scale(1); } 100% { transform: scale(1); } }
+  @keyframes dot2 { 0%, 42% { transform: scale(0); } 44% { transform: scale(1.5); } 46% { transform: scale(1); } 100% { transform: scale(1); } }
+  @keyframes dot3 { 0%, 44% { transform: scale(0); } 46% { transform: scale(1.5); } 48% { transform: scale(1); } 100% { transform: scale(1); } }
+  @keyframes dot4 { 0%, 46% { transform: scale(0); } 48% { transform: scale(1.5); } 50% { transform: scale(1); } 100% { transform: scale(1); } }
+  @keyframes dot5 { 0%, 48% { transform: scale(0); } 50% { transform: scale(1.5); } 52% { transform: scale(1); } 100% { transform: scale(1); } }
+
+  /* Data shape — scale up from center after dots are in */
+  .data-shape {
+    transform-origin: 450px 450px;
+    transform: scale(0);
+    opacity: 0;
+    animation: shapeIn 30s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  }
+  @keyframes shapeIn {
+    0%, 50%  { transform: scale(0); opacity: 0; }
+    55%      { transform: scale(1); opacity: 1; }
+    85%      { transform: scale(1); opacity: 1; }
+    100%     { transform: scale(1); opacity: 1; }
+  }
+
+  /* Chart fades out near end for CTA */
+  .chart-wrap {
+    animation: chartFade 30s ease-in-out infinite;
+  }
+  @keyframes chartFade {
+    0%       { opacity: 0; transform: translateX(-50%) scale(0.92); }
+    8%       { opacity: 1; transform: translateX(-50%) scale(1); }
+    85%      { opacity: 1; transform: translateX(-50%) scale(1); }
+    92%      { opacity: 0; transform: translateX(-50%) scale(0.92); }
+    100%     { opacity: 0; transform: translateX(-50%) scale(0.92); }
+  }
+
+  /* Caption below the chart — describes what we're seeing */
+  .caption {
+    position: absolute;
+    bottom: 240px; left: 0; right: 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--soft);
+    padding: 0 80px;
+    opacity: 0;
+    animation: captionIn 30s ease-in-out infinite;
+  }
+  .caption b {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  @keyframes captionIn {
+    0%, 60%  { opacity: 0; transform: translateY(12px); }
+    65%      { opacity: 1; transform: translateY(0); }
+    85%      { opacity: 1; transform: translateY(0); }
+    90%      { opacity: 0; transform: translateY(-12px); }
+    100%     { opacity: 0; }
+  }
+
+  /* CTA at the very end */
+  .cta {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    opacity: 0;
+    animation: ctaIn 30s ease-in-out infinite;
+  }
+  .cta-mark {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+    box-shadow: 0 0 0 18px rgba(122,62,29,0.12);
+  }
+  .cta-name {
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 120px;
+    color: var(--ink);
+    margin: 0;
+  }
+  .cta-tag {
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-size: 44px;
+    color: var(--soft);
+    margin: 0;
+  }
+  .cta-url {
+    margin-top: 20px;
+    font-size: 32px; font-weight: 600;
+    letter-spacing: 0.32em;
+    color: var(--accent);
+  }
+  @keyframes ctaIn {
+    0%, 88%   { opacity: 0; transform: scale(0.96); }
+    93%       { opacity: 1; transform: scale(1); }
+    100%      { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wm">
+  <span class="wm-dot"></span>
+  <span class="wm-name">Crema</span>
+</div>
+
+<!-- Eyebrow + Title 1: 0–17s -->
+<p class="eyebrow">Taste profile</p>
+<h1 class="title">Your espresso<br/>has a <em>shape</em>.</h1>
+
+<!-- Title 2: 17–28s -->
+<h1 class="title-2">Six axes,<br/>drawn from <em>your</em> data.</h1>
+
+<!-- Spider chart -->
+<div class="chart-wrap">
+  <svg class="chart-svg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="shape-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#7a3e1d" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#d9b580" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Hex rings (33%, 66%, 100%) -->
+    <!--
+      With cx=450, cy=450, R=320.
+      Vertices at angles -90°, -30°, 30°, 90°, 150°, 210° (clockwise from top).
+      Coords for a unit hexagon (R=1):
+        0: (   0, -1   ) top
+        1: ( 0.866, -0.5)
+        2: ( 0.866,  0.5)
+        3: (   0,  1   ) bottom
+        4: (-0.866,  0.5)
+        5: (-0.866, -0.5)
+    -->
+    <polygon class="ring ring-1" points="450,344.4 541.8,397.2 541.8,502.8 450,555.6 358.2,502.8 358.2,397.2"/>
+    <polygon class="ring ring-2" points="450,238.8 633.5,344.4 633.5,555.6 450,661.2 266.5,555.6 266.5,344.4"/>
+    <polygon class="ring ring-outer ring-3" points="450,130 727.1,290 727.1,610 450,770 172.9,610 172.9,290"/>
+
+    <!-- Spokes -->
+    <line class="spoke spoke-0" x1="450" y1="450" x2="450" y2="130"/>
+    <line class="spoke spoke-1" x1="450" y1="450" x2="727.1" y2="290"/>
+    <line class="spoke spoke-2" x1="450" y1="450" x2="727.1" y2="610"/>
+    <line class="spoke spoke-3" x1="450" y1="450" x2="450" y2="770"/>
+    <line class="spoke spoke-4" x1="450" y1="450" x2="172.9" y2="610"/>
+    <line class="spoke spoke-5" x1="450" y1="450" x2="172.9" y2="290"/>
+
+    <!-- Axis labels (placed beyond the outer ring) -->
+    <text class="axis-label axis-label-0" x="450" y="90"  text-anchor="middle">BRIGHT</text>
+    <text class="axis-label axis-label-1" x="755" y="270" text-anchor="start"  >DOSE</text>
+    <text class="axis-label axis-label-2" x="755" y="640" text-anchor="start"  >LONG PULL</text>
+    <text class="axis-label axis-label-3" x="450" y="828" text-anchor="middle">BOLD</text>
+    <text class="axis-label axis-label-4" x="145" y="640" text-anchor="end"   >RICH</text>
+    <text class="axis-label axis-label-5" x="145" y="270" text-anchor="end"   >STRENGTH</text>
+
+    <!-- Data shape — drawn from realistic values
+         bright=0.62 (sour-ish), dose=0.50 (18g), long=0.58, bold=0.40, rich=0.78, strength=0.65 -->
+    <g class="data-shape">
+      <polygon
+        fill="url(#shape-grad)"
+        stroke="#7a3e1d"
+        stroke-width="3"
+        stroke-linejoin="round"
+        points="450,251.6 588.6,372.0 635.5,531.4 450,578 156.4,485 311.4,322"/>
+    </g>
+
+    <!-- Data dots at the same vertices -->
+    <circle class="data-dot data-dot-0" cx="450" cy="251.6" r="14"/>
+    <circle class="data-dot data-dot-1" cx="588.6" cy="372.0" r="14"/>
+    <circle class="data-dot data-dot-2" cx="635.5" cy="531.4" r="14"/>
+    <circle class="data-dot data-dot-3" cx="450" cy="578"   r="14"/>
+    <circle class="data-dot data-dot-4" cx="156.4" cy="485" r="14"/>
+    <circle class="data-dot data-dot-5" cx="311.4" cy="322" r="14"/>
+  </svg>
+</div>
+
+<!-- Caption below chart, appears at scene 3 -->
+<p class="caption">
+  Drawn from <b>your dial-in logs</b>.<br/>
+  Sharper as you log more attempts.
+</p>
+
+<!-- Final CTA -->
+<div class="cta">
+  <span class="cta-mark"></span>
+  <h1 class="cta-name">Crema</h1>
+  <p class="cta-tag">Your espresso, dialed in.</p>
+  <p class="cta-url">CREMA.LIVE</p>
+</div>
+
+<div class="progress-track"><div class="progress-bar"></div></div>
+
+</body>
+</html>
