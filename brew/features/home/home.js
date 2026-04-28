@@ -1,5 +1,6 @@
 import { subscribe, DRINK_TYPES, drinkLabel, getEquipment } from "../../core/store.js";
 import { navigate } from "../../core/router.js";
+import { freshness } from "../../core/freshness.js";
 
 let currentFilter = "active";
 
@@ -159,11 +160,17 @@ function buildCard(bag) {
     ? `<span class="finished-badge">Finished ${formatFinishedDate(bag.finishedAt)}</span>`
     : "";
 
+  const fresh = !bag.finishedAt ? freshness(bag.roastDate) : null;
+  const freshPill = fresh
+    ? `<span class="freshness-pill freshness-${fresh.stage}">${escapeHtml(fresh.label)}</span>`
+    : "";
+
   meta.innerHTML = `
     <h3>${escapeHtml(brand)}</h3>
     <p class="bag-sub">${escapeHtml(origin ? origin.slice(3) : "—")}${bag.process ? " · " + escapeHtml(bag.process) : ""}</p>
     <div class="bag-row">
       ${roast}
+      ${freshPill}
       <span class="bag-dots" aria-label="Average rating ${avg ? avg.toFixed(1) : 'none'}">${ratingDots(avg)}</span>
       ${finishedBadge || (per250 ? `<span class="bag-price">${per250} / 250g</span>` : "")}
       ${finishedBadge ? "" : (perCup ? `<span class="bag-price muted">${perCup} / shot</span>` : "")}

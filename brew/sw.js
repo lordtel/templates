@@ -6,7 +6,7 @@
 // caches are purged on activate. CDN assets (Supabase, Tesseract, fonts)
 // are not intercepted — we let the browser handle them normally.
 
-const VERSION = "v4";
+const VERSION = "v5";
 const CACHE_NAME = `crema-${VERSION}`;
 
 const APP_SHELL = [
@@ -21,7 +21,9 @@ const APP_SHELL = [
   "./core/auth.js",
   "./core/config.js",
   "./core/dial-in.js",
+  "./core/freshness.js",
   "./core/gear-catalog.js",
+  "./core/share-card.js",
   "./core/image-editor.css",
   "./core/image-editor.js",
   "./core/ocr.js",

@@ -2,6 +2,15 @@ import { navigate } from "../../core/router.js";
 
 export const ENTRIES = [
   {
+    date: "2026-04-28",
+    title: "Freshness pill + shareable bag cards",
+    tag: "new",
+    items: [
+      "Bag cards now show a freshness pill based on the new 'Roast date' field — amber while resting (0–6 days), green at peak (7–21 days), neutral as it fades, and greyed-out once stale past 35 days.",
+      "New 'Share as card' button on every bag: generates a 1080×1350 image with the hero photo, brand, dialed-in recipe and average rating. Hooks into the native iOS/Android share sheet, falls back to PNG download elsewhere — perfect for Instagram stories.",
+    ],
+  },
+  {
     date: "2026-04-24",
     title: "Taste profile chart",
     tag: "new",

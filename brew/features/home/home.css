@@ -207,3 +207,41 @@
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* Freshness pill — coffee age based on roast date */
+.freshness-pill {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.freshness-resting {
+  background: #fff5e0;
+  color: #8a5a00;
+  border-color: rgba(180, 130, 30, 0.25);
+}
+
+.freshness-peak {
+  background: #e8f1e6;
+  color: #3a6b32;
+  border-color: rgba(58, 107, 50, 0.25);
+}
+
+.freshness-fading {
+  background: var(--surface-solid);
+  color: var(--ink-soft);
+  border-color: var(--line);
+}
+
+.freshness-stale {
+  background: var(--bg-deep);
+  color: var(--ink-faint);
+  border-color: var(--line);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(43, 27, 18, 0.3);
+}

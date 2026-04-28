@@ -177,6 +177,7 @@ export function render(container, params = {}) {
     process: existing?.process ?? "",
     variety: existing?.variety ?? "",
     roast: existing?.roast ?? "",
+    roastDate: existing?.roastDate ?? "",
     notes: existing?.notes ?? "",
     weight: existing?.weight ?? "",
     price: existing?.price ?? "",
@@ -252,6 +253,12 @@ export function render(container, params = {}) {
         </div>
       </div>
 
+      <div class="field">
+        <label for="f-roast-date">Roast date</label>
+        <input type="date" id="f-roast-date" />
+        <p class="field-hint">Powers the freshness pill. Coffee peaks 7–21 days after roast.</p>
+      </div>
+
       <div class="field-row">
         <div class="field">
           <label for="f-price">Price</label>
@@ -309,6 +316,7 @@ function bind(container, state, editing, id, suggest) {
     variety: container.querySelector("#f-variety"),
     process: container.querySelector("#f-process"),
     roast: container.querySelector("#f-roast"),
+    roastDate: container.querySelector("#f-roast-date"),
     weight: container.querySelector("#f-weight"),
     altitude: container.querySelector("#f-altitude"),
     price: container.querySelector("#f-price"),
@@ -396,6 +404,7 @@ function paintFields(el, state) {
   el.variety.value = state.variety;
   el.process.value = state.process;
   el.roast.value = state.roast;
+  el.roastDate.value = state.roastDate;
   el.weight.value = state.weight;
   el.altitude.value = state.altitude;
   el.price.value = state.price;
@@ -410,6 +419,7 @@ function readFields(el, state) {
   state.variety = el.variety.value.trim();
   state.process = el.process.value.trim();
   state.roast = el.roast.value;
+  state.roastDate = el.roastDate.value || "";
   state.weight = el.weight.value ? Number(el.weight.value) : "";
   state.altitude = el.altitude.value.trim();
   state.price = el.price.value ? Number(el.price.value) : "";

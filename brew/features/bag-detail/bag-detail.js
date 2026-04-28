@@ -1,6 +1,8 @@
 import { subscribe, getBag, drinkLabel, DRINK_TYPES, slugifyDrink, markFinished, markActive, upsertRating } from "../../core/store.js";
 import { suggestForDrink } from "../../core/dial-in.js";
 import { navigate } from "../../core/router.js";
+import { freshness } from "../../core/freshness.js";
+import { shareBagAsCard as generateAndShare } from "../../core/share-card.js";
 
 export function render(container, params) {
   const bagId = params.id;
@@ -54,6 +56,10 @@ function paint(container, bagId) {
     .filter(Boolean)
     .map((v) => `<span class="pill">${escapeHtml(v)}</span>`)
     .join(" ");
+  const fresh = !bag.finishedAt ? freshness(bag.roastDate) : null;
+  const freshPill = fresh
+    ? `<span class="freshness-pill freshness-${fresh.stage}">${escapeHtml(fresh.label)}</span>`
+    : "";
   const finishedBanner = bag.finishedAt
     ? `<p class="finished-banner"><span class="finished-dot" aria-hidden="true"></span>Finished ${formatFullDate(bag.finishedAt)}</p>`
     : "";
@@ -64,7 +70,7 @@ function paint(container, bagId) {
     ${finishedBanner}
     <h1>${escapeHtml(bag.brand || "Untitled")}</h1>
     ${bag.origin ? `<p class="bag-origin">${escapeHtml(bag.origin)}${bag.altitude ? " · " + escapeHtml(bag.altitude) : ""}</p>` : ""}
-    ${pillBits ? `<div class="pill-row">${pillBits}</div>` : ""}
+    ${pillBits || freshPill ? `<div class="pill-row">${pillBits}${freshPill}</div>` : ""}
     ${bag.notes ? `<p class="bag-notes">${escapeHtml(bag.notes)}</p>` : ""}
     <dl class="kv">
       ${per250 ? `<div><dt>Price / 250g</dt><dd>${per250}</dd></div>` : ""}
@@ -73,6 +79,7 @@ function paint(container, bagId) {
     <div class="info-actions">
       ${statusBtn}
       <button class="btn ghost small" id="share-btn">Share recipe</button>
+      <button class="btn ghost small" id="share-card-btn">Share as card</button>
       <button class="btn ghost small" id="edit-btn">Edit</button>
     </div>
   `;
@@ -87,6 +94,17 @@ function paint(container, bagId) {
     }
   });
   info.querySelector("#share-btn").addEventListener("click", () => shareBag(bag));
+  info.querySelector("#share-card-btn").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Generating…";
+    const result = await generateAndShare(bag);
+    btn.disabled = false;
+    btn.textContent = original;
+    if (result?.downloaded) showToast("Saved as image — share it from your gallery");
+    else if (result?.error) showToast(result.error);
+  });
 
   container.appendChild(buildDialInSection(bag));
 
@@ -375,20 +393,20 @@ async function shareBag(bag) {
 
   try {
     await navigator.clipboard.writeText(`${text}\n${url}`);
-    showCopyToast();
+    showToast("Copied to clipboard");
   } catch {
     // Clipboard not available (insecure context) — nothing to do
   }
 }
 
-function showCopyToast() {
+function showToast(message) {
   const existing = document.getElementById("crema-copy-toast");
   if (existing) existing.remove();
   const toast = document.createElement("div");
   toast.id = "crema-copy-toast";
   toast.className = "toast toast--show";
   toast.setAttribute("role", "status");
-  toast.textContent = "Copied to clipboard";
+  toast.textContent = message;
   document.body.appendChild(toast);
   setTimeout(() => {
     toast.classList.remove("toast--show");
