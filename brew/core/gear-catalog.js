@@ -3,15 +3,17 @@ export const MACHINES = [
   { id: "barista-express", brand: "Breville", model: "Barista Express" },
   { id: "dual-boiler", brand: "Breville", model: "Dual Boiler (BES920)" },
   { id: "de1-pro", brand: "Decent", model: "DE1 Pro" },
+  { id: "synchronika", brand: "ECM", model: "Synchronika" },
+  { id: "flair-pro-2", brand: "Flair", model: "Espresso Pro 2" },
+  { id: "flair-58", brand: "Flair", model: "Espresso 58" },
+  { id: "gaggia-classic-pro", brand: "Gaggia", model: "Classic Pro" },
   { id: "linea-mini", brand: "La Marzocco", model: "Linea Mini" },
   { id: "linea-micra", brand: "La Marzocco", model: "Linea Micra" },
-  { id: "silvia-pro-x", brand: "Rancilio", model: "Silvia Pro X" },
-  { id: "gaggia-classic-pro", brand: "Gaggia", model: "Classic Pro" },
   { id: "lelit-bianca", brand: "Lelit", model: "Bianca V3" },
   { id: "lelit-mara-x", brand: "Lelit", model: "Mara X" },
   { id: "oscar-ii", brand: "Nuova Simonelli", model: "Oscar II" },
   { id: "profitec-pro-600", brand: "Profitec", model: "Pro 600" },
-  { id: "synchronika", brand: "ECM", model: "Synchronika" },
+  { id: "silvia-pro-x", brand: "Rancilio", model: "Silvia Pro X" },
 ];
 
 export const GRINDERS = [
@@ -122,6 +124,15 @@ export const GRINDERS = [
     scale: { min: 0, max: 10, step: 0.1, unit: "turn" },
     espressoRange: [2.0, 3.5],
     filterRange: [4.5, 7.0],
+  },
+  {
+    id: "flair-royal",
+    brand: "Flair",
+    model: "Royal",
+    burrSize: "64mm flat",
+    scale: { min: 0, max: 10, step: 0.1, unit: "" },
+    espressoRange: [1.5, 3.5],
+    filterRange: [4.5, 7.5],
   },
 ];
 
