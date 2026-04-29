@@ -22,25 +22,20 @@ A 30-second auto-playing looped vertical animation that showcases the taste prof
 
 ## Recording the reel
 
-From `brew/docs/press-kit/`, with the local server running:
+The recorded mp4 is committed at [`taste-profile-reel.mp4`](./taste-profile-reel.mp4) — 1080×1920, H.264, 30 s, ~1.4 MB. Drop it straight into Instagram Reels or layer audio on top first in CapCut.
+
+To regenerate (after editing the HTML), from `brew/docs/press-kit/` with the local server running:
 
 ```bash
 # Start the server
 cd brew && npx serve . -l 3000
 
-# In another terminal, record
+# In another terminal, record + convert in one step
 cd brew/docs/press-kit
 node reels/taste-profile/record.mjs
 ```
 
-This writes a `.webm` to `reels/taste-profile/out/`. Convert to mp4 (Instagram-ready):
-
-```bash
-ffmpeg -i reels/taste-profile/out/*.webm \
-  -c:v libx264 -preset slow -crf 20 \
-  -pix_fmt yuv420p -movflags +faststart \
-  reels/taste-profile/taste-profile-reel.mp4
-```
+The script records the page with Playwright and pipes the result through ffmpeg to produce the mp4. It needs `ffmpeg` on `PATH`; without it, you'll get a webm fallback alongside a manual conversion command.
 
 ## Editing the visuals
 
