@@ -104,6 +104,37 @@ Use CSS container queries so iframe screenshots scale to any card width:
 }
 ```
 
+## Instagram videos / reels
+
+Whenever the user asks for an Instagram video / reel / story video, always
+produce a ready-to-post **mp4** end-to-end. Don't stop at webm and don't
+ask the user to convert.
+
+Recipe:
+
+1. Build the animation as a self-contained `*.html` at 1080×1920 in
+   `brew/docs/press-kit/reels/<feature>/` (CSS keyframes + SVG; reuse
+   brand tokens from `app.css`).
+2. Snapshot a few keyframes with Playwright (pause `document.getAnimations()`
+   at fixed offsets) to verify the timing visually.
+3. Record + convert in one Node script (`record.mjs`) — Playwright captures
+   the page to webm, then `ffmpeg` re-encodes to H.264:
+   ```bash
+   ffmpeg -y -i <webm> -t 30 \
+     -c:v libx264 -preset slow -crf 20 \
+     -pix_fmt yuv420p -movflags +faststart -an \
+     <feature>-reel.mp4
+   ```
+   `-an` strips audio so a voiceover can be layered on top in CapCut
+   without conflicts.
+4. Commit the mp4 alongside the html + record script + a README.
+5. If the user asked for narration, also produce a `voiceover.md` with the
+   script, scene-aligned timing, delivery notes, and AI-voice settings
+   for ElevenLabs / Murf / Play.ht.
+
+`ffmpeg` is required on PATH. If missing, install it (`apt-get install -y ffmpeg`)
+before recording — fall back to webm only if installation fails.
+
 ## Git workflow
 
 - Development branch: `claude/create-elegant-web-app-Xf25P`
