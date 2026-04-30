@@ -104,6 +104,20 @@ Use CSS container queries so iframe screenshots scale to any card width:
 }
 ```
 
+## Source media (private, not deployed)
+
+Raw photos and videos the user wants me to use as source material live in
+`source-media/` **at the repo root** — outside `brew/`, so they're versioned
+in git but **not** published to crema.live (the GH Pages workflow only
+deploys `./brew`).
+
+- `source-media/images/` — bag photos, gear shots, café shots
+- `source-media/videos/` — raw footage, b-roll, screen recordings
+
+When the user says "use the photo of X" for an IG post / share card / press
+kit asset, look there first. Final renders (the IG story PNGs, the share
+cards, the reel mp4s) belong under `brew/docs/press-kit/...` so they ship.
+
 ## Instagram videos / reels
 
 Whenever the user asks for an Instagram video / reel / story video, always
