@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080" />
+<title>Crema — Dial-in: 3 attempts (30s reel)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,500&family=Inter:wght@400;500;600;700&display=swap"
+  rel="stylesheet" />
+
+<style>
+:root {
+  --bg:        #f4ede0;
+  --bg-deep:   #e2d2ad;
+  --surface:   #fdf8ee;
+  --ink:       #2b1b12;
+  --soft:      #6b5443;
+  --faint:     #a08a78;
+  --accent:    #7a3e1d;
+  --accent-soft: #f5e8d8;
+  --crema:     #d9b580;
+  --green:     #3a6b32;
+  --green-soft:#e8f1e6;
+  --red:       #b3422a;
+  --red-soft:  #fce7df;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 1080px; height: 1920px; overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  background: linear-gradient(180deg, var(--bg), var(--bg-deep));
+  position: relative;
+}
+body::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(217,181,128,0.45), transparent 60%);
+  pointer-events: none;
+}
+
+/* ── Watermark ───────────────────────────────── */
+.wm {
+  position: absolute; top: 64px; left: 64px;
+  display: flex; align-items: center; gap: 14px; z-index: 100;
+}
+.wm-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+  box-shadow: 0 0 0 6px rgba(122,62,29,0.16);
+}
+.wm-name {
+  font-family: "Fraunces", serif;
+  font-weight: 600; font-size: 36px; color: var(--accent);
+  letter-spacing: 0.01em;
+}
+
+/* ── Progress bar ────────────────────────────── */
+.progress-track {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 8px; background: rgba(43,27,18,0.1); z-index: 200;
+}
+.progress-bar {
+  height: 100%; width: 0;
+  background: linear-gradient(to right, var(--accent), var(--crema));
+  animation: prog 30s linear infinite;
+}
+@keyframes prog { to { width: 100%; } }
+
+/* ── Big title overlays ───────────────────────── */
+.scene-title {
+  position: absolute;
+  top: 200px; left: 0; right: 0;
+  text-align: center;
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  color: var(--ink);
+  z-index: 20;
+  opacity: 0;
+  padding: 0 80px;
+}
+.scene-title .eyebrow {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.scene-title .main {
+  font-size: 86px;
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+}
+.scene-title .main em {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Title 0 — intro (0–3s = 0–10%) */
+.title-0 { animation: titleAnim 30s ease-out infinite; animation-delay: 0s; }
+@keyframes titleAnim {
+  0%        { opacity: 0; transform: translateY(20px); }
+  3%        { opacity: 1; transform: translateY(0); }
+  9%        { opacity: 1; transform: translateY(0); }
+  11%       { opacity: 0; transform: translateY(-12px); }
+  100%      { opacity: 0; }
+}
+
+/* ── Attempt counters appear above the phone ── */
+.attempt-num {
+  position: absolute;
+  top: 220px; left: 0; right: 0;
+  text-align: center;
+  z-index: 18;
+  opacity: 0;
+}
+.attempt-num .label {
+  font-family: "Inter", sans-serif;
+  font-size: 22px; font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.attempt-num .number {
+  font-family: "Fraunces", serif;
+  font-size: 92px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.attempt-num.an1 { animation: an1 30s ease-in-out infinite; }
+.attempt-num.an2 { animation: an2 30s ease-in-out infinite; }
+.attempt-num.an3 { animation: an3 30s ease-in-out infinite; }
+@keyframes an1 {
+  0%, 11%   { opacity: 0; }
+  13%, 16%  { opacity: 1; }
+  18%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+@keyframes an2 {
+  0%, 36%   { opacity: 0; }
+  38%, 41%  { opacity: 1; }
+  43%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+@keyframes an3 {
+  0%, 60%   { opacity: 0; }
+  62%, 65%  { opacity: 1; }
+  67%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+
+/* ── Phone frame (with the app card inside) ──── */
+.phone {
+  position: absolute;
+  top: 360px; left: 50%;
+  transform: translateX(-50%);
+  width: 720px; height: 1380px;
+  border-radius: 96px;
+  background: #1a0f09;
+  padding: 14px;
+  box-shadow:
+    0 40px 80px -20px rgba(43, 27, 18, 0.45),
+    0 10px 30px -10px rgba(43, 27, 18, 0.25),
+    inset 0 0 0 2px #3a2818;
+  opacity: 0;
+  animation: phoneIn 30s ease-out infinite;
+  z-index: 10;
+}
+@keyframes phoneIn {
+  0%      { opacity: 0; transform: translateX(-50%) translateY(40px); }
+  10%     { opacity: 0; transform: translateX(-50%) translateY(40px); }
+  13%     { opacity: 1; transform: translateX(-50%) translateY(0); }
+  92%     { opacity: 1; transform: translateX(-50%) translateY(0); }
+  96%     { opacity: 0; transform: translateX(-50%) scale(0.96); }
+  100%    { opacity: 0; }
+}
+.phone-screen {
+  position: relative; width: 100%; height: 100%;
+  border-radius: 86px;
+  background: var(--bg);
+  overflow: hidden;
+}
+.phone-notch {
+  position: absolute; top: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 40px;
+  border-radius: 22px;
+  background: #0a0604;
+  z-index: 30;
+}
+
+/* Header in phone */
+.app-header {
+  position: absolute; top: 80px; left: 0; right: 0;
+  padding: 14px 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid rgba(43,27,18,0.08);
+}
+.app-header .name {
+  font-family: "Fraunces", serif;
+  font-weight: 500; font-size: 28px;
+  color: var(--ink);
+}
+.app-header .name::before {
+  content: ""; display: inline-block;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+  margin-right: 10px; vertical-align: middle;
+}
+
+/* ── Bag header (below app header) ───────────── */
+.bag-strip {
+  position: absolute; top: 160px; left: 36px; right: 36px;
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 24px 28px;
+  display: flex; gap: 22px; align-items: center;
+  box-shadow: 0 6px 20px rgba(43,27,18,0.08);
+  border: 1px solid rgba(43,27,18,0.06);
+}
+.bag-strip .photo {
+  width: 88px; height: 110px;
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 30% 28%, #b98555, #7a3e1d 60%, #3e1e0b 100%);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  font-family: "Fraunces", serif;
+  font-size: 26px;
+  color: rgba(240, 212, 138, 0.9);
+}
+.bag-strip .info {
+  flex: 1;
+}
+.bag-strip h2 {
+  font-family: "Fraunces", serif;
+  font-weight: 500; font-size: 30px; color: var(--ink);
+  line-height: 1; margin-bottom: 6px;
+}
+.bag-strip p {
+  font-size: 15px; color: var(--soft);
+  letter-spacing: 0.02em;
+}
+.bag-strip .pill {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border-radius: 999px;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+/* ── Attempt scene container ─────────────────── */
+.attempt-card {
+  position: absolute;
+  top: 320px; left: 36px; right: 36px;
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 28px 26px;
+  box-shadow: 0 8px 28px rgba(43,27,18,0.1);
+  border: 1px solid rgba(43,27,18,0.06);
+  opacity: 0;
+}
+.attempt-card .eyebrow {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+
+/* parameters grid */
+.param-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 26px;
+  margin-bottom: 22px;
+}
+.param {
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 14px 18px;
+  border: 1px solid rgba(43,27,18,0.06);
+}
+.param dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 6px;
+}
+.param dd {
+  font-family: "Fraunces", serif;
+  font-size: 38px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+}
+.param dd small {
+  font-size: 18px; color: var(--faint); font-weight: 400;
+  margin-left: 4px;
+}
+
+/* Time gets a colored highlight depending on attempt */
+.attempt-card.bad .time-val { color: var(--red); }
+.attempt-card.ok .time-val { color: var(--ink); }
+.attempt-card.dialed .time-val { color: var(--green); }
+
+/* Result sliders */
+.result-block { margin-top: 8px; }
+.result-row {
+  margin-bottom: 14px;
+}
+.result-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--soft);
+  margin-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+.result-label .verdict {
+  color: var(--ink);
+  font-weight: 700;
+}
+.attempt-card.bad .result-label .verdict { color: var(--red); }
+.attempt-card.dialed .result-label .verdict { color: var(--green); }
+
+.result-slider {
+  height: 8px; border-radius: 4px;
+  position: relative;
+}
+.result-slider.sour-bitter {
+  background: linear-gradient(to right, #ffd466 0%, #f5ead2 50%, #7a3e1d 100%);
+}
+.result-slider.water-syrup {
+  background: linear-gradient(to right, #a9cde3 0%, #f5ead2 50%, #5c2a0e 100%);
+}
+.result-thumb {
+  position: absolute; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  box-shadow: 0 4px 12px rgba(43,27,18,0.25);
+}
+
+/* ── Attempt timing ──────────────────────────── */
+/* Attempt 1: visible 18%–34% (5.4s–10.2s) */
+.attempt-1 { animation: a1 30s ease-in-out infinite; }
+@keyframes a1 {
+  0%, 17%   { opacity: 0; transform: scale(0.96); }
+  20%       { opacity: 1; transform: scale(1); }
+  32%       { opacity: 1; transform: scale(1); }
+  35%       { opacity: 0; transform: scale(1.02); }
+  100%      { opacity: 0; }
+}
+/* Attempt 2: visible 43%–58% */
+.attempt-2 { animation: a2 30s ease-in-out infinite; }
+@keyframes a2 {
+  0%, 42%   { opacity: 0; transform: scale(0.96); }
+  45%       { opacity: 1; transform: scale(1); }
+  56%       { opacity: 1; transform: scale(1); }
+  59%       { opacity: 0; transform: scale(1.02); }
+  100%      { opacity: 0; }
+}
+/* Attempt 3: visible 64%–76% (~3.6s) */
+.attempt-3 { animation: a3 30s ease-in-out infinite; }
+@keyframes a3 {
+  0%, 63%   { opacity: 0; transform: scale(0.96); }
+  66%       { opacity: 1; transform: scale(1); }
+  76%       { opacity: 1; transform: scale(1); }
+  79%       { opacity: 0; transform: scale(1.02); }
+  100%      { opacity: 0; }
+}
+/* Locked-in result: peak visibility 80%–87% (~2.1s) */
+.attempt-locked { animation: aLock 30s ease-out infinite; }
+@keyframes aLock {
+  0%, 78%   { opacity: 0; transform: scale(0.94); }
+  81%       { opacity: 1; transform: scale(1.02); }
+  83%       { opacity: 1; transform: scale(1); }
+  87%       { opacity: 1; transform: scale(1); }
+  90%       { opacity: 0; transform: scale(0.98); }
+  100%      { opacity: 0; }
+}
+
+/* ── Tips overlay between attempts ───────────── */
+.tip {
+  position: absolute;
+  top: 1180px; left: 0; right: 0;
+  text-align: center;
+  font-family: "Fraunces", serif;
+  font-size: 36px; font-style: italic;
+  color: var(--accent);
+  z-index: 25;
+  opacity: 0;
+  padding: 0 100px;
+}
+.tip-1 { animation: tip1 30s ease-out infinite; }
+.tip-2 { animation: tip2 30s ease-out infinite; }
+@keyframes tip1 {
+  0%, 33%   { opacity: 0; transform: translateY(8px); }
+  35%       { opacity: 1; transform: translateY(0); }
+  41%       { opacity: 1; transform: translateY(0); }
+  43%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+@keyframes tip2 {
+  0%, 57%   { opacity: 0; transform: translateY(8px); }
+  59%       { opacity: 1; transform: translateY(0); }
+  65%       { opacity: 1; transform: translateY(0); }
+  67%       { opacity: 0; }
+  100%      { opacity: 0; }
+}
+
+/* ── Locked badge that pops in ───────────────── */
+.locked-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 20px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.locked-badge::before {
+  content: "✓";
+  font-size: 20px;
+}
+.locked-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+.locked-stats .stat {
+  text-align: center;
+}
+.locked-stats .stat dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 4px;
+}
+.locked-stats .stat dd {
+  font-family: "Fraunces", serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--green);
+  line-height: 1;
+}
+
+/* ── Final CTA ───────────────────────────────── */
+.cta {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  opacity: 0;
+  z-index: 30;
+}
+.cta-mark {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, var(--crema), var(--accent) 78%);
+  box-shadow: 0 0 0 18px rgba(122,62,29,0.12);
+}
+.cta-name {
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 124px;
+  color: var(--ink);
+  margin: 0;
+}
+.cta-tag {
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-size: 44px;
+  color: var(--soft);
+  margin: 0;
+}
+.cta-url {
+  margin-top: 24px;
+  font-size: 32px; font-weight: 600;
+  letter-spacing: 0.32em;
+  color: var(--accent);
+}
+.cta { animation: ctaIn 30s ease-out infinite; }
+@keyframes ctaIn {
+  0%, 88%   { opacity: 0; transform: scale(0.96); }
+  91%       { opacity: 1; transform: scale(1); }
+  100%      { opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="wm">
+  <span class="wm-dot"></span>
+  <span class="wm-name">Crema</span>
+</div>
+
+<!-- Intro title -->
+<h1 class="scene-title title-0">
+  <span class="eyebrow">Dial-in companion</span>
+  <span class="main">New bag.<br/>Let's <em>dial it in</em>.</span>
+</h1>
+
+<!-- Attempt counters -->
+<div class="attempt-num an1"><div class="label">Attempt</div><div class="number">01</div></div>
+<div class="attempt-num an2"><div class="label">Attempt</div><div class="number">02</div></div>
+<div class="attempt-num an3"><div class="label">Attempt</div><div class="number">03</div></div>
+
+<!-- Phone -->
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+
+    <div class="app-header">
+      <div class="name">Crema</div>
+    </div>
+
+    <!-- Bag context strip (always visible while phone is on) -->
+    <div class="bag-strip">
+      <div class="photo">D</div>
+      <div class="info">
+        <h2>Drop Coffee</h2>
+        <p>Ethiopia · Washed</p>
+        <span class="pill">Light</span>
+      </div>
+    </div>
+
+    <!-- Attempt 1: too fast, sour, thin -->
+    <div class="attempt-card attempt-1 bad">
+      <p class="eyebrow">Attempt #1</p>
+      <dl class="param-grid">
+        <div class="param"><dt>Dose</dt><dd>18<small>g</small></dd></div>
+        <div class="param"><dt>Yield</dt><dd>36<small>g</small></dd></div>
+        <div class="param"><dt>Time</dt><dd class="time-val">22<small>s</small></dd></div>
+        <div class="param"><dt>Grind</dt><dd>4.0</dd></div>
+      </dl>
+      <div class="result-block">
+        <div class="result-row">
+          <div class="result-label"><span>Sour</span> <span class="verdict">Sour</span> <span>Bitter</span></div>
+          <div class="result-slider sour-bitter"><div class="result-thumb" style="left: 18%;"></div></div>
+        </div>
+        <div class="result-row">
+          <div class="result-label"><span>Watery</span> <span class="verdict">Thin</span> <span>Syrupy</span></div>
+          <div class="result-slider water-syrup"><div class="result-thumb" style="left: 30%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attempt 2: getting there -->
+    <div class="attempt-card attempt-2 ok">
+      <p class="eyebrow">Attempt #2</p>
+      <dl class="param-grid">
+        <div class="param"><dt>Dose</dt><dd>18<small>g</small></dd></div>
+        <div class="param"><dt>Yield</dt><dd>36<small>g</small></dd></div>
+        <div class="param"><dt>Time</dt><dd class="time-val">31<small>s</small></dd></div>
+        <div class="param"><dt>Grind</dt><dd>3.4</dd></div>
+      </dl>
+      <div class="result-block">
+        <div class="result-row">
+          <div class="result-label"><span>Sour</span> <span class="verdict">A touch sour</span> <span>Bitter</span></div>
+          <div class="result-slider sour-bitter"><div class="result-thumb" style="left: 38%;"></div></div>
+        </div>
+        <div class="result-row">
+          <div class="result-label"><span>Watery</span> <span class="verdict">Balanced</span> <span>Syrupy</span></div>
+          <div class="result-slider water-syrup"><div class="result-thumb" style="left: 50%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attempt 3: dialed in! -->
+    <div class="attempt-card attempt-3 dialed">
+      <p class="eyebrow">Attempt #3</p>
+      <dl class="param-grid">
+        <div class="param"><dt>Dose</dt><dd>18<small>g</small></dd></div>
+        <div class="param"><dt>Yield</dt><dd>36<small>g</small></dd></div>
+        <div class="param"><dt>Time</dt><dd class="time-val">28<small>s</small></dd></div>
+        <div class="param"><dt>Grind</dt><dd>3.2</dd></div>
+      </dl>
+      <div class="result-block">
+        <div class="result-row">
+          <div class="result-label"><span>Sour</span> <span class="verdict">Balanced</span> <span>Bitter</span></div>
+          <div class="result-slider sour-bitter"><div class="result-thumb" style="left: 50%;"></div></div>
+        </div>
+        <div class="result-row">
+          <div class="result-label"><span>Watery</span> <span class="verdict">Rich</span> <span>Syrupy</span></div>
+          <div class="result-slider water-syrup"><div class="result-thumb" style="left: 65%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Locked-in card -->
+    <div class="attempt-card attempt-locked">
+      <span class="locked-badge">Dialed in</span>
+      <p class="eyebrow" style="margin-top: 10px;">Locked recipe · Drop Coffee</p>
+      <dl class="locked-stats">
+        <div class="stat"><dt>Dose</dt><dd>18g</dd></div>
+        <div class="stat"><dt>Yield</dt><dd>36g</dd></div>
+        <div class="stat"><dt>Ratio</dt><dd>1:2.0</dd></div>
+        <div class="stat"><dt>Time</dt><dd>28s</dd></div>
+        <div class="stat"><dt>Grind</dt><dd>3.2</dd></div>
+      </dl>
+    </div>
+
+  </div>
+</div>
+
+<!-- Tips between attempts -->
+<p class="tip tip-1">Tighten the grind →</p>
+<p class="tip tip-2">Almost. Just a touch more →</p>
+
+<!-- Final CTA (very last) -->
+<div class="cta">
+  <span class="cta-mark"></span>
+  <h1 class="cta-name">Crema</h1>
+  <p class="cta-tag">Your espresso, dialed in.</p>
+  <p class="cta-url">CREMA.LIVE</p>
+</div>
+
+<div class="progress-track"><div class="progress-bar"></div></div>
+
+</body>
+</html>
