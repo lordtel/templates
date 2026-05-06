@@ -19,7 +19,7 @@ export function render(container) {
             <span class="step-num">1</span>
             <div>
               <h3>Set your gear</h3>
-              <p>Pick your espresso machine and grinder from the <strong>Gear</strong> tab. The grinder's native scale (clicks, numbers, turns) shapes the slider and seeds starter grind suggestions.</p>
+              <p>Pick your machine and grinder from the <strong>Gear</strong> tab. Crema knows the click count or turn range of common grinders, so the slider in the app matches what's actually on yours.</p>
             </div>
           </li>
           <li>
@@ -39,8 +39,8 @@ export function render(container) {
           <li>
             <span class="step-num">4</span>
             <div>
-              <h3>Watch it tune itself</h3>
-              <p>After a few ratings the new-rating screen suggests a grind based on your past results for the same roast &amp; origin (weighted by how highly you rated them). Until then it suggests a sensible starting point from your grinder's espresso range.</p>
+              <h3>It picks up your taste</h3>
+              <p>Once you've rated a few bags, Crema looks at what scored well on similar roasts and suggests where to start the grind on a new one. Before that, it just picks something in the middle of your grinder's espresso range.</p>
             </div>
           </li>
         </ol>
@@ -49,11 +49,11 @@ export function render(container) {
       <section class="card about-card">
         <h2>Your data</h2>
         <ul class="about-list">
-          <li>Bags, ratings and photos sync to your own private, secure space. Only you can read them.</li>
-          <li>Sign in on any device — phone, laptop — and your shelf follows.</li>
-          <li>OCR runs locally in your browser, so your photos stay on your device until you save a bag.</li>
-          <li>Anonymous crash reports help fix bugs — no passwords, no photos.</li>
-          <li>Delete a bag and its photo goes with it. Want a full wipe? Sign out, ask Nour, we'll drop the row.</li>
+          <li>Everything you log lives in your own row — bags, ratings, photos. Only you can read it.</li>
+          <li>Sign in on any device, phone or laptop, and your shelf comes with you.</li>
+          <li>OCR runs in your browser, so your photos stay on your device until you save a bag.</li>
+          <li>If something crashes, a stripped-down report goes out — no passwords, no photos, just what broke.</li>
+          <li>Delete a bag and its photo goes with it. Want everything gone? Sign out, email me, I'll drop the row.</li>
         </ul>
       </section>
 
@@ -84,7 +84,7 @@ export function render(container) {
           </ol>
         </div>
 
-        <p class="install-foot">Once installed it launches standalone and survives Safari's aggressive storage eviction — your bags won't disappear on you.</p>
+        <p class="install-foot">Once it's on your Home Screen, Safari stops clearing the data when it's bored. Your bags stick around.</p>
       </section>
 
       <section class="card about-card">
@@ -95,7 +95,7 @@ export function render(container) {
 
       <section class="card about-card">
         <h2>Found a bug? Got an idea?</h2>
-        <p>Crema is a one-person side project — feedback is the difference between a feature landing next week and never. Tell me what broke, what felt off, or what you wish was here.</p>
+        <p>I'm one person building this on the side. If you tell me what broke or what's missing, I can usually fix it within a week. If you don't, I'll probably never notice.</p>
         <a class="btn small" href="mailto:nour@crema.live?subject=Crema%20feedback" rel="noopener">Email Nour</a>
       </section>
 
